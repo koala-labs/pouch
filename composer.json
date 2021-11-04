@@ -4,14 +4,14 @@
 	"license": "MIT",
 	"homepage": "https://fuzzproductions.com/",
 	"require": {
-		"php": "^7.0.0",
-		"illuminate/database": "*"
+		"php": "^7.4|^8.0",
+		"illuminate/database": "^8"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "~5.6",
-		"orchestra/testbench": "3.3.*",
+		"phpunit/phpunit": "^9",
+		"orchestra/testbench": "^6",
 		"fuzz/http-exception": "1.0.*",
-		"mockery/mockery": "0.9.*"
+		"mockery/mockery": "^1"
 	},
 	"authors": [
 		{
@@ -39,6 +39,9 @@
 		],
 		"open-coverage": [
 			"open -a \"Google Chrome\" tests/coverage/index.html"
+		],
+		"test-repo": [
+			"vendor/bin/phpunit --filter EloquentRepositoryTest"
 		]
 	},
 	"minimum-stability": "stable"
