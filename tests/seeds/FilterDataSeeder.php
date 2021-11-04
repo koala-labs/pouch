@@ -6,6 +6,7 @@ use Fuzz\MagicBox\Tests\Models\Profile;
 use Fuzz\MagicBox\Tests\Models\Tag;
 use Fuzz\MagicBox\Tests\Models\User;
 use Illuminate\Database\Seeder;
+use Symfony\Component\Console\Helper\Table;
 
 class FilterDataSeeder extends Seeder
 {
@@ -48,9 +49,13 @@ class FilterDataSeeder extends Seeder
 
 				$tag_ids = [];
 				foreach ($post['tags'] as $tag) {
-					$tag_instance        = new Tag;
-					$tag_instance->label = $tag['label'];
-					$tag_instance->save();
+                    $tag_instance = Tag::firstOrCreate(
+                        ['label' => $tag['label']],
+                        [
+                            'label' => $tag['label']
+                        ]
+                    );
+
 					$tag_ids[] = $tag_instance->id;
 				}
 
@@ -131,7 +136,14 @@ class FilterDataSeeder extends Seeder
 							['label' => '#triggerfinger',],
 							['label' => '#mysonistheworst',],
 						]
-					]
+					],
+                    [
+                        'title' => '99 Problems But A Hutt Ain\'t One',
+                        'tags' => [
+                            ['label' => '#og'],
+                            ['label' => '#99']
+                        ]
+                    ]
 				]
 			],
 			[
@@ -155,6 +167,42 @@ class FilterDataSeeder extends Seeder
 					]
 				]
 			],
+            [
+                'username'       => 'huttboss@galaxyfarfaraway.com',
+                'name'           => 'Jabba The Hutt',
+                'hands'          => 2,
+                'times_captured' => 0,
+                'occupation'     => 'Crime boss',
+                'profile'        => [
+                    'favorite_cheese' => 'brie',
+                    'favorite_fruit'  => 'apple',
+                    'is_human'        => false
+                ],
+                'posts'          => [
+                    [
+                        'title' => 'How To Feed And Care For Your Sarlacc',
+                        'tags'  => [
+                            ['label' => '#hungry',],
+                            ['label' => '#tatooine',],
+                            ['label' => '#og',],
+                        ]
+                    ],
+                    [
+                        'title' => 'Fu-shu-ka-me-na-wa-Han-Solo-ha-ha-ha!',
+                        'tags'  => [
+                            ['label' => '#princess',],
+                            ['label' => '#og',],
+                        ]
+                    ],
+                    [
+                        'title' => 'How To Make Friends And Influence People',
+                        'tags'  => [
+                            ['label' => '#friends',],
+                            ['label' => '#og',],
+                        ]
+                    ]
+                ]
+            ],
 		];
 	}
 }

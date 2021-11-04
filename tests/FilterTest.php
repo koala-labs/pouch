@@ -5,18 +5,15 @@ namespace Fuzz\MagicBox\Tests;
 use Fuzz\MagicBox\Filter;
 use Fuzz\MagicBox\Tests\Models\User;
 use Fuzz\MagicBox\Tests\Seeds\FilterDataSeeder;
+use Illuminate\Database\Console\Seeds\SeedCommand;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class FilterTest extends DBTestCase
 {
-	/**
-	 * Number of users seeder creates
-	 *
-	 * @var int
-	 */
-	public $user_count = 4;
-
-	/**
+    /**
 	 * Set up and seed the database with seed data
 	 *
 	 * @return void
@@ -52,7 +49,6 @@ class FilterTest extends DBTestCase
 
 	public function testItModifiesQuery()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = ['name' => '^lskywalker'];
 
 		$model          = User::class;
@@ -67,7 +63,6 @@ class FilterTest extends DBTestCase
 
 	public function testItStartsWith()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = ['username' => '^lskywalker'];
 
 		$model          = User::class;
@@ -84,7 +79,6 @@ class FilterTest extends DBTestCase
 
 	public function testItFiltersOrStartsWith()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'username' => '^lskywalker',
 			'or'       => ['username' => '^solocup']
@@ -107,7 +101,6 @@ class FilterTest extends DBTestCase
 
 	public function testItEndsWith()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = ['name' => '$gana'];
 
 		$model          = User::class;
@@ -124,7 +117,6 @@ class FilterTest extends DBTestCase
 
 	public function testItFiltersOrEndsWith()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'name' => '$gana',
 			'or'       => ['name' => '$olo']
@@ -146,7 +138,6 @@ class FilterTest extends DBTestCase
 
 	public function testItContains()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = ['username' => '~clava'];
 
 		$model          = User::class;
@@ -163,7 +154,6 @@ class FilterTest extends DBTestCase
 
 	public function testItFiltersOrContains()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'username' => '~skywalker',
 			'or'       => ['username' => '~clava']
@@ -185,7 +175,7 @@ class FilterTest extends DBTestCase
 
 	public function testItIsLessThan()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+        $expectedUsernames = ['chewbaclava@galaxyfarfaraway.com', 'huttboss@galaxyfarfaraway.com'];
 		$filters        = ['times_captured' => '<1'];
 
 		$model          = User::class;
@@ -196,13 +186,16 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(1, count($results));
-		$this->assertEquals('chewbaclava@galaxyfarfaraway.com', $results->first()->username);
+		$this->assertCount(count($expectedUsernames), $results);
+
+        foreach ($expectedUsernames as $expectedUsername) {
+            $this->assertTrue($results->contains('username', $expectedUsername));
+        }
 	}
 
 	public function testItFiltersOrIsLessThan()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+        $expectedUsernames = ['solocup@galaxyfarfaraway.com', 'chewbaclava@galaxyfarfaraway.com', 'huttboss@galaxyfarfaraway.com'];
 		$filters        = [
 			'times_captured' => '<1',
 			'or'       => ['times_captured' => '<3']
@@ -216,15 +209,15 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(2, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['solocup@galaxyfarfaraway.com', 'chewbaclava@galaxyfarfaraway.com']));
-		}
+        $this->assertCount(count($expectedUsernames), $results);
+
+        foreach ($expectedUsernames as $expectedUsername) {
+            $this->assertTrue($results->contains('username', $expectedUsername));
+        }
 	}
 
 	public function testItIsGreaterThan()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = ['hands' => '>1'];
 
 		$model          = User::class;
@@ -235,15 +228,14 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(2, count($results));
+		$this->assertEquals(3, count($results));
 		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['solocup@galaxyfarfaraway.com', 'lorgana@galaxyfarfaraway.com']));
+			$this->assertTrue(in_array($result->username, ['solocup@galaxyfarfaraway.com', 'lorgana@galaxyfarfaraway.com', 'huttboss@galaxyfarfaraway.com']));
 		}
 	}
 
 	public function testItFiltersOrIsGreaterThan()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'hands' => '>1',
 			'or'       => ['hands' => '>0']
@@ -257,15 +249,14 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(3, count($results));
+		$this->assertEquals(4, count($results));
 		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['solocup@galaxyfarfaraway.com', 'lorgana@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com']));
+			$this->assertTrue(in_array($result->username, ['solocup@galaxyfarfaraway.com', 'lorgana@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com', 'huttboss@galaxyfarfaraway.com']));
 		}
 	}
 
 	public function testItIsLessThanOrEquals()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = ['hands' => '<=1'];
 
 		$model          = User::class;
@@ -276,15 +267,18 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(2, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['chewbaclava@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com']));
-		}
+        $expectedUsernames = ['chewbaclava@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com'];
+        $this->assertCount(count($expectedUsernames), $results);
+
+        foreach ($expectedUsernames as $expectedUsername) {
+            $this->assertTrue($results->contains('username', $expectedUsername));
+        }
 	}
 
 	public function testItFiltersOrIsLessThanOrEquals()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+        $expectedUsernames = ['chewbaclava@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com', 'solocup@galaxyfarfaraway.com', 'huttboss@galaxyfarfaraway.com'];
+
 		$filters        = [
 			'times_captured' => '<=2',
 			'or'       => ['times_captured' => '<=5']
@@ -298,15 +292,16 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(3, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['chewbaclava@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com', 'solocup@galaxyfarfaraway.com']));
-		}
+        $expectedUsernames = ['chewbaclava@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com', 'solocup@galaxyfarfaraway.com', 'huttboss@galaxyfarfaraway.com'];
+        $this->assertCount(count($expectedUsernames), $results);
+
+        foreach ($expectedUsernames as $expectedUsername) {
+            $this->assertTrue($results->contains('username', $expectedUsername));
+        }
 	}
 
 	public function testItIsGreaterThanOrEquals()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'times_captured' => '>=5',
 		];
@@ -319,15 +314,16 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(1, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['lorgana@galaxyfarfaraway.com']));
-		}
+        $expectedUsernames = ['lorgana@galaxyfarfaraway.com'];
+        $this->assertCount(count($expectedUsernames), $results);
+
+        foreach ($expectedUsernames as $expectedUsername) {
+            $this->assertTrue($results->contains('username', $expectedUsername));
+        }
 	}
 
 	public function testItFiltersOrIsGreaterThanOrEquals()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'times_captured' => '>=5',
 			'or'       => ['times_captured' => '>=3']
@@ -341,15 +337,16 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(2, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['lorgana@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com']));
-		}
+        $expectedUsernames = ['lorgana@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com'];
+        $this->assertCount(count($expectedUsernames), $results);
+
+        foreach ($expectedUsernames as $expectedUsername) {
+            $this->assertTrue($results->contains('username', $expectedUsername));
+        }
 	}
 
 	public function testItEqualsString()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'username' => '=lskywalker@galaxyfarfaraway.com',
 		];
@@ -370,7 +367,6 @@ class FilterTest extends DBTestCase
 
 	public function testItEqualsInt()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'times_captured' => '=6',
 		];
@@ -391,7 +387,7 @@ class FilterTest extends DBTestCase
 
 	public function testItFiltersOrEqualsString()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = [
 			'username' => '=lskywalker@galaxyfarfaraway.com',
 			'or'       => ['username' => '=lorgana@galaxyfarfaraway.com']
@@ -413,7 +409,7 @@ class FilterTest extends DBTestCase
 
 	public function testItFiltersOrEqualsInt()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = [
 			'times_captured' => '=4',
 			'or'       => ['times_captured' => '=6']
@@ -435,7 +431,7 @@ class FilterTest extends DBTestCase
 
 	public function testItNotEqualsString()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = ['username' => '!=lorgana@galaxyfarfaraway.com'];
 
 		$model          = User::class;
@@ -446,7 +442,7 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(3, count($results));
+		$this->assertEquals(User::count() - 1, count($results));
 		foreach ($results as $result){
 			$this->assertTrue($result->username !== 'lorgana@galaxyfarfaraway.com');
 		}
@@ -454,7 +450,7 @@ class FilterTest extends DBTestCase
 
 	public function testItNotEqualsInt()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = ['times_captured' => '!=4'];
 
 		$model          = User::class;
@@ -465,7 +461,7 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(3, count($results));
+		$this->assertEquals(User::count() - 1, count($results));
 		foreach ($results as $result){
 			$this->assertTrue($result->username !== 'lskywalker@galaxyfarfaraway.com');
 		}
@@ -473,7 +469,6 @@ class FilterTest extends DBTestCase
 
 	public function testItFiltersOrNotEqualString()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'username' => '=lorgana@galaxyfarfaraway.com',
 			'or'       => ['username' => '!=lskywalker@galaxyfarfaraway.com']
@@ -487,16 +482,15 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(3, count($results));
+		$this->assertEquals(User::count() - 1, count($results));
 		foreach ($results as $result){
 			// The only one we shouldn't get is lskywalker@galaxyfarfaraway.com'
-			$this->assertTrue(in_array($result->username, ['lorgana@galaxyfarfaraway.com', 'solocup@galaxyfarfaraway.com', 'chewbaclava@galaxyfarfaraway.com']));
+			$this->assertNotEquals('lskywalker@galaxyfarfaraway.com', $result->username);
 		}
 	}
 
 	public function testItFiltersOrNotEqualInt()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'times_captured' => '=6',
 			'or'       => ['times_captured' => '!=4']
@@ -510,16 +504,15 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(3, count($results));
+		$this->assertCount(User::count() - 1, $results);
 		foreach ($results as $result){
 			// The only one we shouldn't get is lskywalker@galaxyfarfaraway.com'
-			$this->assertTrue(in_array($result->username, ['lorgana@galaxyfarfaraway.com', 'solocup@galaxyfarfaraway.com', 'chewbaclava@galaxyfarfaraway.com']));
+            $this->assertNotEquals('lskywalker@galaxyfarfaraway.com', $result->username);
 		}
 	}
 
 	public function testItNotNull()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = ['occupation' => 'NOT_NULL'];
 
 		$model          = User::class;
@@ -530,15 +523,16 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(3, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['lskywalker@galaxyfarfaraway.com', 'solocup@galaxyfarfaraway.com', 'chewbaclava@galaxyfarfaraway.com']));
-		}
+        $expectedUsernames = ['chewbaclava@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com', 'solocup@galaxyfarfaraway.com', 'huttboss@galaxyfarfaraway.com'];
+        $this->assertCount(count($expectedUsernames), $results);
+
+        foreach ($expectedUsernames as $expectedUsername) {
+            $this->assertTrue($results->contains('username', $expectedUsername));
+        }
 	}
 
 	public function testItFiltersOrNotNull()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'username' => '~lskywalker',
 			'or'       => ['occupation' => 'NOT_NULL']
@@ -552,15 +546,17 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(3, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['lskywalker@galaxyfarfaraway.com', 'solocup@galaxyfarfaraway.com', 'chewbaclava@galaxyfarfaraway.com']));
-		}
+        $expectedUsernames = ['chewbaclava@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com', 'solocup@galaxyfarfaraway.com', 'huttboss@galaxyfarfaraway.com'];
+        $this->assertCount(count($expectedUsernames), $results);
+
+        foreach ($expectedUsernames as $expectedUsername) {
+            $this->assertTrue($results->contains('username', $expectedUsername));
+        }
 	}
 
 	public function testItNull()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = [
 			'occupation' => 'NULL',
 		];
@@ -581,7 +577,6 @@ class FilterTest extends DBTestCase
 
 	public function testItFiltersOrNull()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'occupation' => '=Jedi',
 			'or' => [
@@ -605,7 +600,7 @@ class FilterTest extends DBTestCase
 
 	public function testItInString()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = ['name' => '[Chewbacca,Leia Organa,Luke Skywalker]'];
 
 		$model          = User::class;
@@ -624,7 +619,7 @@ class FilterTest extends DBTestCase
 
 	public function testItInInt()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = ['times_captured' => '[0,4,6]'];
 
 		$model          = User::class;
@@ -635,15 +630,17 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(3, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['lorgana@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com', 'chewbaclava@galaxyfarfaraway.com']));
-		}
+        $expectedUsernames = ['lorgana@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com', 'chewbaclava@galaxyfarfaraway.com', 'huttboss@galaxyfarfaraway.com'];
+        $this->assertCount(count($expectedUsernames), $results);
+
+        foreach ($expectedUsernames as $expectedUsername) {
+            $this->assertTrue($results->contains('username', $expectedUsername));
+        }
 	}
 
 	public function testItFiltersOrInString()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = [
 			'name' => '[Chewbacca,Luke Skywalker]',
 			'or'       => ['name' => '[Luke Skywalker,Leia Organa]']
@@ -665,7 +662,6 @@ class FilterTest extends DBTestCase
 
 	public function testItFiltersOrInInt()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'times_captured' => '[0,4]',
 			'or'       => ['times_captured' => '[4,6]']
@@ -679,15 +675,16 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(3, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['lorgana@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com', 'chewbaclava@galaxyfarfaraway.com']));
-		}
+        $expectedUsernames = ['lorgana@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com', 'chewbaclava@galaxyfarfaraway.com', 'huttboss@galaxyfarfaraway.com'];
+        $this->assertCount(count($expectedUsernames), $results);
+
+        foreach ($expectedUsernames as $expectedUsername) {
+            $this->assertTrue($results->contains('username', $expectedUsername));
+        }
 	}
 
 	public function testItNotInString()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'name' => '![Leia Organa,Chewbacca]',
 		];
@@ -700,15 +697,16 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(2, count($results));
+		$this->assertEquals(User::count() - 2, count($results));
 		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['solocup@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com',]));
+			$this->assertNotEquals('leiaorgana@galaxyfarfaraway.com', $result->username);
+			$this->assertNotEquals('chewbaclava@galaxyfarfaraway.com', $result->username);
 		}
 	}
 
 	public function testItNotInInt()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = [
 			'times_captured' => '![6,0]',
 		];
@@ -729,7 +727,6 @@ class FilterTest extends DBTestCase
 
 	public function testItFiltersOrNotInString()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'name' => '![Leia Organa,Chewbacca]',
 			'or' => [
@@ -745,15 +742,16 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(2, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['solocup@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com']));
+        $expectedUserNames = ['solocup@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com', 'huttboss@galaxyfarfaraway.com'];
+		$this->assertCount(count($expectedUserNames), $results);
+		foreach ($expectedUserNames as $expectedUserName){
+			$this->assertTrue($results->contains('username', $expectedUserName));
 		}
 	}
 
 	public function testItFiltersOrNotInInt()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = [
 			'times_captured' => '![6,0]',
 			'or' => [
@@ -777,7 +775,7 @@ class FilterTest extends DBTestCase
 
 	public function testItFiltersNestedRelationships()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = ['profile.favorite_cheese' => '~Gou'];
 
 		$model          = User::class;
@@ -796,7 +794,6 @@ class FilterTest extends DBTestCase
 
 	public function testItProperlyDeterminesScalarFilters()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = ['name' => '=Leia Organa,Luke Skywalker'];
 
 		$model          = User::class;
@@ -807,12 +804,11 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(4, count($results)); // It does not filter anything because this is a scalar filter
+		$this->assertCount(User::count(), $results); // It does not filter anything because this is a scalar filter
 	}
 
 	public function testItFiltersFalse()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = ['profile.is_human' => 'false'];
 
 		$model          = User::class;
@@ -823,15 +819,12 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(1, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(in_array($result->username, ['chewbaclava@galaxyfarfaraway.com']));
-		}
+		$this->assertCount(2, $results);
+        $this->assertFalse($results->pluck('profile.is_human')->contains(true));
 	}
 
 	public function testItFiltersNestedTrue()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = ['profile.is_human' => 'true'];
 
 		$model          = User::class;
@@ -843,14 +836,11 @@ class FilterTest extends DBTestCase
 		$results = $query->get();
 
 		$this->assertEquals(3, count($results));
-		foreach ($results as $result){
-			$this->assertTrue(! in_array($result->username, ['chewbaclava@galaxyfarfaraway.com']));
-		}
+        $this->assertFalse($results->pluck('profile.is_human')->contains(false));
 	}
 
 	public function testItFiltersNestedNull()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = ['profile.favorite_fruit' => 'NULL'];
 
 		$model          = User::class;
@@ -872,7 +862,7 @@ class FilterTest extends DBTestCase
 	 */
 	public function testItFiltersNestedBelongsToManyRelationships()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
+
 		$filters        = ['posts.tags.label' => '=#mysonistheworst'];
 
 		$model          = User::class;
@@ -891,7 +881,6 @@ class FilterTest extends DBTestCase
 
 	public function testItFiltersNestedConjuctions()
 	{
-		$this->assertEquals(User::all()->count(), $this->user_count);
 		$filters        = [
 			'username' => '^lskywalker',
 			'or'       => [
@@ -914,7 +903,7 @@ class FilterTest extends DBTestCase
 
 		$results = $query->get();
 
-		$this->assertEquals(3, count($results));
+		$this->assertCount(3, $results);
 		foreach ($results as $result){
 			$this->assertTrue(in_array($result->username, ['lorgana@galaxyfarfaraway.com', 'solocup@galaxyfarfaraway.com', 'lskywalker@galaxyfarfaraway.com']));
 		}

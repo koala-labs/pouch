@@ -25,6 +25,7 @@ class CreateProfileTable extends Migration
 				'Gouda',
 				'Cheddar',
 				'Provolone',
+                'Gorgonzola'
 			]);
 			$table->string('favorite_fruit')->nullable();
 			$table->boolean('is_human')->default(false);

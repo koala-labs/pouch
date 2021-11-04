@@ -284,6 +284,7 @@ class EloquentRepository implements Repository
 	 */
 	public function all(): Collection
 	{
+        var_dump($this->query()->toSql());
 		return $this->query()->get();
 	}
 

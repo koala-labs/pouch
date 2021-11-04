@@ -385,7 +385,7 @@ class EloquentRepositoryTest extends DBTestCase
 
 		// Test that the repository implements filters correctly
 		$repository = $this->getRepository(User::class);
-		$this->assertEquals($repository->all()->count(), 4);
+		$this->assertEquals(Users::count(), $repository->all()->count());
 
 		$repository->modify()->setFilters(['username' => '=chewbaclava@galaxyfarfaraway.com']);
 		$found_users = $repository->all();
@@ -807,15 +807,19 @@ class EloquentRepositoryTest extends DBTestCase
 			->setEagerLoads(['posts']);
 		$tags = $repository->all();
 
-		$this->assertCount(Tag::count(), $tags);
+		$this->assertCount(Tag::count(), $tags->pluck('label')->unique());
 
-		foreach ($tags as $index => $tag) {
+		foreach ($tags->toArray() as $index => $tag) {
 			$previous_post = null;
 			$order = [];
 			foreach ($tag['posts'] as $post) {
 				$order[] = $post['title'];
-				if ($index > 0) {
+				if ($previous_post) {
 					// String 1 (Gouda) should be greater than (comes later alphabetically) than string 2 (Cheddar)
+                    if (($post['title'] <=> $previous_post['title']) !== 1) {
+                        var_dump(collect($tag['posts'])->pluck('title')->toArray());
+                        $a=1;
+                    }
 					$this->assertEquals(1, $post['title'] <=> $previous_post['title']);
 				}
 
