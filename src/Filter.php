@@ -3,6 +3,7 @@
 namespace Fuzz\MagicBox;
 
 use Fuzz\MagicBox\Contracts\QueryFilterContainer;
+use Illuminate\Support\Str;
 
 /**
  * Class Filter
@@ -222,12 +223,12 @@ class Filter implements QueryFilterContainer
 				if (is_array($nested_relations)) {
 					$query->whereHas(
 						$relation, function ($query) use ($filter, $column) {
-						$where = camel_case('where' . $column);
+						$where = ('where' . $column);
 						$query->$where($filter);
 					});
 				} else {
 					$column = self::applyTablePrefix($column);
-					$where  = camel_case('where' . $column);
+					$where  = Str::camel('where' . $column);
 					$query->$where($filter);
 				}
 			} elseif ($filter === 'NULL' || $filter === 'NOT_NULL') {
@@ -551,6 +552,6 @@ class Filter implements QueryFilterContainer
 	 */
 	private static function determineMethod($base_name, $or)
 	{
-		return $or ? camel_case('or_' . $base_name) : $base_name;
+		return $or ? Str::camel('or_' . $base_name) : $base_name;
 	}
 }

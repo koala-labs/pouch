@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -576,6 +577,7 @@ class EloquentQueryModifier implements QueryModifier
 		$class = get_class($instance);
 
 		// If the relation exists, determine which type (singular, multiple)
+        /** @var $related Relation */
 		if ($this->isRelation($instance, $singular, $class)) {
 			$related = $instance->$singular();
 		} elseif ($this->isRelation($instance, $relation, $class)) {
@@ -585,47 +587,36 @@ class EloquentQueryModifier implements QueryModifier
 			return;
 		}
 
-		$foreign_key = $related->getForeignKey();
-
 		// Join tables differently depending on relationship type
 		switch (get_class($related)) {
 			case BelongsToMany::class:
 				/**
 				 * @var \Illuminate\Database\Eloquent\Relations\BelongsToMany $related
 				 */
-				$base_table_key = $instance->getKeyName();
-				$relation_primary_key = $related->getModel()->getKeyName();
-
 				// Join through the pivot table
-				$query->join($related->getTable(), "$base_table.$base_table_key", '=', $foreign_key);
-				$query->join($table, $related->getOtherKey(), '=', "$relation.$relation_primary_key");
+				$query->join($related->getTable(), $instance->getQualifiedKeyName(), '=', $related->getQualifiedForeignPivotKeyName());
+				$query->join($table, $related->getQualifiedRelatedPivotKeyName(), '=', $related->getModel()->getQualifiedKeyName());
 				break;
 			case HasMany::class:
 				/**
 				 * @var \Illuminate\Database\Eloquent\Relations\HasMany $related
 				 */
-				$base_table_key = $instance->getKeyName();
-
 				// Join child's table
-				$query->join($table, "$base_table.$base_table_key", '=', $foreign_key);
+				$query->join($table, $instance->getQualifiedKeyName(), '=', $related->getQualifiedForeignKeyName());
 				break;
 			case BelongsTo::class:
 				/**
 				 * @var \Illuminate\Database\Eloquent\Relations\BelongsTo $related
 				 */
-				$relation_key = $related->getOtherKey();
-
 				// Join related's table on the base table's foreign key
-				$query->join($table, "$base_table.$foreign_key", '=', "$table.$relation_key");
+				$query->join($table, $related->getQualifiedForeignKeyName(), '=', $related->getQualifiedOwnerKeyName());
 				break;
 			case HasOne::class:
 				/**
 				 * @var \Illuminate\Database\Eloquent\Relations\HasOne $related
 				 */
-				$parent_key = $instance->getKeyName();
-
 				// Join related's table on the base table's foreign key
-				$query->join($table, "$base_table.$parent_key", '=', "$foreign_key");
+				$query->join($table, $instance->getQualifiedKeyName(), '=', $related->getQualifiedForeignKeyName());
 				break;
 		}
 

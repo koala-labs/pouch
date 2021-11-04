@@ -42,19 +42,18 @@ class EloquentRepositoryTest extends DBTestCase
 			]);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
-	public function testItRejectsUnfuzzyModels()
+	public function testItRejectsNonEloquentModels()
 	{
-		$repo = (new EloquentRepository)->setModelClass('NotVeryFuzzy');
+        $this->expectExceptionMessage(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Specified model class must be an instance of Illuminate\Database\Eloquent\Model');
+		(new EloquentRepository)->setModelClass('NotVeryFuzzy');
 	}
 
 	public function testItCanCreateASimpleModel()
 	{
 		$user = $this->getRepository('Fuzz\MagicBox\Tests\Models\User')->save();
 		$this->assertNotNull($user);
-		$this->assertEquals($user->id, 1);
+		$this->assertEquals(1, $user->id);
 	}
 
 	public function testItCanFindASimpleModel()
@@ -806,9 +805,9 @@ class EloquentRepositoryTest extends DBTestCase
 		$repository->modify()
 			->setSortOrder(['posts.title' => 'asc'])
 			->setEagerLoads(['posts']);
-		$tags = $repository->all()->toArray();
+		$tags = $repository->all();
 
-		$this->assertEquals(Tag::all()->count(), count($tags));
+		$this->assertCount(Tag::count(), $tags);
 
 		foreach ($tags as $index => $tag) {
 			$previous_post = null;
@@ -817,7 +816,7 @@ class EloquentRepositoryTest extends DBTestCase
 				$order[] = $post['title'];
 				if ($index > 0) {
 					// String 1 (Gouda) should be greater than (comes later alphabetically) than string 2 (Cheddar)
-					$this->assertTrue(strcmp($post['title'], $previous_post['title']) > 0);
+					$this->assertEquals(1, $post['title'] <=> $previous_post['title']);
 				}
 
 				$previous_post = $post;

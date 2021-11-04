@@ -6,3 +6,4 @@ composer.phar
 /tests/coverage
 .DS_Store
 **/.idea
+.phpunit.result.cache

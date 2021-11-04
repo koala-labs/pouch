@@ -2,11 +2,15 @@
 
 namespace Fuzz\MagicBox\Tests;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 abstract class DBTestCase extends TestCase
 {
+    use DatabaseTransactions;
+
 	protected $artisan;
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 

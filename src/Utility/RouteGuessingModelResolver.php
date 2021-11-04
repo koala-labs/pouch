@@ -4,6 +4,7 @@ namespace Fuzz\MagicBox\Utility;
 
 use Fuzz\MagicBox\Contracts\MagicBoxResource;
 use Fuzz\MagicBox\Contracts\ModelResolver;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Route;
 use Illuminate\Console\AppNamespaceDetectorTrait;
@@ -31,7 +32,7 @@ class RouteGuessingModelResolver implements ModelResolver
 		$route_name = $route->getName();
 
 		if (! is_null($route_name) && strpos($route_name, '.') !== false) {
-			list(, $alias) = array_reverse(explode('.', $route->getName()));
+			list(, $alias) = Arr::reverse(explode('.', $route->getName()));
 
 			$model_class = $this->namespaceModel(Str::studly(Str::singular($alias)));
 
