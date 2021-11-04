@@ -10,7 +10,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Routing\Route;
 use Mockery;
 
-class ExplicitExplicitModelResolverTest extends TestCase
+class ExplicitModelResolverTest extends TestCase
 {
 	/**
 	 * Given a route has a property named resource
