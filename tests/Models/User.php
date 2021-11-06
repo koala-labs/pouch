@@ -3,6 +3,7 @@
 namespace Fuzz\MagicBox\Tests\Models;
 
 use Fuzz\MagicBox\Contracts\MagicBoxResource;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -47,10 +48,17 @@ class User extends Model implements MagicBoxResource
 		'profile.is_human',
 	];
 
+    protected $casts = [
+        'hands' => 'integer',
+        'times_captured' => 'integer'
+    ];
+
 	/**
 	 * @var string
 	 */
 	protected $table = 'users';
+
+    protected $fillable = self::FILLABLE;
 
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany

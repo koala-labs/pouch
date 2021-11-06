@@ -34,33 +34,38 @@ class FilterDataSeeder extends Seeder
 
 			$user_instance->save();
 
-			$profile = new Profile;
-			foreach ($user['profile'] as $key => $value) {
-				$profile->{$key} = $value;
-			}
-			$profile->user_id = $user_instance->id;
-			$profile->save();
+            if (isset($user['profile'])) {
+                $profile = new Profile;
+                foreach ($user['profile'] as $key => $value) {
+                    $profile->{$key} = $value;
+                }
+                $profile->user_id = $user_instance->id;
+                $profile->save();
+            }
 
-			foreach ($user['posts'] as $post) {
-				$post_instance          = new Post;
-				$post_instance->title   = $post['title'];
-				$post_instance->user_id = $user_instance->id;
-				$post_instance->save();
 
-				$tag_ids = [];
-				foreach ($post['tags'] as $tag) {
-                    $tag_instance = Tag::firstOrCreate(
-                        ['label' => $tag['label']],
-                        [
-                            'label' => $tag['label']
-                        ]
-                    );
+            if (isset($user['posts'])) {
+                foreach ($user['posts'] as $post) {
+                    $post_instance          = new Post;
+                    $post_instance->title   = $post['title'];
+                    $post_instance->user_id = $user_instance->id;
+                    $post_instance->save();
 
-					$tag_ids[] = $tag_instance->id;
-				}
+                    $tag_ids = [];
+                    foreach ($post['tags'] as $tag) {
+                        $tag_instance = Tag::firstOrCreate(
+                            ['label' => $tag['label']],
+                            [
+                                'label' => $tag['label']
+                            ]
+                        );
 
-				$post_instance->tags()->sync($tag_ids);
-			}
+                        $tag_ids[] = $tag_instance->id;
+                    }
+
+                    $post_instance->tags()->sync($tag_ids);
+                }
+            }
 		}
 
 		$users = User::with(
@@ -202,7 +207,7 @@ class FilterDataSeeder extends Seeder
                         ]
                     ]
                 ]
-            ],
+            ]
 		];
 	}
 }

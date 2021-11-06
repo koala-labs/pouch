@@ -33,6 +33,10 @@ class Profile extends Model implements MagicBoxResource
 		'is_human',
 	];
 
+    protected $casts = [
+        'is_human' => 'boolean'
+    ];
+
 	/**
 	 * @var string
 	 */

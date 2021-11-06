@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -476,11 +477,12 @@ class EloquentQueryModifier implements QueryModifier
 				$relations[$name] = $cleaned_relation;
 			} else {
 				$relations[$cleaned_relation] = $constraints;
-				unset($relations[$name]);
+                if ($cleaned_relation !== $name) {
+                    unset($relations[$name]);
+                }
 			}
 
 			foreach ($nested_relations as $index => $relation) {
-
 				if ($this->isRelation($model, $relation, get_class($model))) {
 					// Iterate through relations if they actually exist
 					$model = $model->$relation()->getRelated();
@@ -548,6 +550,24 @@ class EloquentQueryModifier implements QueryModifier
 					$query->selectRaw("$base_table.*");
 
 					$this->applyNestedJoins($split, $temp_instance, $field, $direction);
+
+                    if (count($split) > 0) {
+                        //Replace existing eager loads with eager loads that contain a closure that apply a sort order
+                        $relationRequiredForSort = current($split);
+
+                        if (array_key_exists($relationRequiredForSort, $this->eager_loads)) {
+                            $oldCallback = $this->eager_loads[$relationRequiredForSort];
+                            $this->eager_loads[$relationRequiredForSort] = function ($query) use ($field, $direction, $oldCallback) {
+                                $oldCallback($query);
+                                $query->orderBy($field, $direction);
+                            };
+                        } else if (($key = array_search($relationRequiredForSort, $this->eager_loads)) !== false) {
+                            unset($this->eager_loads[$key]);
+                            $this->eager_loads[$relationRequiredForSort] = function ($query) use ($field, $direction) {
+                                $query->orderBy($field, $direction);
+                            };
+                        }
+                    }
 				}
 			}
 		}
@@ -568,6 +588,7 @@ class EloquentQueryModifier implements QueryModifier
 
 		$base_table = $instance->getTable();
 
+        /** @var $related Relation */
 		// The current working relation
 		$relation = $relations[0];
 
@@ -577,7 +598,6 @@ class EloquentQueryModifier implements QueryModifier
 		$class = get_class($instance);
 
 		// If the relation exists, determine which type (singular, multiple)
-        /** @var $related Relation */
 		if ($this->isRelation($instance, $singular, $class)) {
 			$related = $instance->$singular();
 		} elseif ($this->isRelation($instance, $relation, $class)) {
@@ -596,6 +616,7 @@ class EloquentQueryModifier implements QueryModifier
 				// Join through the pivot table
 				$query->join($related->getTable(), $instance->getQualifiedKeyName(), '=', $related->getQualifiedForeignPivotKeyName());
 				$query->join($table, $related->getQualifiedRelatedPivotKeyName(), '=', $related->getModel()->getQualifiedKeyName());
+
 				break;
 			case HasMany::class:
 				/**

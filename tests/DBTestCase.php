@@ -2,12 +2,10 @@
 
 namespace Fuzz\MagicBox\Tests;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use League\Flysystem\Config;
 
 abstract class DBTestCase extends TestCase
 {
-    use DatabaseTransactions;
-
 	protected $artisan;
 
 	public function setUp(): void
@@ -30,9 +28,9 @@ abstract class DBTestCase extends TestCase
 		$app['config']->set('database.default', 'testbench');
 		$app['config']->set(
 			'database.connections.testbench', [
-				'driver'   => 'sqlite',
+                'driver'   => 'sqlite',
 				'database' => ':memory:',
-				'prefix'   => ''
+                'prefix'   => ''
 			]
 		);
 	}

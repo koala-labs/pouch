@@ -38,8 +38,8 @@ class EloquentRepositoryTest extends DBTestCase
 	public function seedUsers()
 	{
 		$this->artisan->call('db:seed', [
-				'--class' => FilterDataSeeder::class
-			]);
+            '--class' => FilterDataSeeder::class
+        ]);
 	}
 
 	public function testItRejectsNonEloquentModels()
@@ -385,7 +385,7 @@ class EloquentRepositoryTest extends DBTestCase
 
 		// Test that the repository implements filters correctly
 		$repository = $this->getRepository(User::class);
-		$this->assertEquals(Users::count(), $repository->all()->count());
+		$this->assertEquals(User::count(), $repository->all()->count());
 
 		$repository->modify()->setFilters(['username' => '=chewbaclava@galaxyfarfaraway.com']);
 		$found_users = $repository->all();
@@ -654,120 +654,58 @@ class EloquentRepositoryTest extends DBTestCase
 		}
 	}
 
-	public function testItCanSortQueryAscending()
+    /**
+     * @dataProvider sortDirectionProvider
+     */
+	public function testItCanSortQuery(string $direction)
 	{
 		$this->seedUsers();
-
 		$repository = $this->getRepository(User::class);
-		$repository->modify()->setSortOrder(['times_captured' => 'asc']);
+		$repository->modify()->setSortOrder(['times_captured' => $direction]);
 		$users = $repository->all();
 
 		$this->assertEquals(User::all()->count(), $users->count());
-
-		$previous_user = null;
-		foreach ($users as $index => $user) {
-			if ($index > 0) {
-				$this->assertTrue($user->times_captured > $previous_user->times_captured);
-			}
-
-			$previous_user = $user;
-		}
+        $this->assertCollectionIsSorted($users->pluck('times_captured'), $direction);
 	}
 
-	public function testItCanSortQueryDescending()
-	{
-		$this->seedUsers();
-
-		$repository = $this->getRepository(User::class);
-		$repository->modify()
-			->setSortOrder(['times_captured' => 'desc']);
-		$users = $repository->all();
-
-		$this->assertEquals(User::all()->count(), $users->count());
-
-		$previous_user = null;
-		foreach ($users as $index => $user) {
-			if ($index > 0) {
-				$this->assertTrue($user->times_captured < $previous_user->times_captured);
-			}
-
-			$previous_user = $user;
-		}
-	}
-
-	public function testItDepthRestrictsSorts()
+    /**
+     * @dataProvider sortDirectionProvider
+     */
+	public function testItDepthRestrictsSorts(string $direction)
 	{
 		$this->seedUsers();
 
 		/**
-		 * Sort depth zero, expect sorting by top level ID
+		 * Sort depth zero, expect users in whichever order returned by DB
 		 */
 		$repository = $this->getRepository(User::class);
 		$repository->accessControl()
 			->setDepthRestriction(0);
 		$repository->modify()
-			->setSortOrder(['profile.favorite_cheese' => 'asc']);
+			->setSortOrder(['profile.favorite_cheese' => $direction]);
 		$users = $repository->all();
 
 		$this->assertEquals(User::all()->count(), $users->count());
-
-		$previous_user = null;
-		foreach ($users as $index => $user) {
-			if ($index > 0) {
-				$this->assertTrue($user->id > $previous_user->id);
-			}
-
-			$previous_user = $user;
-		}
+        $this->assertCollectionIsSorted($users);
 
 		/**
-		 * Sort depth 1, expect sorting by favorite cheese, asc alphabetical
+		 * Sort depth 1, expect sorting by favorite cheese, sorted alphabetical
 		 */
 		$repository = $this->getRepository(User::class);
 		$repository->accessControl()
 			->setDepthRestriction(1);
 		$repository->modify()
-			->setSortOrder(['profile.favorite_cheese' => 'asc']);
+			->setSortOrder(['profile.favorite_cheese' => $direction]);
 		$users = $repository->all();
 
 		$this->assertEquals(User::all()->count(), $users->count());
-
-		$previous_user = null;
-		$order = [];
-		foreach ($users as $index => $user) {
-			$order[] = $user->username;
-			if ($index > 0) {
-				// String 1 (Gouda) should be greater than (comes later alphabetically) than string 2 (Cheddar)
-				$this->assertTrue(strcmp($user->profile->favorite_cheese, $previous_user->profile->favorite_cheese) > 0);
-			}
-
-			$previous_user = $user;
-		}
-
-		/**
-		 * Sort depth 1, expect sorting by favorite cheese, desc alphabetical
-		 */
-		$repository = $this->getRepository(User::class);
-		$repository->accessControl()
-			->setDepthRestriction(1);
-		$repository->modify()
-			->setSortOrder(['profile.favorite_cheese' => 'desc']);
-		$users = $repository->all();
-
-		$this->assertEquals(User::all()->count(), $users->count());
-
-		$previous_user = null;
-		foreach ($users as $index => $user) {
-			if ($index > 0) {
-				// String 1 (Cheddar) should be less than (comes before alphabetically) than string 2 (Gouda)
-				$this->assertTrue(strcmp($user->profile->favorite_cheese, $previous_user->profile->favorite_cheese) < 0);
-			}
-
-			$previous_user = $user;
-		}
+        $this->assertCollectionIsSorted($users->pluck('profile.favorite_cheese'), $direction);
 	}
 
-	public function testItCanSortBelongsToRelation()
+    /**
+     * @dataProvider sortDirectionProvider
+     */
+	public function testItCanSortBelongsToRelation(string $direction)
 	{
 		$this->seedUsers();
 		/**
@@ -775,69 +713,82 @@ class EloquentRepositoryTest extends DBTestCase
 		 */
 		$repository = $this->getRepository(Profile::class);
 		$repository->modify()
-			->setSortOrder(['users.username' => 'asc'])
+			->setSortOrder(['users.username' => $direction])
 			->setEagerLoads(['user']);
-		$profiles = $repository->all()->toArray();
+		$profiles = $repository->all();
 
-		$this->assertEquals(Profile::all()->count(), count($profiles));
-
-		$previous_profile = null;
-		$order = [];
-		foreach ($profiles as $index => $profile) {
-			$order[] = $profile['user']['username'];
-			if ($index > 0) {
-				// String 1 (Gouda) should be greater than (comes later alphabetically) than string 2 (Cheddar)
-				$this->assertTrue(strcmp($profile['user']['username'], $previous_profile['user']['username']) > 0);
-			}
-
-			$previous_profile = $profile;
-		}
+		$this->assertCount(Profile::all()->count(), $profiles);
+        $this->assertCollectionIsSorted($profiles->pluck('user.username'), $direction);
 	}
 
-	public function testItCanSortBelongsToManyRelation()
+    /**
+     * @dataProvider sortDirectionProvider
+     */
+	public function testItCanSortBelongsToManyRelation(string $direction)
 	{
 		$this->seedUsers();
 
 		/**
-		 * Sort depth 1, expect sorting by favorite cheese, asc alphabetical
+		 * Sort depth 1, expect sorting by post title, asc alphabetical
 		 */
 		$repository = $this->getRepository(Tag::class);
 		$repository->modify()
-			->setSortOrder(['posts.title' => 'asc'])
+			->setSortOrder(['posts.title' => $direction])
 			->setEagerLoads(['posts']);
 		$tags = $repository->all();
 
 		$this->assertCount(Tag::count(), $tags->pluck('label')->unique());
 
-		foreach ($tags->toArray() as $index => $tag) {
-			$previous_post = null;
-			$order = [];
-			foreach ($tag['posts'] as $post) {
-				$order[] = $post['title'];
-				if ($previous_post) {
-					// String 1 (Gouda) should be greater than (comes later alphabetically) than string 2 (Cheddar)
-                    if (($post['title'] <=> $previous_post['title']) !== 1) {
-                        var_dump(collect($tag['posts'])->pluck('title')->toArray());
-                        $a=1;
-                    }
-					$this->assertEquals(1, $post['title'] <=> $previous_post['title']);
-				}
-
-				$previous_post = $post;
-			}
-		}
+        $tags->each(fn ($tag) =>
+            $this->assertCollectionIsSorted($tag->posts->pluck('title'), $direction)
+        );
 	}
+
+    /**
+     * @dataProvider sortDirectionProvider
+     */
+    public function testItCanSortBelongsToManyRelationDesc(string $direction)
+    {
+        $this->seedUsers();
+
+        /**
+         * Sort depth 1, expect sorting by post title, desc alphabetical
+         */
+        $repository = $this->getRepository(Tag::class);
+        $repository->modify()
+            ->setSortOrder(['posts.title' => $direction])
+            ->setEagerLoads(['posts']);
+        $tags = $repository->all();
+
+        $this->assertCount(Tag::count(), $tags->pluck('label')->unique());
+
+        $tags->each(fn ($tag) =>
+            $this->assertCollectionIsSorted($tag->posts->pluck('title'), $direction)
+        );
+    }
 
 	public function testItCanAddMultipleAdditionalFilters()
 	{
 		$this->seedUsers();
 
+        $otherUser = User::firstOrCreate(
+            ['username' => 'bobbytables@xkcd.com'],
+            [
+                'username'       => 'bobbytables@xkcd.com',
+                'name'           => 'Bobby',
+                'hands'          => 2,
+                'times_captured' => 0,
+                'occupation'     => 'Student'
+            ]
+        );
+
 		$repository = $this->getRepository(User::class);
-		$this->assertEquals($repository->all()->count(), 4);
+		$this->assertEquals($allCount = User::count(), $repository->all()->count());
 
 		$repository->modify()->setFilters(['username' => '~galaxyfarfaraway.com']);
 		$found_users = $repository->all();
-		$this->assertEquals($found_users->count(), 4);
+		$this->assertEquals($allCount - 1, $found_users->count());
+        $this->assertFalse($found_users->contains($otherUser));
 
 		$additional_filters = [
 			'profile.is_human' => '=true',
@@ -860,12 +811,24 @@ class EloquentRepositoryTest extends DBTestCase
 	{
 		$this->seedUsers();
 
+        $otherUser = User::firstOrCreate(
+            ['username' => 'bobbytables@xkcd.com'],
+            [
+                'username'       => 'bobbytables@xkcd.com',
+                'name'           => 'Bobby',
+                'hands'          => 2,
+                'times_captured' => 0,
+                'occupation'     => 'Student'
+            ]
+        );
+
 		$repository = $this->getRepository(User::class);
-		$this->assertEquals($repository->all()->count(), 4);
+		$this->assertEquals($allCount = User::count(), $repository->all()->count());
 
 		$repository->modify()->setFilters(['username' => '~galaxyfarfaraway.com']);
 		$found_users = $repository->all();
-		$this->assertEquals($found_users->count(), 4);
+		$this->assertEquals($allCount - 1, $found_users->count());
+        $this->assertFalse($found_users->contains($otherUser));
 
 		$repository->modify()->addFilter('profile.is_human', '=true');
 		$found_users = $repository->all();
@@ -1295,14 +1258,14 @@ class EloquentRepositoryTest extends DBTestCase
 
 		// Test that the repository implements filters correctly
 		$repository = $this->getRepository(User::class);
-		$this->assertEquals($repository->all()->count(), 4);
+		$this->assertEquals(User::count(), $repository->all()->count());
 
 		$repository->modify()->setFilters([
 			'not_filterable' => '=foo', // Should not be applied
 			'posts.not_filterable' => '=foo', // Should not be applied
 		]);
 		$found_users = $repository->all();
-		$this->assertEquals($found_users->count(), 4); // No filters applied, expect to get all 4 users
+		$this->assertEquals(User::count(), $found_users->count()); // No filters applied, expect to get all 4 users
 	}
 
 	public function testItFiltersWithAllFieldsIfAllowAllIsSet()
@@ -1310,7 +1273,7 @@ class EloquentRepositoryTest extends DBTestCase
 		$this->seedUsers();
 
 		$repository = $this->getRepository(User::class);
-		$this->assertEquals($repository->all()->count(), 4);
+		$this->assertEquals(User::count(), $repository->all()->count());
 
 		// Filters not applied
 		$repository->accessControl()->setFilterable([]);
@@ -1319,7 +1282,8 @@ class EloquentRepositoryTest extends DBTestCase
 			'times_captured' => '>2'
 		]);
 		$found_users = $repository->all();
-		$this->assertEquals($found_users->count(), 4);
+
+		$this->assertEquals(User::count(), $found_users->count());
 
 		// Filters now applied
 		$repository->accessControl()->setFilterable(AccessControl::ALLOW_ALL);
@@ -1328,7 +1292,14 @@ class EloquentRepositoryTest extends DBTestCase
 			'times_captured' => '>2'
 		]);
 		$found_users = $repository->all();
-		$this->assertEquals($found_users->count(), 2);
+
+        $this->assertEquals(
+            User::query()
+                ->whereHas('profile', function ($query) { $query->where('is_human', true); })
+                ->where('times_captured', '>', 2)
+                ->count(),
+            $found_users->count()
+        );
 	}
 
 	public function testItCanGetIncludableAsAssoc()
@@ -1384,32 +1355,32 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItCanAggregateQueryCount()
 	{
-
+        $this->markTestIncomplete();
 	}
 
 	public function testItCanAggregateQueryMin()
 	{
-
+        $this->markTestIncomplete();
 	}
 
 	public function testItCanAggregateQueryMax()
 	{
-
+        $this->markTestIncomplete();
 	}
 
 	public function testItCanAggregateQuerySum()
 	{
-
+        $this->markTestIncomplete();
 	}
 
 	public function testItCanAggregateQueryAverage()
 	{
-
+        $this->markTestIncomplete();
 	}
 
 	public function testItCanGroupQuery()
 	{
-
+        $this->markTestIncomplete();
 	}
 
 	/**
@@ -1471,4 +1442,19 @@ class EloquentRepositoryTest extends DBTestCase
 		$this->assertFalse($this->getRepository(User::class, $notManyOperationData)->isManyOperation());
 		$this->assertTrue($this->getRepository(User::class, $manyOperationData)->isManyOperation());
 	}
+
+    public function sortDirectionProvider()
+    {
+        return [['asc'], ['desc']];
+    }
+
+    protected function assertCollectionIsSorted(\Illuminate\Support\Collection $collection, string $direction = 'asc')
+    {
+        $valueToAvoid = $direction == 'desc' ? -1 : 1;
+        $collection->sliding(2)->eachSpread(function ($previous, $current) use ($valueToAvoid, $direction) {
+            $word = $valueToAvoid == -1 ? 'after' : 'before';
+            $message = "Failed asserting that the collection is sorted in $direction order. $previous does not come $word to $current.";
+            $this->assertNotEquals($valueToAvoid, $previous <=> $current, $message);
+        });
+    }
 }
