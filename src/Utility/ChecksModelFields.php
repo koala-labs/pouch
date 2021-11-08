@@ -19,14 +19,14 @@ use Illuminate\Support\Facades\Schema;
  */
 trait ChecksModelFields
 {
-	/**
-	 * Return a model's fields.
-	 *
-	 * @param \Illuminate\Database\Eloquent\Model $instance
-	 * @return array
-	 */
-	public static function getFields(Model $instance): array
-	{
-		return Schema::getColumnListing($instance->getTable());
-	}
+    /**
+     * Return a model's fields.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $instance
+     * @return array
+     */
+    public static function getFields(Model $instance): array
+    {
+        return Schema::getColumnListing($instance->getTable());
+    }
 }

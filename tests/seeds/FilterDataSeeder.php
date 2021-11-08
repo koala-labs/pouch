@@ -1,4 +1,5 @@
 <?php
+
 namespace Fuzz\MagicBox\Tests\Seeds;
 
 use Fuzz\MagicBox\Tests\Models\Post;
@@ -6,36 +7,35 @@ use Fuzz\MagicBox\Tests\Models\Profile;
 use Fuzz\MagicBox\Tests\Models\Tag;
 use Fuzz\MagicBox\Tests\Models\User;
 use Illuminate\Database\Seeder;
-use Symfony\Component\Console\Helper\Table;
 
 class FilterDataSeeder extends Seeder
 {
-	/**
-	 * Run the database seeds.
-	 *
-	 * @return void
-	 */
-	public function run()
-	{
-		foreach ($this->users() as $user) {
-			$user_instance = new User;
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        foreach ($this->users() as $user) {
+            $user_instance = new User();
 
-			foreach (
-				[
-					'username',
-					'name',
-					'hands',
-					'times_captured',
-					'occupation',
-				] as $attribute
-			) {
-				$user_instance->{$attribute} = $user[$attribute];
-			}
+            foreach (
+                [
+                    'username',
+                    'name',
+                    'hands',
+                    'times_captured',
+                    'occupation',
+                ] as $attribute
+            ) {
+                $user_instance->{$attribute} = $user[$attribute];
+            }
 
-			$user_instance->save();
+            $user_instance->save();
 
             if (isset($user['profile'])) {
-                $profile = new Profile;
+                $profile = new Profile();
                 foreach ($user['profile'] as $key => $value) {
                     $profile->{$key} = $value;
                 }
@@ -46,7 +46,7 @@ class FilterDataSeeder extends Seeder
 
             if (isset($user['posts'])) {
                 foreach ($user['posts'] as $post) {
-                    $post_instance          = new Post;
+                    $post_instance          = new Post();
                     $post_instance->title   = $post['title'];
                     $post_instance->user_id = $user_instance->id;
                     $post_instance->save();
@@ -66,112 +66,112 @@ class FilterDataSeeder extends Seeder
                     $post_instance->tags()->sync($tag_ids);
                 }
             }
-		}
+        }
 
-		$users = User::with(
-			[
-				'profile',
-				'posts.tags'
-			]
-		)->get()->toArray();
-		$test  = 'test';
-	}
+        $users = User::with(
+            [
+                'profile',
+                'posts.tags'
+            ]
+        )->get()->toArray();
+        $test = 'test';
+    }
 
-	public function users()
-	{
-		return [
-			[
-				'username'       => 'lskywalker@galaxyfarfaraway.com',
-				'name'           => 'Luke Skywalker',
-				'hands'          => 1,
-				'times_captured' => 4,
-				'occupation'     => 'Jedi',
-				'profile'        => [
-					'favorite_cheese' => 'Gouda',
-					'favorite_fruit'  => 'Apples',
-					'is_human'        => true
-				],
-				'posts'          => [
-					[
-						'title' => 'I Kissed a Princess and I Liked it',
-						'tags'  => [
-							['label' => '#peace',],
-							['label' => '#thelastjedi',]
-						]
-					]
-				]
-			],
-			[
-				'username'       => 'lorgana@galaxyfarfaraway.com',
-				'name'           => 'Leia Organa',
-				'hands'          => 2,
-				'times_captured' => 6,
-				'occupation'     => null,
-				'profile'        => [
-					'favorite_cheese' => 'Provolone',
-					'favorite_fruit'  => 'Mystery Berries',
-					'is_human'        => true
-				],
-				'posts'          => [
-					[
-						'title' => 'Smugglers: A Girl\'s Dream',
-						'tags'  => [
-							['label' => '#princess',],
-							['label' => '#mysonistheworst',],
-						]
-					]
-				]
-			],
-			[
-				'username'       => 'solocup@galaxyfarfaraway.com',
-				'name'           => 'Han Solo',
-				'hands'          => 2,
-				'times_captured' => 1,
-				'occupation'     => 'Smuggler',
-				'profile'        => [
-					'favorite_cheese' => 'Cheddar',
-					'favorite_fruit'  => null,
-					'is_human'        => true
-				],
-				'posts'          => [
-					[
-						'title' => '10 Easy Ways to Clean Fur From Couches',
-						'tags'  => [
-							['label' => '#iknow',],
-							['label' => '#triggerfinger',],
-							['label' => '#mysonistheworst',],
-						]
-					],
+    public function users()
+    {
+        return [
+            [
+                'username'       => 'lskywalker@galaxyfarfaraway.com',
+                'name'           => 'Luke Skywalker',
+                'hands'          => 1,
+                'times_captured' => 4,
+                'occupation'     => 'Jedi',
+                'profile'        => [
+                    'favorite_cheese' => 'Gouda',
+                    'favorite_fruit'  => 'Apples',
+                    'is_human'        => true
+                ],
+                'posts' => [
+                    [
+                        'title' => 'I Kissed a Princess and I Liked it',
+                        'tags'  => [
+                            ['label' => '#peace',],
+                            ['label' => '#thelastjedi',]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'username'       => 'lorgana@galaxyfarfaraway.com',
+                'name'           => 'Leia Organa',
+                'hands'          => 2,
+                'times_captured' => 6,
+                'occupation'     => null,
+                'profile'        => [
+                    'favorite_cheese' => 'Provolone',
+                    'favorite_fruit'  => 'Mystery Berries',
+                    'is_human'        => true
+                ],
+                'posts' => [
+                    [
+                        'title' => 'Smugglers: A Girl\'s Dream',
+                        'tags'  => [
+                            ['label' => '#princess',],
+                            ['label' => '#mysonistheworst',],
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'username'       => 'solocup@galaxyfarfaraway.com',
+                'name'           => 'Han Solo',
+                'hands'          => 2,
+                'times_captured' => 1,
+                'occupation'     => 'Smuggler',
+                'profile'        => [
+                    'favorite_cheese' => 'Cheddar',
+                    'favorite_fruit'  => null,
+                    'is_human'        => true
+                ],
+                'posts' => [
+                    [
+                        'title' => '10 Easy Ways to Clean Fur From Couches',
+                        'tags'  => [
+                            ['label' => '#iknow',],
+                            ['label' => '#triggerfinger',],
+                            ['label' => '#mysonistheworst',],
+                        ]
+                    ],
                     [
                         'title' => '99 Problems But A Hutt Ain\'t One',
-                        'tags' => [
+                        'tags'  => [
                             ['label' => '#og'],
                             ['label' => '#99']
                         ]
                     ]
-				]
-			],
-			[
-				'username'       => 'chewbaclava@galaxyfarfaraway.com',
-				'name'           => 'Chewbacca',
-				'hands'          => 0,
-				'times_captured' => 0,
-				'occupation'     => 'Smuggler\'s Assistant',
-				'profile'        => [
-					'favorite_cheese' => 'brie',
-					'favorite_fruit'  => null,
-					'is_human'        => false
-				],
-				'posts'          => [
-					[
-						'title' => 'Rrrrrrr-ghghg Rrrr-ghghghghgh Rrrr-ghghghgh!',
-						'tags'  => [
-							['label' => '#starwarsfurlife',],
-							['label' => '#chewonthis',],
-						]
-					]
-				]
-			],
+                ]
+            ],
+            [
+                'username'       => 'chewbaclava@galaxyfarfaraway.com',
+                'name'           => 'Chewbacca',
+                'hands'          => 0,
+                'times_captured' => 0,
+                'occupation'     => 'Smuggler\'s Assistant',
+                'profile'        => [
+                    'favorite_cheese' => 'brie',
+                    'favorite_fruit'  => null,
+                    'is_human'        => false
+                ],
+                'posts' => [
+                    [
+                        'title' => 'Rrrrrrr-ghghg Rrrr-ghghghghgh Rrrr-ghghghgh!',
+                        'tags'  => [
+                            ['label' => '#starwarsfurlife',],
+                            ['label' => '#chewonthis',],
+                        ]
+                    ]
+                ]
+            ],
             [
                 'username'       => 'huttboss@galaxyfarfaraway.com',
                 'name'           => 'Jabba The Hutt',
@@ -183,7 +183,7 @@ class FilterDataSeeder extends Seeder
                     'favorite_fruit'  => 'apple',
                     'is_human'        => false
                 ],
-                'posts'          => [
+                'posts' => [
                     [
                         'title' => 'How To Feed And Care For Your Sarlacc',
                         'tags'  => [
@@ -208,6 +208,6 @@ class FilterDataSeeder extends Seeder
                     ]
                 ]
             ]
-		];
-	}
+        ];
+    }
 }

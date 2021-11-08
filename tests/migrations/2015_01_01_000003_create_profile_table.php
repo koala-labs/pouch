@@ -6,33 +6,35 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateProfileTable extends Migration
 {
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create(
-			'profiles', function (Blueprint $table) {
-			$table->increments('id');
-			$table->unsignedInteger('user_id');
-			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-			$table->string('favorite_cheese')->nullable();
-			$table->string('favorite_fruit')->nullable();
-			$table->boolean('is_human')->default(false);
-			$table->string('not_fillable')->nullable();
-			$table->string('not_filterable')->nullable();
-		});
-	}
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create(
+            'profiles',
+            function (Blueprint $table) {
+                $table->increments('id');
+                $table->unsignedInteger('user_id');
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+                $table->string('favorite_cheese')->nullable();
+                $table->string('favorite_fruit')->nullable();
+                $table->boolean('is_human')->default(false);
+                $table->string('not_fillable')->nullable();
+                $table->string('not_filterable')->nullable();
+            }
+        );
+    }
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::dropIfExists('profiles');
-	}
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('profiles');
+    }
 }
