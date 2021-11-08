@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuzz\MagicBox\Tests;
+namespace Koala\Pouch\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Fuzz\MagicBox;
+namespace Koala\Pouch;
 
 use Closure;
-use Fuzz\MagicBox\Contracts\AccessControl;
-use Fuzz\MagicBox\Contracts\QueryModifier;
-use Fuzz\MagicBox\Utility\ChecksModelFields;
-use Fuzz\MagicBox\Utility\ChecksRelations;
+use Koala\Pouch\Contracts\AccessControl;
+use Koala\Pouch\Contracts\QueryModifier;
+use Koala\Pouch\Utility\ChecksModelFields;
+use Koala\Pouch\Utility\ChecksRelations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
  *
  * A QueryModifier implementation for Eloquent.
  *
- * @package Fuzz\MagicBox
+ * @package Koala\Pouch
  */
 class EloquentQueryModifier implements QueryModifier
 {
@@ -83,7 +83,7 @@ class EloquentQueryModifier implements QueryModifier
 	 *
 	 * @param \Illuminate\Database\Eloquent\Builder $query
 	 *
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function setQuery(Builder $query): QueryModifier
 	{
@@ -106,7 +106,7 @@ class EloquentQueryModifier implements QueryModifier
 	 * Set eager load manually.
 	 *
 	 * @param array $eager_loads
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function setEagerLoads(array $eager_loads): QueryModifier
 	{
@@ -129,7 +129,7 @@ class EloquentQueryModifier implements QueryModifier
 	 * Set filters manually.
 	 *
 	 * @param array $filters
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function setFilters(array $filters): QueryModifier
 	{
@@ -152,7 +152,7 @@ class EloquentQueryModifier implements QueryModifier
 	 * Add filters to already existing filters without overwriting them.
 	 *
 	 * @param array $filters
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function addFilters(array $filters): QueryModifier
 	{
@@ -168,7 +168,7 @@ class EloquentQueryModifier implements QueryModifier
 	 *
 	 * @param string $key
 	 * @param string $value
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function addFilter(string $key, string $value): QueryModifier
 	{
@@ -182,7 +182,7 @@ class EloquentQueryModifier implements QueryModifier
 	 *
 	 * @param \Closure $modifier
 	 *
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function add(Closure $modifier): QueryModifier
 	{
@@ -195,7 +195,7 @@ class EloquentQueryModifier implements QueryModifier
 	 * Set modifiers.
 	 *
 	 * @param array $modifiers
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function set(array $modifiers): QueryModifier
 	{
@@ -229,7 +229,7 @@ class EloquentQueryModifier implements QueryModifier
 	 *
 	 * @param array $group_by
 	 *
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function setGroupBy(array $group_by): QueryModifier
 	{
@@ -251,7 +251,7 @@ class EloquentQueryModifier implements QueryModifier
 	 *
 	 * @param array $aggregate
 	 *
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function setAggregate(array $aggregate): QueryModifier
 	{
@@ -264,7 +264,7 @@ class EloquentQueryModifier implements QueryModifier
 	 * Set sort order manually.
 	 *
 	 * @param array $sort_order
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function setSortOrder(array $sort_order): QueryModifier
 	{
@@ -287,7 +287,7 @@ class EloquentQueryModifier implements QueryModifier
 	 * Apply filters to the query
 	 *
 	 * @param array                                  $filters
-	 * @param \Fuzz\MagicBox\Contracts\AccessControl $access_compiler
+	 * @param \Koala\Pouch\Contracts\AccessControl $access_compiler
 	 * @param array                                  $columns
 	 * @param \Illuminate\Database\Eloquent\Model    $temp_instance
 	 */
@@ -358,10 +358,10 @@ class EloquentQueryModifier implements QueryModifier
 	/**
 	 * Process filter and sort modifications on $query
 	 *
-	 * @param \Fuzz\MagicBox\Contracts\AccessControl $access_compiler
+	 * @param \Koala\Pouch\Contracts\AccessControl $access_compiler
 	 * @param string                                 $model_class
 	 *
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function apply(AccessControl $access_compiler, string $model_class): QueryModifier
 	{
@@ -432,9 +432,9 @@ class EloquentQueryModifier implements QueryModifier
 	 *
 	 * Checks if relations exist before loading them.
 	 *
-	 * @param \Fuzz\MagicBox\Contracts\AccessControl $access_compiler
+	 * @param \Koala\Pouch\Contracts\AccessControl $access_compiler
 	 *
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function applyEagerLoads(AccessControl $access_compiler): QueryModifier
 	{

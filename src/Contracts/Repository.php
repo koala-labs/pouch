@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuzz\MagicBox\Contracts;
+namespace Koala\Pouch\Contracts;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -12,28 +12,28 @@ use Illuminate\Contracts\Pagination\Paginator;
  * A Repository is an implementation of the core MagicBox functionality and it is responsible for pulling in all
  * relevant logic.
  *
- * @package Fuzz\MagicBox\Contracts
+ * @package Koala\Pouch\Contracts
  */
 interface Repository
 {
 	/**
 	 * Access the AccessControl instance
 	 *
-	 * @return \Fuzz\MagicBox\Contracts\AccessControl
+	 * @return \Koala\Pouch\Contracts\AccessControl
 	 */
 	public function accessControl(): AccessControl;
 
 	/**
 	 * Access the QueryModifier instance
 	 *
-	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
+	 * @return \Koala\Pouch\Contracts\QueryModifier
 	 */
 	public function modify(): QueryModifier;
 
 	/**
 	 * Access the QueryFilterContainer instance
 	 *
-	 * @return \Fuzz\MagicBox\Contracts\QueryFilterContainer
+	 * @return \Koala\Pouch\Contracts\QueryFilterContainer
 	 */
 	public function queryFilters(): QueryFilterContainer;
 
@@ -41,7 +41,7 @@ interface Repository
 	 * Set the model for an instance of this resource controller.
 	 *
 	 * @param string $model_class
-	 * @return \Fuzz\MagicBox\Contracts\Repository
+	 * @return \Koala\Pouch\Contracts\Repository
 	 */
 	public function setModelClass($model_class): Repository;
 
@@ -56,7 +56,7 @@ interface Repository
 	 * Set input manually.
 	 *
 	 * @param array $input
-	 * @return \Fuzz\MagicBox\Contracts\Repository
+	 * @return \Koala\Pouch\Contracts\Repository
 	 */
 	public function setInput(array $input): Repository;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuzz\MagicBox\Tests;
+namespace Koala\Pouch\Tests;
 
 use League\Flysystem\Config;
 

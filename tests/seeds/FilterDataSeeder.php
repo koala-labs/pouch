@@ -1,10 +1,10 @@
 <?php
-namespace Fuzz\MagicBox\Tests\Seeds;
+namespace Koala\Pouch\Tests\Seeds;
 
-use Fuzz\MagicBox\Tests\Models\Post;
-use Fuzz\MagicBox\Tests\Models\Profile;
-use Fuzz\MagicBox\Tests\Models\Tag;
-use Fuzz\MagicBox\Tests\Models\User;
+use Koala\Pouch\Tests\Models\Post;
+use Koala\Pouch\Tests\Models\Profile;
+use Koala\Pouch\Tests\Models\Tag;
+use Koala\Pouch\Tests\Models\User;
 use Illuminate\Database\Seeder;
 use Symfony\Component\Console\Helper\Table;
 

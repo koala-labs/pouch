@@ -1,14 +1,10 @@
 <?php
 
-namespace Fuzz\MagicBox\Tests;
+namespace Koala\Pouch\Tests;
 
-use Fuzz\MagicBox\Filter;
-use Fuzz\MagicBox\Tests\Models\User;
-use Fuzz\MagicBox\Tests\Seeds\FilterDataSeeder;
-use Illuminate\Database\Console\Seeds\SeedCommand;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
+use Koala\Pouch\Filter;
+use Koala\Pouch\Tests\Models\User;
+use Koala\Pouch\Tests\Seeds\FilterDataSeeder;
 use Illuminate\Support\Facades\Schema;
 
 class FilterTest extends DBTestCase

@@ -1,12 +1,12 @@
 <?php
 
-namespace Fuzz\MagicBox\Tests;
+namespace Koala\Pouch\Tests;
 
-use Fuzz\MagicBox\Contracts\MagicBoxResource;
-use Fuzz\MagicBox\EloquentRepository;
-use Fuzz\MagicBox\Facades\ModelResolver;
-use Fuzz\MagicBox\Middleware\RepositoryMiddleware;
-use Fuzz\MagicBox\Providers\RepositoryServiceProvider;
+use Koala\Pouch\Contracts\PouchResource;
+use Koala\Pouch\EloquentRepository;
+use Koala\Pouch\Facades\ModelResolver;
+use Koala\Pouch\Middleware\RepositoryMiddleware;
+use Koala\Pouch\Providers\RepositoryServiceProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
@@ -163,7 +163,7 @@ class RepositoryMiddlewareTest extends TestCase
 	}
 }
 
-class RepositoryMiddlewareTestStubModel extends Model implements MagicBoxResource
+class RepositoryMiddlewareTestStubModel extends Model implements PouchResource
 {
 	/**
 	 * Get the list of fields fillable by the repository

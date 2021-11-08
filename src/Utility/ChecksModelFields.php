@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuzz\MagicBox\Utility;
+namespace Koala\Pouch\Utility;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Schema;
  *
  * Finds fields for a model.
  *
- * @package Fuzz\MagicBox\Utility
+ * @package Koala\Pouch\Utility
  */
 trait ChecksModelFields
 {

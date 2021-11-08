@@ -1,11 +1,11 @@
 <?php
 
-namespace Fuzz\MagicBox\Tests\Models;
+namespace Koala\Pouch\Tests\Models;
 
-use Fuzz\MagicBox\Contracts\MagicBoxResource;
+use Koala\Pouch\Contracts\PouchResource;
 use Illuminate\Database\Eloquent\Model;
 
-class Profile extends Model implements MagicBoxResource
+class Profile extends Model implements PouchResource
 {
 	/**
 	 * @const array

@@ -1,11 +1,11 @@
 <?php
 
-namespace Fuzz\MagicBox\Tests;
+namespace Koala\Pouch\Tests;
 
-use Fuzz\MagicBox\Exception\ModelNotResolvedException;
-use Fuzz\MagicBox\Tests\Models\Post;
-use Fuzz\MagicBox\Tests\Models\User;
-use Fuzz\MagicBox\Utility\ExplicitModelResolver;
+use Koala\Pouch\Exception\ModelNotResolvedException;
+use Koala\Pouch\Tests\Models\Post;
+use Koala\Pouch\Tests\Models\User;
+use Koala\Pouch\Utility\ExplicitModelResolver;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Route;
 use Mockery;
@@ -53,7 +53,7 @@ class ExplicitModelResolverTest extends TestCase
 	{
 		$route = Mockery::mock(Route::class);
 		$route->shouldReceive('getAction')->zeroOrMoreTimes()->andReturn([
-			'uses' => 'Fuzz\MagicBox\Tests\UserController@getUsers',
+			'uses' => 'Koala\Pouch\Tests\UserController@getUsers',
 		]);
 
 		$model = (new ExplicitModelResolver())->resolveModelClass($route);
@@ -66,7 +66,7 @@ class ExplicitModelResolverTest extends TestCase
 	{
 		$route = Mockery::mock(Route::class);
 		$route->shouldReceive('getAction')->zeroOrMoreTimes()->andReturn([
-			'uses' => 'Fuzz\MagicBox\Tests\ExplicitExplicitModelResolverTestStubControllerNoResource@getUsers',
+			'uses' => 'Koala\Pouch\Tests\ExplicitExplicitModelResolverTestStubControllerNoResource@getUsers',
 		]);
 
 		$this->expectException(ModelNotResolvedException::class);
@@ -111,7 +111,7 @@ class ExplicitModelResolverTest extends TestCase
 /**
  * Class UserController
  *
- * @package Fuzz\MagicBox\Tests
+ * @package Koala\Pouch\Tests
  */
 class UserController extends Controller
 {
