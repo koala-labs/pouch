@@ -8,13 +8,6 @@
  */
 
 $finder = PhpCsFixer\Finder::create()
-    ->exclude('templates')
-    ->exclude('bootstrap')
-    ->exclude('public')
-    ->exclude('private')
-    ->exclude('resources')
-    ->exclude('vendor')
-    ->exclude('database/seeds/configs')
     ->in(__DIR__);
 
 return (new PhpCsFixer\Config())->setRules([
