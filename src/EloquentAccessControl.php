@@ -1,15 +1,15 @@
 <?php
 
-namespace Koala\Pouch;
+namespace Fuzz\MagicBox;
 
 use Closure;
-use Koala\Pouch\Contracts\AccessControl;
-use Koala\Pouch\Contracts\QueryModifier;
-use Koala\Pouch\Utility\ChecksRelations;
+use Fuzz\MagicBox\Contracts\AccessControl;
+use Fuzz\MagicBox\Contracts\QueryModifier;
+use Fuzz\MagicBox\Utility\ChecksRelations;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Koala\Pouch\Contracts\Repository;
+use Fuzz\MagicBox\Contracts\Repository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -27,7 +27,7 @@ use InvalidArgumentException;
  *
  * An AccessControl implementation for Eloquent.
  *
- * @package Koala\Pouch
+ * @package Fuzz\MagicBox
  */
 class EloquentAccessControl implements AccessControl
 {
@@ -75,7 +75,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param int $depth
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function setDepthRestriction($depth): AccessControl
 	{
@@ -102,7 +102,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param array $fillable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function setFillable(array $fillable): AccessControl
 	{
@@ -143,7 +143,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param string $fillable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function addFillable(string $fillable): AccessControl
 	{
@@ -157,7 +157,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param array $fillable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function addManyFillable(array $fillable): AccessControl
 	{
@@ -173,7 +173,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param string $fillable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function removeFillable(string $fillable): AccessControl
 	{
@@ -187,7 +187,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param array $fillable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function removeManyFillable(array $fillable): AccessControl
 	{
@@ -219,7 +219,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param array $includable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function setIncludable(array $includable): AccessControl
 	{
@@ -260,7 +260,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param string $includable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function addIncludable(string $includable): AccessControl
 	{
@@ -274,7 +274,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param array $includable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function addManyIncludable(array $includable): AccessControl
 	{
@@ -290,7 +290,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param string $includable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function removeIncludable(string $includable): AccessControl
 	{
@@ -304,7 +304,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param array $includable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function removeManyIncludable(array $includable): AccessControl
 	{
@@ -336,7 +336,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param array $filterable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function setFilterable(array $filterable): AccessControl
 	{
@@ -377,7 +377,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param string $filterable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function addFilterable(string $filterable): AccessControl
 	{
@@ -391,7 +391,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param array $filterable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function addManyFilterable(array $filterable): AccessControl
 	{
@@ -407,7 +407,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param string $filterable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function removeFilterable(string $filterable): AccessControl
 	{
@@ -421,7 +421,7 @@ class EloquentAccessControl implements AccessControl
 	 *
 	 * @param array $filterable
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function removeManyFilterable(array $filterable): AccessControl
 	{

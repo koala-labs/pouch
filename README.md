@@ -11,7 +11,7 @@ Play with the [demo](http://explorer.magic-box.fuzzproductions.com/)!
 
 ## Installation/Setup
 1. `composer require fuzz/magic-box`
-1. Use or extend `Koala\Pouch\Middleware\RepositoryMiddleware` into your project and register your class under the `$routeMiddleware` array in `app/Http/Kernel.php`. `RepositoryMiddleware` contains a variety of configuration options that can be overridden
+1. Use or extend `Fuzz\MagicBox\Middleware\RepositoryMiddleware` into your project and register your class under the `$routeMiddleware` array in `app/Http/Kernel.php`. `RepositoryMiddleware` contains a variety of configuration options that can be overridden
 1. If you're using `fuzz/api-server`, you can use magical routing by updating `app/Providers/RouteServiceProvider.php`, `RouteServiceProvider@map`, to include:
 
 	```php
@@ -51,7 +51,7 @@ Play with the [demo](http://explorer.magic-box.fuzzproductions.com/)!
 Just run `phpunit` after you `composer install`.
 
 ## Eloquent Repository
-`Koala\Pouch\EloquentRepository` implements a CRUD repository that cascades through relationships,
+`Fuzz\MagicBox\EloquentRepository` implements a CRUD repository that cascades through relationships,
 whether or not related models have been created yet.
 
 Consider a simple model where a User has many Posts. EloquentRepository's basic usage is as follows:
@@ -135,7 +135,7 @@ The public API methods that return an `\Illuminate\Database\Eloquent\Collection`
 1. `all`
 
 ## Filtering
-`Koala\Pouch\Filter` handles Eloquent Query Builder modifications based on filter values passed through the `filters` 
+`Fuzz\MagicBox\Filter` handles Eloquent Query Builder modifications based on filter values passed through the `filters` 
 parameter.
 
 Tokens and usage:  
@@ -193,7 +193,7 @@ We can use `AND` and `OR` statements to build filters such as `users?filters[use
 and this filter can be read as `select (users with username Bobby) OR (users with username Johnny who's profile.favorite_cheese attribute is Gouda)`.
 
 ## Model Setup
-Models need to implement `Koala\Pouch\Contracts\MagicBoxResource` before MagicBox will allow them to be exposed as a MagicBox resource. This is done so exposure is an explicit process and no more is exposed than is needed.
+Models need to implement `Fuzz\MagicBox\Contracts\MagicBoxResource` before MagicBox will allow them to be exposed as a MagicBox resource. This is done so exposure is an explicit process and no more is exposed than is needed.
 
 Models also need to define their own `$fillable` array including attributes and relations that can be filled through this model. For example, if a User has many posts and has many comments but an API consumer should only be able to update comments through a user, the `$fillable` array would look like:
 
@@ -206,7 +206,7 @@ MagicBox will only modify attributes/relations that are explicitly defined.
 ## Resolving models
 Magic Box is great and all, but we don't want to resolve model classes ourselves before we can instantiate a repository...
 
-If you've configured a RESTful URI structure with pluralized resources (i.e. `https://api.mydowmain.com/1.0/users` maps to the User model), you can use `Koala\Pouch\Utility\Modeler` to resolve a model class name from a route name.
+If you've configured a RESTful URI structure with pluralized resources (i.e. `https://api.mydowmain.com/1.0/users` maps to the User model), you can use `Fuzz\MagicBox\Utility\Modeler` to resolve a model class name from a route name.
 
 ## Testing
 `phpunit` :)

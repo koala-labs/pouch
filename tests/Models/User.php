@@ -1,13 +1,13 @@
 <?php
 
-namespace Koala\Pouch\Tests\Models;
+namespace Fuzz\MagicBox\Tests\Models;
 
-use Koala\Pouch\Contracts\PouchResource;
+use Fuzz\MagicBox\Contracts\MagicBoxResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Model implements PouchResource
+class User extends Model implements MagicBoxResource
 {
 	use SoftDeletes;
 

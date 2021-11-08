@@ -1,8 +1,8 @@
 <?php
 
-namespace Koala\Pouch;
+namespace Fuzz\MagicBox;
 
-use Koala\Pouch\Contracts\QueryFilterContainer;
+use Fuzz\MagicBox\Contracts\QueryFilterContainer;
 use Illuminate\Support\Str;
 
 /**
@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
  *
  * A QueryFilterContainer implementation for Eloquent.
  *
- * @package Koala\Pouch
+ * @package Fuzz\MagicBox
  */
 class Filter implements QueryFilterContainer
 {

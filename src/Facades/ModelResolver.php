@@ -1,6 +1,6 @@
 <?php
 
-namespace Koala\Pouch\Facades;
+namespace Fuzz\MagicBox\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

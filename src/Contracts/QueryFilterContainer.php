@@ -1,13 +1,13 @@
 <?php
 
-namespace Koala\Pouch\Contracts;
+namespace Fuzz\MagicBox\Contracts;
 
 /**
  * Interface QueryFilterContainer
  *
  * A QueryFilterContainer modifies an Eloquent query and applies filters to it.
  *
- * @package Koala\Pouch\Contracts
+ * @package Fuzz\MagicBox\Contracts
  */
 interface QueryFilterContainer
 {

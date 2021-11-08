@@ -1,13 +1,13 @@
 <?php
 
-namespace Koala\Pouch;
+namespace Fuzz\MagicBox;
 
-use Koala\Pouch\Contracts\AccessControl;
-use Koala\Pouch\Contracts\QueryFilterContainer;
-use Koala\Pouch\Contracts\QueryModifier;
-use Koala\Pouch\Contracts\Repository;
-use Koala\Pouch\Utility\ChecksModelFields;
-use Koala\Pouch\Utility\ChecksRelations;
+use Fuzz\MagicBox\Contracts\AccessControl;
+use Fuzz\MagicBox\Contracts\QueryFilterContainer;
+use Fuzz\MagicBox\Contracts\QueryModifier;
+use Fuzz\MagicBox\Contracts\Repository;
+use Fuzz\MagicBox\Utility\ChecksModelFields;
+use Fuzz\MagicBox\Utility\ChecksRelations;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +25,7 @@ use InvalidArgumentException;
  *
  * A Repository implementation for Eloquent.
  *
- * @package Koala\Pouch
+ * @package Fuzz\MagicBox
  */
 class EloquentRepository implements Repository
 {
@@ -55,28 +55,28 @@ class EloquentRepository implements Repository
 	/**
 	 * AccessCompiler storage
 	 *
-	 * @var \Koala\Pouch\Contracts\AccessControl
+	 * @var \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	protected $access_compiler;
 
 	/**
 	 * QueryModifier storage
 	 *
-	 * @var \Koala\Pouch\Contracts\QueryModifier
+	 * @var \Fuzz\MagicBox\Contracts\QueryModifier
 	 */
 	protected $query_modifier;
 
 	/**
 	 * QueryFilterContainer storage
 	 *
-	 * @var \Koala\Pouch\Contracts\QueryFilterContainer
+	 * @var \Fuzz\MagicBox\Contracts\QueryFilterContainer
 	 */
 	protected $query_filter_container;
 
 	/**
 	 * Access the access compiler
 	 *
-	 * @return \Koala\Pouch\Contracts\AccessControl
+	 * @return \Fuzz\MagicBox\Contracts\AccessControl
 	 */
 	public function accessControl(): AccessControl
 	{
@@ -90,9 +90,9 @@ class EloquentRepository implements Repository
 	/**
 	 * Set the AccessCompiler
 	 *
-	 * @param \Koala\Pouch\Contracts\AccessControl $access_compiler
+	 * @param \Fuzz\MagicBox\Contracts\AccessControl $access_compiler
 	 *
-	 * @return \Koala\Pouch\Contracts\Repository
+	 * @return \Fuzz\MagicBox\Contracts\Repository
 	 */
 	public function setAccessCompiler(AccessControl $access_compiler): Repository
 	{
@@ -104,7 +104,7 @@ class EloquentRepository implements Repository
 	/**
 	 * Access the query modifier
 	 *
-	 * @return \Koala\Pouch\Contracts\QueryModifier
+	 * @return \Fuzz\MagicBox\Contracts\QueryModifier
 	 */
 	public function modify(): QueryModifier
 	{
@@ -118,9 +118,9 @@ class EloquentRepository implements Repository
 	/**
 	 * Set the QueryModifier
 	 *
-	 * @param \Koala\Pouch\Contracts\QueryModifier $query_modifier
+	 * @param \Fuzz\MagicBox\Contracts\QueryModifier $query_modifier
 	 *
-	 * @return \Koala\Pouch\Contracts\Repository
+	 * @return \Fuzz\MagicBox\Contracts\Repository
 	 */
 	public function setQueryModifier(QueryModifier $query_modifier): Repository
 	{
@@ -132,7 +132,7 @@ class EloquentRepository implements Repository
 	/**
 	 * Access the query filters
 	 *
-	 * @return \Koala\Pouch\Contracts\QueryFilterContainer
+	 * @return \Fuzz\MagicBox\Contracts\QueryFilterContainer
 	 */
 	public function queryFilters(): QueryFilterContainer
 	{
@@ -142,9 +142,9 @@ class EloquentRepository implements Repository
 	/**
 	 * Set the QueryFilterContainer
 	 *
-	 * @param \Koala\Pouch\Contracts\QueryFilterContainer $query_filter_container
+	 * @param \Fuzz\MagicBox\Contracts\QueryFilterContainer $query_filter_container
 	 *
-	 * @return \Koala\Pouch\Contracts\Repository
+	 * @return \Fuzz\MagicBox\Contracts\Repository
 	 */
 	public function setQueryFilters(QueryFilterContainer $query_filter_container): Repository
 	{
@@ -157,7 +157,7 @@ class EloquentRepository implements Repository
 	 * Set the model for an instance of this resource controller.
 	 *
 	 * @param string $model_class
-	 * @return \Koala\Pouch\Contracts\Repository
+	 * @return \Fuzz\MagicBox\Contracts\Repository
 	 */
 	public function setModelClass($model_class): Repository
 	{
@@ -167,7 +167,7 @@ class EloquentRepository implements Repository
 
 		$this->model_class = $model_class;
 
-		/** @var \Illuminate\Database\Eloquent\Model|\Koala\Pouch\Contracts\PouchResource $instance */
+		/** @var \Illuminate\Database\Eloquent\Model|\Fuzz\MagicBox\Contracts\MagicBoxResource $instance */
 		$instance = new $model_class;
 
 		$this->accessControl()->setFillable($instance->getRepositoryFillable());
@@ -213,7 +213,7 @@ class EloquentRepository implements Repository
 	 * Set input manually.
 	 *
 	 * @param array $input
-	 * @return \Koala\Pouch\Contracts\Repository
+	 * @return \Fuzz\MagicBox\Contracts\Repository
 	 */
 	public function setInput(array $input): Repository
 	{

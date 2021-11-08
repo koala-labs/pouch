@@ -1,6 +1,6 @@
 <?php
 
-namespace Koala\Pouch\Contracts;
+namespace Fuzz\MagicBox\Contracts;
 
 use Illuminate\Routing\Route;
 
@@ -9,7 +9,7 @@ use Illuminate\Routing\Route;
  *
  * A ModelResolver determines which MagicBoxResource is being worked on via a Route.
  *
- * @package Koala\Pouch\Contracts
+ * @package Fuzz\MagicBox\Contracts
  */
 interface ModelResolver
 {

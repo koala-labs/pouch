@@ -21,13 +21,13 @@
 	],
 	"autoload": {
 		"psr-4": {
-			"Koala\\Pouch\\": "src/"
+			"Fuzz\\MagicBox\\": "src/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Koala\\Pouch\\Tests\\": "tests/",
-			"Koala\\Pouch\\Tests\\Seeds\\": "tests/seeds"
+			"Fuzz\\MagicBox\\Tests\\": "tests/",
+			"Fuzz\\MagicBox\\Tests\\Seeds\\": "tests/seeds"
 		}
 	},
 	"scripts": {

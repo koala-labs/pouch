@@ -1,16 +1,16 @@
 <?php
 
-namespace Koala\Pouch\Tests;
+namespace Fuzz\MagicBox\Tests;
 
-use Koala\Pouch\Contracts\AccessControl;
-use Koala\Pouch\Tests\Models\Tag;
-use Koala\Pouch\Tests\Seeds\FilterDataSeeder;
+use Fuzz\MagicBox\Contracts\AccessControl;
+use Fuzz\MagicBox\Tests\Models\Tag;
+use Fuzz\MagicBox\Tests\Seeds\FilterDataSeeder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use Koala\Pouch\Tests\Models\User;
-use Koala\Pouch\Tests\Models\Post;
-use Koala\Pouch\EloquentRepository;
-use Koala\Pouch\Tests\Models\Profile;
+use Fuzz\MagicBox\Tests\Models\User;
+use Fuzz\MagicBox\Tests\Models\Post;
+use Fuzz\MagicBox\EloquentRepository;
+use Fuzz\MagicBox\Tests\Models\Profile;
 use Illuminate\Database\Eloquent\Builder;
 
 class EloquentRepositoryTest extends DBTestCase
@@ -21,7 +21,7 @@ class EloquentRepositoryTest extends DBTestCase
 	 * @param string|null $model_class
 	 * @param array       $input
 	 *
-	 * @return \Koala\Pouch\Contracts\Repository|\Koala\Pouch\EloquentRepository
+	 * @return \Fuzz\MagicBox\Contracts\Repository|\Fuzz\MagicBox\EloquentRepository
 	 */
 	private function getRepository($model_class = null, array $input = [])
 	{
@@ -51,14 +51,14 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItCanCreateASimpleModel()
 	{
-		$user = $this->getRepository('Koala\Pouch\Tests\Models\User')->save();
+		$user = $this->getRepository('Fuzz\MagicBox\Tests\Models\User')->save();
 		$this->assertNotNull($user);
 		$this->assertEquals(1, $user->id);
 	}
 
 	public function testItCanFindASimpleModel()
 	{
-		$repo       = $this->getRepository('Koala\Pouch\Tests\Models\User');
+		$repo       = $this->getRepository('Fuzz\MagicBox\Tests\Models\User');
 		$user       = $repo->save();
 		$found_user = $repo->find($user->id);
 		$this->assertNotNull($found_user);
@@ -67,14 +67,14 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItCountsCollections()
 	{
-		$repository = $this->getRepository('Koala\Pouch\Tests\Models\User');
+		$repository = $this->getRepository('Fuzz\MagicBox\Tests\Models\User');
 		$this->assertEquals($repository->count(), 0);
 		$this->assertFalse($repository->hasAny());
 	}
 
 	public function testItPaginates()
 	{
-		$repository  = $this->getRepository('Koala\Pouch\Tests\Models\User');
+		$repository  = $this->getRepository('Fuzz\MagicBox\Tests\Models\User');
 		$first_user  = $repository->setInput(['username' => 'bob'])->save();
 		$second_user = $repository->setInput(['username' => 'sue'])->save();
 
@@ -85,7 +85,7 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItEagerLoadsRelationsSafely()
 	{
-		$this->getRepository('Koala\Pouch\Tests\Models\User', [
+		$this->getRepository('Fuzz\MagicBox\Tests\Models\User', [
 				'username' => 'joe',
 				'posts'    => [
 					[
@@ -94,7 +94,7 @@ class EloquentRepositoryTest extends DBTestCase
 				]
 			])->save();
 
-		$repository = $this->getRepository('Koala\Pouch\Tests\Models\User');
+		$repository = $this->getRepository('Fuzz\MagicBox\Tests\Models\User');
 		$repository->modify()
 			->setFilters(['username' => 'joe'])
 			->setEagerLoads([
@@ -106,23 +106,23 @@ class EloquentRepositoryTest extends DBTestCase
 
 		$this->assertNotNull($user);
 		$this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $user->posts);
-		$this->assertInstanceOf('Koala\Pouch\Tests\Models\Post', $user->posts->first());
+		$this->assertInstanceOf('Fuzz\MagicBox\Tests\Models\Post', $user->posts->first());
 	}
 
 	public function testItCanFillModelFields()
 	{
-		$user = $this->getRepository('Koala\Pouch\Tests\Models\User', ['username' => 'bob'])->save();
+		$user = $this->getRepository('Fuzz\MagicBox\Tests\Models\User', ['username' => 'bob'])->save();
 		$this->assertNotNull($user);
 		$this->assertEquals($user->username, 'bob');
 	}
 
 	public function testItUpdatesExistingModels()
 	{
-		$user = $this->getRepository('Koala\Pouch\Tests\Models\User', ['username' => 'bobby'])->save();
+		$user = $this->getRepository('Fuzz\MagicBox\Tests\Models\User', ['username' => 'bobby'])->save();
 		$this->assertEquals($user->id, 1);
 		$this->assertEquals($user->username, 'bobby');
 
-		$user = $this->getRepository('Koala\Pouch\Tests\Models\User', [
+		$user = $this->getRepository('Fuzz\MagicBox\Tests\Models\User', [
 				'id'       => 1,
 				'username' => 'sue'
 			])->save();
@@ -132,17 +132,17 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItDeletesModels()
 	{
-		$user = $this->getRepository(User::class, ['username' => 'spammer'])->save();
+		$user = $this->getRepository('Fuzz\MagicBox\Tests\Models\User', ['username' => 'spammer'])->save();
 		$this->assertEquals($user->id, 1);
 		$this->assertTrue($user->exists());
 
-		$this->getRepository(User::class, ['id' => 1])->delete();
+		$this->getRepository('Fuzz\MagicBox\Tests\Models\User', ['id' => 1])->delete();
 		$this->assertNull(User::find(1));
 	}
 
 	public function testItFillsBelongsToRelations()
 	{
-		$post = $this->getRepository(Post::class, [
+		$post = $this->getRepository('Fuzz\MagicBox\Tests\Models\Post', [
 				'title' => 'Some Great Post',
 				'user'  => [
 					'username' => 'jimmy',
@@ -155,7 +155,7 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItFillsHasManyRelations()
 	{
-		$user = $this->getRepository(User::class, [
+		$user = $this->getRepository('Fuzz\MagicBox\Tests\Models\User', [
 				'username' => 'joe',
 				'posts'    => [
 					[
@@ -177,7 +177,7 @@ class EloquentRepositoryTest extends DBTestCase
 		$this->assertEquals($post->user_id, $user->id);
 		$this->assertEquals($post->title, 'Yet Another Great Post');
 
-		$this->getRepository(User::class, [
+		$this->getRepository('Fuzz\MagicBox\Tests\Models\User', [
 				'id'    => $user->id,
 				'posts' => [
 					[
@@ -198,7 +198,7 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItFillsHasOneRelations()
 	{
-		$user = $this->getRepository(User::class, [
+		$user = $this->getRepository('Fuzz\MagicBox\Tests\Models\User', [
 				'username' => 'joe',
 				'profile'  => [
 					'favorite_cheese' => 'brie',
@@ -209,7 +209,7 @@ class EloquentRepositoryTest extends DBTestCase
 		$this->assertEquals($user->profile->favorite_cheese, 'brie');
 		$old_profile_id = $user->profile->id;
 
-		$user = $this->getRepository(User::class, [
+		$user = $this->getRepository('Fuzz\MagicBox\Tests\Models\User', [
 				'id'      => $user->id,
 				'profile' => [
 					'favorite_cheese' => 'pepper jack',
@@ -225,7 +225,7 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItCascadesThroughSupportedRelations()
 	{
-		$post = $this->getRepository(Post::class, [
+		$post = $this->getRepository('Fuzz\MagicBox\Tests\Models\Post', [
 				'title' => 'All the Tags',
 				'user'  => [
 					'username' => 'simon',
@@ -250,7 +250,7 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItUpdatesBelongsToManyPivots()
 	{
-		$post = $this->getRepository(Post::class, [
+		$post = $this->getRepository('Fuzz\MagicBox\Tests\Models\Post', [
 				'title' => 'All the Tags',
 				'user'  => [
 					'username' => 'josh',
@@ -268,7 +268,7 @@ class EloquentRepositoryTest extends DBTestCase
 		$tag = $post->tags->first();
 		$this->assertEquals($tag->pivot->extra, 'Meowth');
 
-		$post = $this->getRepository(Post::class, [
+		$post = $this->getRepository('Fuzz\MagicBox\Tests\Models\Post', [
 				'id'   => $post->id,
 				'tags' => [
 					[
@@ -286,7 +286,7 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItSorts()
 	{
-		$repository  = $this->getRepository(User::class);
+		$repository  = $this->getRepository('Fuzz\MagicBox\Tests\Models\User');
 		$first_user  = $repository->setInput([
 				'username' => 'Bobby'
 			])->save();
@@ -307,7 +307,7 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItSortsNested()
 	{
-		$repository  = $this->getRepository(User::class);
+		$repository  = $this->getRepository('Fuzz\MagicBox\Tests\Models\User');
 		$first_user  = $repository->setInput([
 				'username' => 'Bobby',
 				'posts'    => [
@@ -355,7 +355,7 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItModifiesQueries()
 	{
-		$repository = $this->getRepository(User::class, ['username' => 'Billy']);
+		$repository = $this->getRepository('Fuzz\MagicBox\Tests\Models\User', ['username' => 'Billy']);
 		$repository->save();
 		$this->assertEquals($repository->count(), 1);
 		$repository->modify()->set([
@@ -368,7 +368,7 @@ class EloquentRepositoryTest extends DBTestCase
 
 	public function testItAddsModifier()
 	{
-		$repository = $this->getRepository(User::class, ['username' => 'Billy']);
+		$repository = $this->getRepository('Fuzz\MagicBox\Tests\Models\User', ['username' => 'Billy']);
 		$repository->save();
 		$this->assertEquals($repository->count(), 1);
 		$repository->modify()->add(function (Builder $query) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Koala\Pouch\Exception;
+namespace Fuzz\MagicBox\Exception;
 
 use RuntimeException;
 
@@ -9,7 +9,7 @@ use RuntimeException;
  *
  * Thrown when a model could not be resolved by a ModelResolver.
  *
- * @package Koala\Pouch\Exception
+ * @package Fuzz\MagicBox\Exception
  */
 class ModelNotResolvedException extends RuntimeException
 {

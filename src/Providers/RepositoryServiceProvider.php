@@ -1,11 +1,11 @@
 <?php
 
-namespace Koala\Pouch\Providers;
+namespace Fuzz\MagicBox\Providers;
 
-use Koala\Pouch\Contracts\Repository;
-use Koala\Pouch\EloquentRepository;
-use Koala\Pouch\Facades\ModelResolver;
-use Koala\Pouch\Utility\ExplicitModelResolver;
+use Fuzz\MagicBox\Contracts\Repository;
+use Fuzz\MagicBox\EloquentRepository;
+use Fuzz\MagicBox\Facades\ModelResolver;
+use Fuzz\MagicBox\Utility\ExplicitModelResolver;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -17,7 +17,7 @@ class RepositoryServiceProvider extends ServiceProvider
 	 */
 	public function boot()
 	{
-		$this->publishes([$this->configPath() => config_path('pouch.php')], 'config');
+		$this->publishes([$this->configPath() => config_path('magic-box.php')], 'config');
 	}
 
 	/**
