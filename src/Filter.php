@@ -227,7 +227,7 @@ class Filter implements QueryFilterContainer
                     $query->whereHas(
                         $relation,
                         function ($query) use ($filter, $column) {
-                            $where = ('where' . $column);
+                            $where = Str::camel('where' . $column);
                             $query->$where($filter);
                         }
                     );
