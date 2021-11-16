@@ -72,7 +72,7 @@ class RepositoryMiddleware
             ->setEagerLoads((array) $request->get('include'))
             ->setAggregate((array) $request->get('aggregate'));
 
-        $repository->accessControl()->setDepthRestriction(config('magic-box.eager_load_depth'));
+        $repository->accessControl()->setDepthRestriction(config('pouch.eager_load_depth'));
 
         return $repository;
     }

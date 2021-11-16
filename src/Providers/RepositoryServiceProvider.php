@@ -17,7 +17,7 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([$this->configPath() => config_path('magic-box.php')], 'config');
+        $this->publishes([$this->configPath() => config_path('pouch.php')], 'config');
     }
 
     /**
@@ -43,6 +43,6 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     protected function configPath()
     {
-        return realpath(__DIR__ . '/../../config/magic-box.php');
+        return realpath(__DIR__ . '/../../config/pouch.php');
     }
 }
