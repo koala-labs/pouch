@@ -622,6 +622,8 @@ class EloquentRepository implements Repository
         return ($this->getInput() && array_keys($this->getInput()) === range(0, count($this->getInput()) - 1));
     }
 
+
+
     /**
      * A helper method for backwards compatibility.
      *
@@ -634,5 +636,26 @@ class EloquentRepository implements Repository
     private function getRelationsForeignKeyName(HasOneOrMany $relation): string
     {
         return method_exists($relation, 'getForeignKeyName') ? $relation->getForeignKeyName() : $relation->getPlainForeignKey();
+    }
+
+    /**
+     * Get the first element against the base query.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function first(): ?Model
+    {
+        return $this->query()->first();
+    }
+
+    /**
+     * Get the first element against the base query, or fail if no results are found.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function firstOrFail(): Model
+    {
+        return $this->query()->firstOrFail();
     }
 }

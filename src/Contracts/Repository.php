@@ -174,4 +174,18 @@ interface Repository
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function save(): Model;
+
+    /**
+     * Get the first element against the base query.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function first(): ?Model;
+
+    /**
+     * Get the first element against the base query, or fail if no results are found.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function firstOrFail(): Model;
 }
