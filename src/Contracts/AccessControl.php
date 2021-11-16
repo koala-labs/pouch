@@ -8,7 +8,7 @@ namespace Koala\Pouch\Contracts;
  * An AccessControl defines access to a resource via a Repository. Its responsible for determining
  * depth restrictions, allowed includes, allowed filters, etc.
  *
- * @package Fuzz\MagicBox\Contracts
+ * @package Koala\Pouch\Contracts
  */
 interface AccessControl
 {

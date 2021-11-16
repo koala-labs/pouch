@@ -2,10 +2,10 @@
 
 namespace Koala\Pouch\Tests\Models;
 
-use Koala\Pouch\Contracts\MagicBoxResource;
+use Koala\Pouch\Contracts\PouchResource;
 use Illuminate\Database\Eloquent\Model;
 
-class NotIncludable extends Model implements MagicBoxResource
+class NotIncludable extends Model implements PouchResource
 {
     /**
      * @const array

@@ -2,7 +2,7 @@
 
 namespace Koala\Pouch\Utility;
 
-use Koala\Pouch\Contracts\MagicBoxResource;
+use Koala\Pouch\Contracts\PouchResource;
 use Koala\Pouch\Contracts\ModelResolver;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -14,7 +14,7 @@ use Illuminate\Console\AppNamespaceDetectorTrait;
  *
  * A ModelResolver which guesses the resource currently being worked on based on the route name.
  *
- * @package Fuzz\MagicBox\Utility
+ * @package Koala\Pouch\Utility
  */
 class RouteGuessingModelResolver implements ModelResolver
 {
@@ -36,11 +36,11 @@ class RouteGuessingModelResolver implements ModelResolver
 
             $model_class = $this->namespaceModel(Str::studly(Str::singular($alias)));
 
-            if (is_a($model_class, MagicBoxResource::class, true)) {
+            if (is_a($model_class, PouchResource::class, true)) {
                 return $model_class;
             }
 
-            throw new \LogicException(sprintf('%s must be an instance of %s', $model_class, MagicBoxResource::class));
+            throw new \LogicException(sprintf('%s must be an instance of %s', $model_class, PouchResource::class));
         }
 
         throw new \LogicException('Unable to resolve model from improperly named route');

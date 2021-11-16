@@ -7,7 +7,7 @@ namespace Koala\Pouch\Contracts;
  *
  * A QueryFilterContainer modifies an Eloquent query and applies filters to it.
  *
- * @package Fuzz\MagicBox\Contracts
+ * @package Koala\Pouch\Contracts
  */
 interface QueryFilterContainer
 {

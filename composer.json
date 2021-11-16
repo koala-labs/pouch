@@ -2,7 +2,7 @@
 	"name": "koala/pouch",
 	"description": "A magical implementation of Laravel's Eloquent models as injectable, masked resource repositories.",
 	"license": "MIT",
-	"homepage": "https://fuzzproductions.com/",
+	"homepage": "https://koala.io/",
 	"require": {
 		"php": "^7.4|^8.0",
 		"illuminate/database": "^8"
@@ -17,7 +17,7 @@
 	"authors": [
 		{
 			"name": "Koala Labs",
-			"email": "fuzzweb@fuzzproductions.com"
+			"email": "engineering@koala.io"
 		}
 	],
 	"autoload": {

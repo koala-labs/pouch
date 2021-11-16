@@ -2,10 +2,10 @@
 
 namespace Koala\Pouch\Tests\Models;
 
-use Koala\Pouch\Contracts\MagicBoxResource;
+use Koala\Pouch\Contracts\PouchResource;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model implements MagicBoxResource
+class Post extends Model implements PouchResource
 {
     /**
      * @const array

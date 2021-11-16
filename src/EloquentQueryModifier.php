@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
  *
  * A QueryModifier implementation for Eloquent.
  *
- * @package Fuzz\MagicBox
+ * @package Koala\Pouch
  */
 class EloquentQueryModifier implements QueryModifier
 {

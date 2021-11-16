@@ -111,7 +111,7 @@ class ExplicitModelResolverTest extends TestCase
 /**
  * Class UserController
  *
- * @package Fuzz\MagicBox\Tests
+ * @package Koala\Pouch\Tests
  */
 class UserController extends Controller
 {

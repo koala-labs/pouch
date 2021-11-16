@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  *
  * Safely determine if a key is a relation on a model.
  *
- * @package Fuzz\MagicBox\Utility
+ * @package Koala\Pouch\Utility
  */
 trait ChecksRelations
 {

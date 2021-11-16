@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Schema;
  *
  * Finds fields for a model.
  *
- * @package Fuzz\MagicBox\Utility
+ * @package Koala\Pouch\Utility
  */
 trait ChecksModelFields
 {

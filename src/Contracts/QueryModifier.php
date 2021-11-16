@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
  *
  * A QueryModifier applies query modifications such as eager loads, groupings, aggregations, etc to a query.
  *
- * @package Fuzz\MagicBox\Contracts
+ * @package Koala\Pouch\Contracts
  */
 interface QueryModifier
 {

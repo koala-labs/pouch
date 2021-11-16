@@ -12,7 +12,7 @@ use Illuminate\Contracts\Pagination\Paginator;
  * A Repository is an implementation of the core MagicBox functionality and it is responsible for pulling in all
  * relevant logic.
  *
- * @package Fuzz\MagicBox\Contracts
+ * @package Koala\Pouch\Contracts
  */
 interface Repository
 {

@@ -27,7 +27,7 @@ use InvalidArgumentException;
  *
  * An AccessControl implementation for Eloquent.
  *
- * @package Fuzz\MagicBox
+ * @package Koala\Pouch
  */
 class EloquentAccessControl implements AccessControl
 {

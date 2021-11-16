@@ -2,12 +2,12 @@
 
 namespace Koala\Pouch\Tests\Models;
 
-use Koala\Pouch\Contracts\MagicBoxResource;
+use Koala\Pouch\Contracts\PouchResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Model implements MagicBoxResource
+class User extends Model implements PouchResource
 {
     use SoftDeletes;
 

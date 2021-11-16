@@ -3,13 +3,13 @@
 namespace Koala\Pouch\Contracts;
 
 /**
- * Interface MagicBoxResource
+ * Interface PouchResource
  *
- * A MagicBoxResource is a resource (Model) which can be accessed via MagicBox.
+ * A PouchResource is a resource (Model) which can be accessed via MagicBox.
  *
- * @package Fuzz\Agency\Contracts
+ * @package Koala\Pouch\Contracts
  */
-interface MagicBoxResource
+interface PouchResource
 {
     /**
      * Get the list of fields fillable by the repository

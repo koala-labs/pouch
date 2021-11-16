@@ -25,7 +25,7 @@ use InvalidArgumentException;
  *
  * A Repository implementation for Eloquent.
  *
- * @package Fuzz\MagicBox
+ * @package Koala\Pouch
  */
 class EloquentRepository implements Repository
 {
@@ -168,7 +168,7 @@ class EloquentRepository implements Repository
 
         $this->model_class = $model_class;
 
-        /** @var \Illuminate\Database\Eloquent\Model|\Koala\Pouch\Contracts\MagicBoxResource $instance */
+        /** @var \Illuminate\Database\Eloquent\Model|\Koala\Pouch\Contracts\PouchResource $instance */
         $instance = new $model_class();
 
         $this->accessControl()->setFillable($instance->getRepositoryFillable());

@@ -11,7 +11,7 @@ use Illuminate\Routing\Route;
  *
  * A ModelResolver which expects a controller to define the resource its repositories should work on.
  *
- * @package Fuzz\MagicBox\Utility
+ * @package Koala\Pouch\Utility
  */
 class ExplicitModelResolver implements ModelResolver
 {

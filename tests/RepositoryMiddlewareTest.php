@@ -2,7 +2,7 @@
 
 namespace Koala\Pouch\Tests;
 
-use Koala\Pouch\Contracts\MagicBoxResource;
+use Koala\Pouch\Contracts\PouchResource;
 use Koala\Pouch\EloquentRepository;
 use Koala\Pouch\Facades\ModelResolver;
 use Koala\Pouch\Middleware\RepositoryMiddleware;
@@ -163,7 +163,7 @@ class RepositoryMiddlewareTest extends TestCase
     }
 }
 
-class RepositoryMiddlewareTestStubModel extends Model implements MagicBoxResource
+class RepositoryMiddlewareTestStubModel extends Model implements PouchResource
 {
     /**
      * Get the list of fields fillable by the repository

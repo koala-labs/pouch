@@ -12,7 +12,7 @@ use Koala\Pouch\Contracts\Repository;
  *
  * Responsible for accepting a request and building a Repository for the appropriate class.
  *
- * @package Fuzz\MagicBox\Middleware
+ * @package Koala\Pouch\Middleware
  */
 class RepositoryMiddleware
 {

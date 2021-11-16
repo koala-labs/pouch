@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
  *
  * A QueryFilterContainer implementation for Eloquent.
  *
- * @package Fuzz\MagicBox
+ * @package Koala\Pouch
  */
 class Filter implements QueryFilterContainer
 {
@@ -35,7 +35,7 @@ class Filter implements QueryFilterContainer
 
     /**
      * Tokens that accept non-scalar filters.
-     * ex: [One,Two,Three,Fuzz]
+     * ex: [One,Two,Three,Koala]
      *
      * @var array
      */
