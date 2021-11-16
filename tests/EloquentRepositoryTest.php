@@ -6,6 +6,7 @@ use Fuzz\MagicBox\Contracts\AccessControl;
 use Fuzz\MagicBox\Tests\Models\Tag;
 use Fuzz\MagicBox\Tests\Seeds\FilterDataSeeder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Fuzz\MagicBox\Tests\Models\User;
 use Fuzz\MagicBox\Tests\Models\Post;
@@ -63,6 +64,52 @@ class EloquentRepositoryTest extends DBTestCase
         $found_user = $repo->find($user->id);
         $this->assertNotNull($found_user);
         $this->assertEquals($user->id, $found_user->id);
+    }
+
+    public function testItCanReturnASingleModelFromAQuery()
+    {
+        $this->seedUsers();
+        $repo            = $this->getRepository('Fuzz\MagicBox\Tests\Models\User');
+        $users           = $repo->all();
+        $firstUser       = $repo->first();
+        $firstOrFailUser = $repo->firstOrFail();
+        $this->assertNotNull($firstUser);
+        $this->assertNotNull($firstOrFailUser);
+        $this->assertTrue($users->first()->is($firstUser));
+        $this->assertTrue($users->first()->is($firstOrFailUser));
+        $this->assertTrue($firstUser->is($firstOrFailUser));
+    }
+
+    public function testItFirstReturnsNullWhenTheQueryHasNoResults()
+    {
+        $model = new class() extends User {
+            public static function query()
+            {
+                return \Mockery::mock(parent::query())
+                    ->shouldReceive('first')
+                    ->andReturn(null)
+                    ->getMock();
+            }
+        };
+
+        $this->assertNull($this->getRepository(get_class($model))->first());
+    }
+
+    public function testItFailsWhenFirstOrFailQueryHasNoResults()
+    {
+        $model = new class() extends User {
+            public static function query()
+            {
+                return \Mockery::mock(parent::query())
+                    ->shouldReceive('first')
+                    ->andReturn(null)
+                    ->getMock();
+            }
+        };
+
+        $this->expectException(ModelNotFoundException::class);
+
+        $this->getRepository(get_class($model))->firstOrFail();
     }
 
     public function testItCountsCollections()
