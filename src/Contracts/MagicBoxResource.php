@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuzz\MagicBox\Contracts;
+namespace Koala\Pouch\Contracts;
 
 /**
  * Interface MagicBoxResource

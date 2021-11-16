@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuzz\MagicBox\Exception;
+namespace Koala\Pouch\Exception;
 
 use RuntimeException;
 

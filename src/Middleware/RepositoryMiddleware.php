@@ -1,11 +1,11 @@
 <?php
 
-namespace Fuzz\MagicBox\Middleware;
+namespace Koala\Pouch\Middleware;
 
-use Fuzz\MagicBox\Facades\ModelResolver;
+use Koala\Pouch\Facades\ModelResolver;
 use Illuminate\Http\Request;
-use Fuzz\MagicBox\EloquentRepository;
-use Fuzz\MagicBox\Contracts\Repository;
+use Koala\Pouch\EloquentRepository;
+use Koala\Pouch\Contracts\Repository;
 
 /**
  * Class RepositoryMiddleware
@@ -35,7 +35,7 @@ class RepositoryMiddleware
      *
      * @param \Illuminate\Http\Request $request
      *
-     * @return \Fuzz\MagicBox\Contracts\Repository|\Fuzz\MagicBox\EloquentRepository
+     * @return \Koala\Pouch\Contracts\Repository|\Koala\Pouch\EloquentRepository
      */
     public function buildRepository(Request $request): EloquentRepository
     {

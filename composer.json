@@ -1,5 +1,5 @@
 {
-	"name": "fuzz/magic-box",
+	"name": "koala/pouch",
 	"description": "A magical implementation of Laravel's Eloquent models as injectable, masked resource repositories.",
 	"license": "MIT",
 	"homepage": "https://fuzzproductions.com/",
@@ -16,19 +16,19 @@
 	},
 	"authors": [
 		{
-			"name": "Fuzz Productions",
+			"name": "Koala Labs",
 			"email": "fuzzweb@fuzzproductions.com"
 		}
 	],
 	"autoload": {
 		"psr-4": {
-			"Fuzz\\MagicBox\\": "src/"
+			"Koala\\Pouch\\": "src/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Fuzz\\MagicBox\\Tests\\": "tests/",
-			"Fuzz\\MagicBox\\Tests\\Seeds\\": "tests/seeds"
+			"Koala\\Pouch\\Tests\\": "tests/",
+			"Koala\\Pouch\\Tests\\Seeds\\": "tests/seeds"
 		}
 	},
 	"scripts": {

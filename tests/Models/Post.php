@@ -1,8 +1,8 @@
 <?php
 
-namespace Fuzz\MagicBox\Tests\Models;
+namespace Koala\Pouch\Tests\Models;
 
-use Fuzz\MagicBox\Contracts\MagicBoxResource;
+use Koala\Pouch\Contracts\MagicBoxResource;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model implements MagicBoxResource

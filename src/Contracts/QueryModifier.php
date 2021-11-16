@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuzz\MagicBox\Contracts;
+namespace Koala\Pouch\Contracts;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,17 +26,17 @@ interface QueryModifier
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier
+     * @return \Koala\Pouch\Contracts\QueryModifier
      */
     public function setQuery(Builder $query): QueryModifier;
 
     /**
      * Process filter and sort modifications on $query
      *
-     * @param \Fuzz\MagicBox\Contracts\AccessControl $access_compiler
+     * @param \Koala\Pouch\Contracts\AccessControl $access_compiler
      * @param string                                 $model_class
      *
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier|void
+     * @return \Koala\Pouch\Contracts\QueryModifier|void
      */
     public function apply(AccessControl $access_compiler, string $model_class): QueryModifier;
 
@@ -45,9 +45,9 @@ interface QueryModifier
      *
      * Checks if relations exist before loading them.
      *
-     * @param \Fuzz\MagicBox\Contracts\AccessControl $access_compiler
+     * @param \Koala\Pouch\Contracts\AccessControl $access_compiler
      *
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier
+     * @return \Koala\Pouch\Contracts\QueryModifier
      */
     public function applyEagerLoads(AccessControl $access_compiler): QueryModifier;
 
@@ -62,7 +62,7 @@ interface QueryModifier
      * Set eager load manually.
      *
      * @param array $eager_loads
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier
+     * @return \Koala\Pouch\Contracts\QueryModifier
      */
     public function setEagerLoads(array $eager_loads): QueryModifier;
 
@@ -77,7 +77,7 @@ interface QueryModifier
      * Set filters manually.
      *
      * @param array $filters
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier
+     * @return \Koala\Pouch\Contracts\QueryModifier
      */
     public function setFilters(array $filters): QueryModifier;
 
@@ -92,7 +92,7 @@ interface QueryModifier
      * Add filters to already existing filters without overwriting them.
      *
      * @param array $filters
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier
+     * @return \Koala\Pouch\Contracts\QueryModifier
      */
     public function addFilters(array $filters);
 
@@ -101,7 +101,7 @@ interface QueryModifier
      *
      * @param string $key
      * @param string $value
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier
+     * @return \Koala\Pouch\Contracts\QueryModifier
      */
     public function addFilter(string $key, string $value);
 
@@ -110,7 +110,7 @@ interface QueryModifier
      *
      * @param \Closure $modifier
      *
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier
+     * @return \Koala\Pouch\Contracts\QueryModifier
      */
     public function add(Closure $modifier): QueryModifier;
 
@@ -118,7 +118,7 @@ interface QueryModifier
      * Set modifiers.
      *
      * @param array $modifiers
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier
+     * @return \Koala\Pouch\Contracts\QueryModifier
      */
     public function set(array $modifiers): QueryModifier;
 
@@ -141,7 +141,7 @@ interface QueryModifier
      *
      * @param array $group_by
      *
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier
+     * @return \Koala\Pouch\Contracts\QueryModifier
      */
     public function setGroupBy(array $group_by): QueryModifier;
 
@@ -157,7 +157,7 @@ interface QueryModifier
      *
      * @param array $aggregate
      *
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier
+     * @return \Koala\Pouch\Contracts\QueryModifier
      */
     public function setAggregate(array $aggregate): QueryModifier;
 
@@ -165,7 +165,7 @@ interface QueryModifier
      * Set sort order manually.
      *
      * @param array $sort_order
-     * @return \Fuzz\MagicBox\Contracts\QueryModifier
+     * @return \Koala\Pouch\Contracts\QueryModifier
      */
     public function setSortOrder(array $sort_order): QueryModifier;
 

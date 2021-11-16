@@ -1,9 +1,9 @@
 <?php
 
-namespace Fuzz\MagicBox\Utility;
+namespace Koala\Pouch\Utility;
 
-use Fuzz\MagicBox\Contracts\MagicBoxResource;
-use Fuzz\MagicBox\Contracts\ModelResolver;
+use Koala\Pouch\Contracts\MagicBoxResource;
+use Koala\Pouch\Contracts\ModelResolver;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Route;

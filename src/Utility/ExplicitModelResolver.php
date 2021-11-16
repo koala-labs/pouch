@@ -1,9 +1,9 @@
 <?php
 
-namespace Fuzz\MagicBox\Utility;
+namespace Koala\Pouch\Utility;
 
-use Fuzz\MagicBox\Contracts\ModelResolver;
-use Fuzz\MagicBox\Exception\ModelNotResolvedException;
+use Koala\Pouch\Contracts\ModelResolver;
+use Koala\Pouch\Exception\ModelNotResolvedException;
 use Illuminate\Routing\Route;
 
 /**
@@ -21,7 +21,7 @@ class ExplicitModelResolver implements ModelResolver
      * @param \Illuminate\Routing\Route $route
      *
      * @return string
-     * @throws \Fuzz\MagicBox\Exception\ModelNotResolvedException
+     * @throws \Koala\Pouch\Exception\ModelNotResolvedException
      *
      * @TODO Add check on route groups properties so resource settings can be set in groups.
      * @TODO But make sure it still follows the rule of most specificity.

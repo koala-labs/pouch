@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuzz\MagicBox\Contracts;
+namespace Koala\Pouch\Contracts;
 
 /**
  * Interface AccessControl
@@ -32,7 +32,7 @@ interface AccessControl
      *
      * @param int $depth
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function setDepthRestriction($depth);
 
@@ -51,7 +51,7 @@ interface AccessControl
      *
      * @param array $fillable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function setFillable(array $fillable): AccessControl;
 
@@ -69,7 +69,7 @@ interface AccessControl
      *
      * @param string $fillable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function addFillable(string $fillable): AccessControl;
 
@@ -78,7 +78,7 @@ interface AccessControl
      *
      * @param array $fillable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function addManyFillable(array $fillable): AccessControl;
 
@@ -87,7 +87,7 @@ interface AccessControl
      *
      * @param string $fillable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function removeFillable(string $fillable): AccessControl;
 
@@ -96,7 +96,7 @@ interface AccessControl
      *
      * @param array $fillable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function removeManyFillable(array $fillable): AccessControl;
 
@@ -114,7 +114,7 @@ interface AccessControl
      *
      * @param array $includable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function setIncludable(array $includable): AccessControl;
 
@@ -132,7 +132,7 @@ interface AccessControl
      *
      * @param string $includable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function addIncludable(string $includable): AccessControl;
 
@@ -141,7 +141,7 @@ interface AccessControl
      *
      * @param array $includable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function addManyIncludable(array $includable): AccessControl;
 
@@ -150,7 +150,7 @@ interface AccessControl
      *
      * @param string $includable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function removeIncludable(string $includable): AccessControl;
 
@@ -159,7 +159,7 @@ interface AccessControl
      *
      * @param array $includable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function removeManyIncludable(array $includable): AccessControl;
 
@@ -177,7 +177,7 @@ interface AccessControl
      *
      * @param array $filterable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function setFilterable(array $filterable): AccessControl;
 
@@ -195,7 +195,7 @@ interface AccessControl
      *
      * @param string $filterable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function addFilterable(string $filterable): AccessControl;
 
@@ -204,7 +204,7 @@ interface AccessControl
      *
      * @param array $filterable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function addManyFilterable(array $filterable): AccessControl;
 
@@ -213,7 +213,7 @@ interface AccessControl
      *
      * @param string $filterable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function removeFilterable(string $filterable): AccessControl;
 
@@ -222,7 +222,7 @@ interface AccessControl
      *
      * @param array $filterable
      *
-     * @return \Fuzz\MagicBox\Contracts\AccessControl
+     * @return \Koala\Pouch\Contracts\AccessControl
      */
     public function removeManyFilterable(array $filterable): AccessControl;
 

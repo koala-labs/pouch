@@ -1,11 +1,11 @@
 <?php
 
-namespace Fuzz\MagicBox\Providers;
+namespace Koala\Pouch\Providers;
 
-use Fuzz\MagicBox\Contracts\Repository;
-use Fuzz\MagicBox\EloquentRepository;
-use Fuzz\MagicBox\Facades\ModelResolver;
-use Fuzz\MagicBox\Utility\ExplicitModelResolver;
+use Koala\Pouch\Contracts\Repository;
+use Koala\Pouch\EloquentRepository;
+use Koala\Pouch\Facades\ModelResolver;
+use Koala\Pouch\Utility\ExplicitModelResolver;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider

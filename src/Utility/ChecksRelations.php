@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuzz\MagicBox\Utility;
+namespace Koala\Pouch\Utility;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
