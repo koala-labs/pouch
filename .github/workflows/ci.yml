@@ -20,38 +20,4 @@ jobs:
         uses: php-actions/phpunit@v3
         with:
           php_version: 8
-          configuration: /app/phpunit.xml
-
-#      - name: Run Tests
-#        run: docker exec -t koala-ordering-api-test composer run test-with-coverage
-#
-#      - name: Upload Coverage
-#        uses: codecov/codecov-action@v1
-#        with:
-#          file: ./coverage.xml
-#          fail_ci_if_error: true
-#      - uses: actions/upload-artifact@v2
-#        with:
-#          name: debug-output
-#          path: output.log
-
-#  linting:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#      - name: Composer
-#        uses: php-actions/composer@v6
-#          with:
-#            command: style-lint
-#
-#  analysis:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Composer
-#        uses: php-actions/composer@v6
-#          with:
-#            command: phan
+          configuration: /phpunit.xml
