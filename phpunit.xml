@@ -15,11 +15,7 @@
     <env name="CACHE_DRIVER" value="array"/>
     <env name="SESSION_DRIVER" value="array"/>
     <env name="QUEUE_DRIVER" value="sync"/>
-    <env name="DB_CONNECTION" value="mysql"/>
-    <env name="DB_DATABASE" value="test"/>
-    <env name="DB_HOST" value="test"/>
-    <env name="DB_PORT" value="3306"/>
-    <env name="APP_SERVICES_CACHE" value="/tmp/services.phpxyy"/>
-    <env name="APP_PACKAGES_CACHE" value="/tmp/packages.phpx"/>
+    <env name="APP_SERVICES_CACHE" value="/tmp/services.php"/>
+    <env name="APP_PACKAGES_CACHE" value="/tmp/packages.php"/>
   </php>
 </phpunit>
