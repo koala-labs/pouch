@@ -20,7 +20,7 @@ jobs:
         uses: php-actions/phpunit@v3
         with:
           php_version: 8
-          configuration: /app/tests/phpunit.xml
+          configuration: /app/phpunit.xml
 
 #      - name: Run Tests
 #        run: docker exec -t koala-ordering-api-test composer run test-with-coverage
