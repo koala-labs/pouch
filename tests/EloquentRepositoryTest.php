@@ -2,6 +2,7 @@
 
 namespace Koala\Pouch\Tests;
 
+use Illuminate\Support\Facades\Artisan;
 use Koala\Pouch\Contracts\AccessControl;
 use Koala\Pouch\Tests\Models\Tag;
 use Koala\Pouch\Tests\Seeds\FilterDataSeeder;
@@ -38,7 +39,7 @@ class EloquentRepositoryTest extends DBTestCase
 
     public function seedUsers()
     {
-        $this->artisan->call('db:seed', [
+        Artisan::call('db:seed', [
             '--class' => FilterDataSeeder::class
         ]);
     }

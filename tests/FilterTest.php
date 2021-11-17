@@ -2,6 +2,7 @@
 
 namespace Koala\Pouch\Tests;
 
+use Illuminate\Support\Facades\Artisan;
 use Koala\Pouch\Filter;
 use Koala\Pouch\Tests\Models\User;
 use Koala\Pouch\Tests\Seeds\FilterDataSeeder;
@@ -18,7 +19,7 @@ class FilterTest extends DBTestCase
     {
         parent::setUp();
 
-        $this->artisan->call(
+        Artisan::call(
             'db:seed',
             [
                 '--class' => FilterDataSeeder::class

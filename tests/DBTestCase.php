@@ -2,18 +2,16 @@
 
 namespace Koala\Pouch\Tests;
 
+use Illuminate\Support\Facades\Artisan;
 use League\Flysystem\Config;
 
 abstract class DBTestCase extends TestCase
 {
-    protected $artisan;
-
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
-        $this->artisan->call(
+        Artisan::call(
             'migrate',
             [
                 '--database' => 'testbench',
