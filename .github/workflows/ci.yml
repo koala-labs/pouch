@@ -12,8 +12,15 @@ jobs:
       - name: Install Dependencies
         uses: php-actions/composer@v6
         with:
+          version: 2
           php_version: 8.0
-          command: test
+          progress: true
+          dev: yes
+      - name: Test
+        uses: php-actions/phpunit@v3
+        with:
+          php_version: 8
+          configuration: /var/www/app/phpunit.xml
 
 #      - name: Run Tests
 #        run: docker exec -t koala-ordering-api-test composer run test-with-coverage
