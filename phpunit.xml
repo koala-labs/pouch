@@ -19,6 +19,7 @@
     <env name="DB_DATABASE" value="test"/>
     <env name="DB_HOST" value="test"/>
     <env name="DB_PORT" value="3306"/>
-    <env name="APP_SERVICES_CACHE" value="/tmp/services.php"/>
+    <env name="APP_SERVICES_CACHE" value="/tmp/services.phpxyy"/>
+    <env name="APP_PACKAGES_CACHE" value="/tmp/packages.phpx"/>
   </php>
 </phpunit>
