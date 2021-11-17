@@ -18,6 +18,13 @@ class FilterTest extends DBTestCase
     public function setUp(): void
     {
         parent::setUp();
+        Artisan::call(
+            'migrate',
+            [
+                '--path'     => '../../../../tests/migrations'
+            ]
+        );
+
 
         Artisan::call(
             'db:seed',
