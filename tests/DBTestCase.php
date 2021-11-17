@@ -18,4 +18,11 @@ abstract class DBTestCase extends TestCase
             ]
         );
     }
+
+    protected function getEnvironmentSetUp($app)
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $app['config']->set('database.default', 'testing');
+    }
 }
