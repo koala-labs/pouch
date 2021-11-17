@@ -20,4 +20,4 @@ jobs:
         uses: php-actions/phpunit@v3
         with:
           php_version: 8
-          configuration: /phpunit.xml
+          configuration: /app/phpunit.xml
