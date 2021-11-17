@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3772afe66e477e6260474219f11dcd80",
+    "content-hash": "2bbe5c46fd41c21bb18b38e78f2712dd",
     "packages": [
         {
             "name": "brick/math",
@@ -4962,47 +4962,6 @@
                 }
             ],
             "time": "2021-10-05T08:12:17+00:00"
-        },
-        {
-            "name": "fuzz/http-exception",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fuzz-productions/php-http-exception.git",
-                "reference": "7902d60524b6d340094cc4c7e406df9bf06a19ba"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fuzz-productions/php-http-exception/zipball/7902d60524b6d340094cc4c7e406df9bf06a19ba",
-                "reference": "7902d60524b6d340094cc4c7e406df9bf06a19ba",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Fuzz\\HttpException\\": "src/",
-                    "Fuzz\\HttpException\\Tests\\": "tests/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fuzz Web",
-                    "email": "web@fuzzproductions.com"
-                }
-            ],
-            "description": "A library containing a set of RESTful HTTP exceptions that use a consistent interface.",
-            "support": {
-                "issues": "https://github.com/fuzz-productions/php-http-exception/issues",
-                "source": "https://github.com/fuzz-productions/php-http-exception/tree/feature_not_implemented"
-            },
-            "time": "2016-10-17T16:45:49+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
