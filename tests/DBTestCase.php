@@ -13,8 +13,7 @@ abstract class DBTestCase extends TestCase
         Artisan::call(
             'migrate',
             [
-                '--database' => 'testing',
-                '--path'     => '../../../../tests/migrations',
+                '--path'     => '../../../../tests/migrations'
             ]
         );
     }
