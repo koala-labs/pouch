@@ -14,7 +14,7 @@ jobs:
         with:
           version: 2
           php_version: 8.0
-          progress: true
+          progress: yes
           dev: yes
       - name: Test
         uses: php-actions/phpunit@v3
