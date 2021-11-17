@@ -3,7 +3,6 @@
 namespace Koala\Pouch\Tests;
 
 use Illuminate\Support\Facades\Artisan;
-use League\Flysystem\Config;
 
 abstract class DBTestCase extends TestCase
 {
@@ -14,23 +13,8 @@ abstract class DBTestCase extends TestCase
         Artisan::call(
             'migrate',
             [
-                '--database' => 'testbench',
+                '--database' => 'testing',
                 '--path'     => '../../../../tests/migrations',
-            ]
-        );
-    }
-
-    protected function getEnvironmentSetUp($app)
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app['config']->set('database.default', 'testbench');
-        $app['config']->set(
-            'database.connections.testbench',
-            [
-                'driver'   => 'sqlite',
-                'database' => ':memory:',
-                'prefix'   => ''
             ]
         );
     }
