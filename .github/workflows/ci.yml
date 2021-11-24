@@ -3,7 +3,7 @@ name: CI
 on: [push]
 
 jobs:
-  testing:
+  testing-8:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,6 +25,23 @@ jobs:
         with:
           php_version: 8
           configuration: phpunit.xml
+  testing-74:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache Composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+      - name: Install Dependencies
+        uses: php-actions/composer@v6
+        with:
+          version: 2
+          php_version: 8.0
+          progress: yes
+          dev: yes
       - name: Test PHP 7.4
         uses: php-actions/phpunit@v3
         with:
