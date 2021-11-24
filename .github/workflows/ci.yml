@@ -20,8 +20,13 @@ jobs:
           php_version: 8.0
           progress: yes
           dev: yes
-      - name: Test
+      - name: Test PHP 8
         uses: php-actions/phpunit@v3
         with:
           php_version: 8
+          configuration: phpunit.xml
+      - name: Test PHP 7.4
+        uses: php-actions/phpunit@v3
+        with:
+          php_version: 7.4
           configuration: phpunit.xml
