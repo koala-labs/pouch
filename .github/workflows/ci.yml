@@ -20,7 +20,7 @@ jobs:
           php_version: 8.0
           progress: yes
           dev: yes
-      - name: Test PHP 8
+      - name: Test
         uses: php-actions/phpunit@v3
         with:
           php_version: 8
@@ -39,10 +39,10 @@ jobs:
         uses: php-actions/composer@v6
         with:
           version: 2
-          php_version: 8.0
+          php_version: 7.4
           progress: yes
           dev: yes
-      - name: Test PHP 7.4
+      - name: Test
         uses: php-actions/phpunit@v3
         with:
           php_version: 7.4
