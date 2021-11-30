@@ -43,7 +43,7 @@ jobs:
           php-version: '7.4'
           coverage: xdebug
           extensions: sqlite3, pdo_sqlite
-          tools: phpunit
+          tools: phpunit, phan
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
