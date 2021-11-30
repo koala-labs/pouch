@@ -48,7 +48,7 @@ class EloquentRepositoryTest extends DBTestCase
     {
         $this->expectExceptionMessage(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Specified model class must be an instance of Illuminate\Database\Eloquent\Model');
-        (new EloquentRepository())->setModelClass('ClumsyKoala');
+        (new EloquentRepository())->setModelClass('AwkwardKoala');
     }
 
     public function testItCanCreateASimpleModel()

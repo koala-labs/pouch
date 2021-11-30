@@ -1,5 +1,5 @@
 {
-	"name": "koala/pouch",
+	"name": "koala-labs/pouch",
 	"description": "A magical implementation of Laravel's Eloquent models as injectable, masked resource repositories.",
 	"license": "MIT",
 	"homepage": "https://koala.io/",
