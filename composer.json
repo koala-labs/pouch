@@ -35,10 +35,7 @@
 			"vendor/bin/phpunit"
 		],
 		"test-coverage": [
-			"vendor/bin/phpunit --coverage-html tests/coverage"
-		],
-		"open-coverage": [
-			"open -a \"Google Chrome\" tests/coverage/index.html"
+			"vendor/bin/phpunit --coverage-text"
 		],
 		"test-repo": [
 			"vendor/bin/phpunit --filter EloquentRepositoryTest"
