@@ -14,7 +14,7 @@ jobs:
           php-version: '8.0'
           coverage: xdebug
           extensions: sqlite3, pdo_sqlite
-          tools: phpunit, phan, php-cs-fixer
+          tools: composer, phpunit
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
@@ -28,10 +28,6 @@ jobs:
         run: composer install
       - name: Run Tests
         run: composer run test-coverage
-      - name: Linting
-        run: composer run style-lint
-      - name: Static Analysis
-        run: composer run phan
   testing-74:
     runs-on: ubuntu-latest
     steps:
@@ -43,7 +39,7 @@ jobs:
           php-version: '7.4'
           coverage: xdebug
           extensions: sqlite3, pdo_sqlite
-          tools: phpunit
+          tools: composer, phpunit
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
@@ -57,3 +53,27 @@ jobs:
         run: composer install
       - name: Run Tests
         run: composer run test-coverage
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          tools: composer, php-cs-fixer
+      - name: Run Lint Check
+        run: php-cs-fixer fix --dry-run -vv --diff --config=.php_cs.dist.php
+  phan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          tools: phan
+      - name: Run Static Analysis
+        run: phan --progress-bar -o phan_analysis.txt

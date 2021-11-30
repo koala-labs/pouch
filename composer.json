@@ -39,8 +39,8 @@
 		"test-repo": [
 			"vendor/bin/phpunit --filter EloquentRepositoryTest"
 		],
-		"style-fix": "vendor/bin/php-cs-fixer fix --config=.php_cs.dist.php",
-		"style-lint": "vendor/bin/php-cs-fixer fix --dry-run -vv --diff --config=.php_cs.dist.php",
+		"style-fix": "php-cs-fixer fix --config=.php_cs.dist.php",
+		"style-lint": "php-cs-fixer fix --dry-run -vv --diff --config=.php_cs.dist.php",
 		"phan": [
 			"phan --progress-bar -o phan_analysis.txt"
 		]
