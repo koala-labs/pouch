@@ -22,7 +22,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php8-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-php8-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Composer
         run: composer install --dev
@@ -47,7 +47,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php7-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-php7-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Composer
         run: composer install --dev
