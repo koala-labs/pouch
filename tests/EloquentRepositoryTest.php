@@ -83,7 +83,7 @@ class EloquentRepositoryTest extends DBTestCase
 
     public function testItFirstReturnsNullWhenTheQueryHasNoResults()
     {
-        $model = new class() extends User {
+        $model = new class () extends User {
             public static function query()
             {
                 return \Mockery::mock(parent::query())
@@ -98,7 +98,7 @@ class EloquentRepositoryTest extends DBTestCase
 
     public function testItFailsWhenFirstOrFailQueryHasNoResults()
     {
-        $model = new class() extends User {
+        $model = new class () extends User {
             public static function query()
             {
                 return \Mockery::mock(parent::query())

@@ -25,9 +25,13 @@ jobs:
           key: ${{ runner.os }}-php8-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Composer
-        run: composer install --dev
+        run: composer install
       - name: Run Tests
-        run: phpunit
+        run: composer run test-coverage
+      - name: Linting
+        run: composer run style-lint
+      - name: Static Analysis
+        run: composer run phan
   testing-74:
     runs-on: ubuntu-latest
     steps:
@@ -50,6 +54,6 @@ jobs:
           key: ${{ runner.os }}-php7-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Composer
-        run: composer install --dev
+        run: composer install
       - name: Run Tests
-        run: phpunit
+        run: composer run test-coverage

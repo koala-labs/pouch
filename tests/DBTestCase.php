@@ -6,12 +6,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 abstract class DBTestCase extends TestCase
 {
-    public $mockConsoleOutput = false;
-
     use RefreshDatabase {
         RefreshDatabase::migrateFreshUsing as parentMigrateFreshUsing;
         RefreshDatabase::migrateUsing as parentMigrateUsing;
     }
+    public $mockConsoleOutput = false;
 
     protected function migrateUsing(): array
     {
