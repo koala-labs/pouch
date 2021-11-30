@@ -2,18 +2,39 @@
 
 namespace Koala\Pouch\Tests;
 
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 abstract class DBTestCase extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
+    public $mockConsoleOutput = false;
 
-        Artisan::call(
-            'migrate',
+    use RefreshDatabase {
+        RefreshDatabase::migrateFreshUsing as parentMigrateFreshUsing;
+        RefreshDatabase::migrateUsing as parentMigrateUsing;
+    }
+
+    protected function migrateUsing(): array
+    {
+        return array_merge(
+            $this->parentMigrateUsing(),
             [
-                '--path'     => '../../../../tests/migrations'
+                '--database' => 'testbench',
+                '--path'     => __DIR__ . '/migrations',
+                '--realpath' => true
+            ]
+        );
+    }
+
+    protected function migrateFreshUsing(): array
+    {
+        $migrationPath = __DIR__ . '/migrations';
+
+        return array_merge(
+            $this->parentMigrateFreshUsing(),
+            [
+                '--database' => 'testbench',
+                '--path'     => $migrationPath,
+                '--realpath' => true
             ]
         );
     }
@@ -22,6 +43,14 @@ abstract class DBTestCase extends TestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.default', 'testbench');
+        $app['config']->set(
+            'database.connections.testbench',
+            [
+                'driver'   => 'sqlite',
+                'database' => ':memory:',
+                'prefix'   => ''
+            ]
+        );
     }
 }

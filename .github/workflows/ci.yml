@@ -8,42 +8,47 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache Composer dependencies
+      - name: Build
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          coverage: xdebug
+          extensions: sqlite3, pdo_sqlite
+          tools: phpunit
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::/tmp/" #$(composer config cache-files-dir)"
+      - name: Cache composer dependencies
         uses: actions/cache@v2
         with:
-          path: /tmp/composer-cache
-          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-      - name: Install Dependencies
-        uses: php-actions/composer@v6
-        with:
-          version: 2
-          php_version: 8.0
-          progress: yes
-          dev: yes
-      - name: Test
-        uses: php-actions/phpunit@v3
-        with:
-          php_version: 8
-          configuration: phpunit.xml
-  testing-74:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Cache Composer dependencies
-        uses: actions/cache@v2
-        with:
-          path: /tmp/composer-cache
-          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-      - name: Install Dependencies
-        uses: php-actions/composer@v6
-        with:
-          version: 2
-          php_version: 7.4
-          progress: yes
-          dev: yes
-      - name: Test
-        uses: php-actions/phpunit@v3
-        with:
-          php_version: 7.4
-          configuration: phpunit.xml
+          path: ${{ steps.composer-cache.outputs.dir }}
+          # Use composer.json for key, if composer.lock is not committed.
+          # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Composer
+        run: composer install --dev
+      - name: Run Tests
+        run: phpunit
+#  testing-74:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#      - name: Cache Composer dependencies
+#        uses: actions/cache@v2
+#        with:
+#          path: /tmp/composer-cache
+#          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+#      - name: Install Dependencies
+#        uses: php-actions/composer@v6
+#        with:
+#          version: 2
+#          php_version: 7.4
+#          progress: yes
+#          dev: yes
+#      - name: Test
+#        uses: php-actions/phpunit@v3
+#        with:
+#          php_version: 7.4
+#          configuration: phpunit.xml
