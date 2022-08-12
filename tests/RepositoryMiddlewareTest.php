@@ -161,6 +161,54 @@ class RepositoryMiddlewareTest extends TestCase
         $this->assertSame(['foo' => 'include'], $repository->modify()->getEagerLoads());
         $this->assertSame(['foo' => 'aggregate'], $repository->modify()->getAggregate());
     }
+
+    public function testItBuildsARepositoryFromARequestAndSetsPicks()
+    {
+        $request = Mockery::mock(Request::class);
+        $route   = Mockery::mock(Route::class);
+
+        $request->shouldReceive('route')->once()->andReturn($route);
+
+        ModelResolver::shouldReceive('resolveModelClass')->once()->andReturn(RepositoryMiddlewareTestStubModel::class);
+
+        $route->shouldReceive('parametersWithoutNulls')->once()->andReturn(['857']);
+
+        $request->shouldReceive('method')->once()->andReturn('GET');
+
+        $request->shouldReceive('get')->with('filters')->once()->andReturn([
+            'foo' => 'filters',
+        ]);
+        $request->shouldReceive('get')->with('sort')->once()->andReturn([
+            'foo' => 'sort',
+        ]);
+        $request->shouldReceive('get')->with('group')->once()->andReturn([
+            'foo' => 'group',
+        ]);
+        $request->shouldReceive('get')->with('include')->once()->andReturn([
+            'foo' => 'include',
+        ]);
+        $request->shouldReceive('get')->with('aggregate')->once()->andReturn([
+            'foo' => 'aggregate',
+        ]);
+        $request->shouldReceive('get')->with('pick')->once()->andReturn([
+           'foo', 'bar', 'baz', 'yar', 'derp'
+        ]);
+
+        $middleware = new RepositoryMiddleware();
+        $repository = $middleware->buildRepository($request);
+
+        $this->assertTrue($repository instanceof EloquentRepository);
+        $this->assertSame($repository->getModelClass(), RepositoryMiddlewareTestStubModel::class);
+
+        $this->assertSame('857', $repository->getInputId());
+
+        $this->assertSame(['foo' => 'filters'], $repository->modify()->getFilters());
+        $this->assertSame(['foo' => 'sort'], $repository->modify()->getSortOrder());
+        $this->assertSame(['foo' => 'group'], $repository->modify()->getGroupBy());
+        $this->assertSame(['foo' => 'include'], $repository->modify()->getEagerLoads());
+        $this->assertSame(['foo' => 'aggregate'], $repository->modify()->getAggregate());
+        $this->assertSame(['foo', 'bar', 'baz', 'yar', 'derp'], $repository->modify()->getPicks());
+    }
 }
 
 class RepositoryMiddlewareTestStubModel extends Model implements PouchResource

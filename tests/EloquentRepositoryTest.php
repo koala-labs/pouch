@@ -3,6 +3,7 @@
 namespace Koala\Pouch\Tests;
 
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
 use Koala\Pouch\Contracts\AccessControl;
 use Koala\Pouch\Tests\Models\Tag;
 use Koala\Pouch\Tests\Seeds\FilterDataSeeder;
@@ -1494,6 +1495,25 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertFalse($this->getRepository(User::class, [])->isManyOperation());
         $this->assertFalse($this->getRepository(User::class, $notManyOperationData)->isManyOperation());
         $this->assertTrue($this->getRepository(User::class, $manyOperationData)->isManyOperation());
+    }
+
+    public function testItCanFindASimpleModelAndPickASubsetOfColumns()
+    {
+        $this->seedUsers();
+        $repo       = $this->getRepository(User::class);
+        $user       = $repo->findOrFail(1);
+
+        $repo->modify()->addPicks(['id', 'username']);
+
+        $userWithPicks = $repo->findOrFail(1);
+
+        $repo->modify()->setPicks([]);
+
+        $userWithMorePicks = $repo->findOrFail(1);
+
+        $this->assertEqualsCanonicalizing(Schema::getColumnListing($user->getTable()), array_keys($user->getAttributes()));
+        $this->assertEqualsCanonicalizing(['id', 'username'], array_keys($userWithPicks->getAttributes()));
+        $this->assertEqualsCanonicalizing([], array_keys($userWithMorePicks->getAttributes()));
     }
 
     public function sortDirectionProvider()

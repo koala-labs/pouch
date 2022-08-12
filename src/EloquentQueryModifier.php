@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -71,6 +70,13 @@ class EloquentQueryModifier implements QueryModifier
      * @var array
      */
     private $aggregate = [];
+
+    /**
+     * Selected fields
+     *
+     * @var string[]|null
+     */
+    private array $picks = [];
 
     /**
      * Query storage
@@ -378,15 +384,20 @@ class EloquentQueryModifier implements QueryModifier
         $sorts_exist     = ! empty($sort_order_options);
         $group_exist     = ! empty($group_by);
         $aggregate_exist = ! empty($aggregate);
+        $picks_exist     = ! empty($this->picks);
 
         // No modifications to apply
-        if (! $filters_exist && ! $sorts_exist && ! $group_exist && ! $aggregate_exist) {
+        if (! $picks_exist && ! $filters_exist && ! $sorts_exist && ! $group_exist && ! $aggregate_exist) {
             return $this;
         }
 
         // Make a mock instance so we can describe its columns
         $temp_instance = new $model_class();
         $columns       = $this->getFields($temp_instance);
+
+        if ($picks_exist) {
+            $this->query()->select($this->picks);
+        }
 
         if ($filters_exist) {
             $this->filterQuery($filters, $access_compiler, $columns, $temp_instance);
@@ -650,5 +661,29 @@ class EloquentQueryModifier implements QueryModifier
         } else {
             $query->orderBy("$table.$field", $direction);
         }
+    }
+
+    public function addPick(string $name): QueryModifier
+    {
+        $this->addPicks(!empty($name) ? [$name] : []);
+
+        return $this;
+    }
+
+    public function addPicks(array $names): self
+    {
+        return $this->setPicks(array_merge($this->picks, $names));
+    }
+
+    public function getPicks(): ?array
+    {
+        return $this->picks;
+    }
+
+    public function setPicks(array $names): self
+    {
+        $this->picks = array_values(array_unique($names));
+
+        return $this;
     }
 }

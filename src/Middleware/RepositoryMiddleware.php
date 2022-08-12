@@ -66,6 +66,7 @@ class RepositoryMiddleware
         $repository->setModelClass($model_class)->setInput($input);
 
         $repository->modify()
+            ->setPicks((array) $request->get('pick'))
             ->setFilters((array) $request->get('filters'))
             ->setSortOrder((array) $request->get('sort'))
             ->setGroupBy((array) $request->get('group'))

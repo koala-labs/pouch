@@ -106,6 +106,20 @@ interface QueryModifier
     public function addFilter(string $key, string $value);
 
     /**
+     * Add a single pick
+     * @param string $name
+     * @return QueryModifier
+     */
+    public function addPick(string $name): self;
+
+    /**
+     * Add a single pick
+     * @param string[] $names
+     * @return QueryModifier
+     */
+    public function addPicks(array $names): self;
+
+    /**
      * Add a single modifier
      *
      * @param \Closure $modifier
@@ -175,4 +189,19 @@ interface QueryModifier
      * @return array
      */
     public function getSortOrder(): array;
+
+    /**
+     * Get picked fields
+     *
+     * @return array
+     */
+    public function getPicks(): ?array;
+
+    /**
+     * Set picked fields
+     *
+     * @param string[] $names
+     * @return self
+     */
+    public function setPicks(array $names): self;
 }
