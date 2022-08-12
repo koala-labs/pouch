@@ -1509,11 +1509,13 @@ class EloquentRepositoryTest extends DBTestCase
 
         $repo->modify()->addPick('occupation');
 
-        $userWithMorePicks = $repo->findOrFail(1);
+        $repo->modify()->setEagerLoads(['posts']);
+        $userWithMorePicksAndEagerLoad = $repo->findOrFail(1);
 
         $this->assertEqualsCanonicalizing(Schema::getColumnListing($user->getTable()), array_keys($user->getAttributes()));
         $this->assertEqualsCanonicalizing(['id', 'username'], array_keys($userWithPicks->getAttributes()));
-        $this->assertEqualsCanonicalizing(['id', 'username', 'occupation'], array_keys($userWithMorePicks->getAttributes()));
+        //Assert that posts have been eager loaded in addition to picked attributes
+        $this->assertEqualsCanonicalizing(['id', 'username', 'occupation', 'posts'], array_keys($userWithMorePicksAndEagerLoad->toArray()));
     }
 
     public function testItOnlyPicksASubsetOfColumnsThatExistOnTheResourceModel()
