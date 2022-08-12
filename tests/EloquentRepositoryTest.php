@@ -1507,32 +1507,22 @@ class EloquentRepositoryTest extends DBTestCase
 
         $userWithPicks = $repo->findOrFail(1);
 
-        $repo->modify()->setPicks([]);
+        $repo->modify()->addPick('occupation');
 
         $userWithMorePicks = $repo->findOrFail(1);
 
         $this->assertEqualsCanonicalizing(Schema::getColumnListing($user->getTable()), array_keys($user->getAttributes()));
         $this->assertEqualsCanonicalizing(['id', 'username'], array_keys($userWithPicks->getAttributes()));
-        $this->assertEqualsCanonicalizing([], array_keys($userWithMorePicks->getAttributes()));
+        $this->assertEqualsCanonicalizing(['id', 'username', 'occupation'], array_keys($userWithMorePicks->getAttributes()));
     }
 
     public function testItOnlyPicksASubsetOfColumnsThatExistOnTheResourceModel()
     {
         $this->seedUsers();
-        $repo       = $this->getRepository(User::class);
-        $user       = $repo->findOrFail(1);
+        $repo = $this->getRepository(User::class);
+        $repo->modify()->setPicks(['id', 'username', 'notinthismodel']);
 
-        $repo->modify()->addPicks(['id', 'username', 'not_appearing_in_this_model']);
-
-        $userWithPicks = $repo->findOrFail(1);
-
-        $repo->modify()->setPicks([]);
-
-        $userWithMorePicks = $repo->findOrFail(1);
-
-        $this->assertEqualsCanonicalizing(Schema::getColumnListing($user->getTable()), array_keys($user->getAttributes()));
-        $this->assertEqualsCanonicalizing(['id', 'username'], array_keys($userWithPicks->getAttributes()));
-        $this->assertEqualsCanonicalizing([], array_keys($userWithMorePicks->getAttributes()));
+        $this->assertEqualsCanonicalizing(['id', 'username'], array_keys($repo->firstOrFail()->getAttributes()));
     }
 
     public function sortDirectionProvider()
