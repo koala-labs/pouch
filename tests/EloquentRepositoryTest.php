@@ -1516,6 +1516,25 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertEqualsCanonicalizing([], array_keys($userWithMorePicks->getAttributes()));
     }
 
+    public function testItOnlyPicksASubsetOfColumnsThatExistOnTheResourceModel()
+    {
+        $this->seedUsers();
+        $repo       = $this->getRepository(User::class);
+        $user       = $repo->findOrFail(1);
+
+        $repo->modify()->addPicks(['id', 'username', 'not_appearing_in_this_model']);
+
+        $userWithPicks = $repo->findOrFail(1);
+
+        $repo->modify()->setPicks([]);
+
+        $userWithMorePicks = $repo->findOrFail(1);
+
+        $this->assertEqualsCanonicalizing(Schema::getColumnListing($user->getTable()), array_keys($user->getAttributes()));
+        $this->assertEqualsCanonicalizing(['id', 'username'], array_keys($userWithPicks->getAttributes()));
+        $this->assertEqualsCanonicalizing([], array_keys($userWithMorePicks->getAttributes()));
+    }
+
     public function sortDirectionProvider()
     {
         return [['asc'], ['desc']];

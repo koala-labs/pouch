@@ -396,7 +396,7 @@ class EloquentQueryModifier implements QueryModifier
         $columns       = $this->getFields($temp_instance);
 
         if ($picks_exist) {
-            $this->query()->select($this->picks);
+            $this->query()->select(array_intersect($columns, $this->picks));
         }
 
         if ($filters_exist) {
