@@ -875,6 +875,7 @@ class EloquentRepositoryTest extends DBTestCase
         );
 
         $repository = $this->getRepository(User::class);
+
         $this->assertEquals($allCount = User::count(), $repository->all()->count());
 
         $repository->modify()->setFilters(['username' => '~galaxyfarfaraway.com']);
@@ -1538,7 +1539,7 @@ class EloquentRepositoryTest extends DBTestCase
     {
         $valueToAvoid = $direction == 'desc' ? -1 : 1;
         $collection->sliding(2)->eachSpread(function ($previous, $current) use ($valueToAvoid, $direction) {
-            $word = $valueToAvoid == -1 ? 'after' : 'before';
+            $word    = $valueToAvoid == -1 ? 'after' : 'before';
             $message = "Failed asserting that the collection is sorted in $direction order. $previous does not come $word to $current.";
             $this->assertNotEquals($valueToAvoid, $previous <=> $current, $message);
         });
