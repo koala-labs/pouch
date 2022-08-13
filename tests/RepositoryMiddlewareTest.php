@@ -46,6 +46,7 @@ class RepositoryMiddlewareTest extends TestCase
         $request->shouldReceive('get')->with('group')->once()->andReturn([]);
         $request->shouldReceive('get')->with('include')->once()->andReturn([]);
         $request->shouldReceive('get')->with('aggregate')->once()->andReturn([]);
+        $request->shouldReceive('get')->with('pick')->once()->andReturn([]);
 
         $middleware = new RepositoryMiddleware();
         $repository = $middleware->buildRepository($request);
@@ -72,6 +73,7 @@ class RepositoryMiddlewareTest extends TestCase
         $request->shouldReceive('get')->with('group')->once()->andReturn([]);
         $request->shouldReceive('get')->with('include')->once()->andReturn([]);
         $request->shouldReceive('get')->with('aggregate')->once()->andReturn([]);
+        $request->shouldReceive('get')->with('pick')->once()->andReturn([]);
 
         $middleware = new RepositoryMiddleware();
         $repository = $middleware->buildRepository($request);
@@ -104,6 +106,7 @@ class RepositoryMiddlewareTest extends TestCase
         $request->shouldReceive('get')->with('group')->once()->andReturn([]);
         $request->shouldReceive('get')->with('include')->once()->andReturn([]);
         $request->shouldReceive('get')->with('aggregate')->once()->andReturn([]);
+        $request->shouldReceive('get')->with('pick')->once()->andReturn([]);
 
         $middleware = new RepositoryMiddleware();
         $repository = $middleware->buildRepository($request);
@@ -146,6 +149,7 @@ class RepositoryMiddlewareTest extends TestCase
         $request->shouldReceive('get')->with('aggregate')->once()->andReturn([
             'foo' => 'aggregate',
         ]);
+        $request->shouldReceive('get')->with('pick')->once()->andReturn([]);
 
         $middleware = new RepositoryMiddleware();
         $repository = $middleware->buildRepository($request);
