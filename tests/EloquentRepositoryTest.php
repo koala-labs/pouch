@@ -833,10 +833,12 @@ class EloquentRepositoryTest extends DBTestCase
         );
 
         $repository = $this->getRepository(User::class);
+
         $this->assertEquals($allCount = User::count(), $repository->all()->count());
 
         $repository->modify()->setFilters(['username' => '~galaxyfarfaraway.com']);
         $found_users = $repository->all();
+
         $this->assertEquals($allCount - 1, $found_users->count());
         $this->assertFalse($found_users->contains($otherUser));
 
@@ -1500,8 +1502,8 @@ class EloquentRepositoryTest extends DBTestCase
     public function testItCanFindASimpleModelAndPickASubsetOfColumns()
     {
         $this->seedUsers();
-        $repo       = $this->getRepository(User::class);
-        $user       = $repo->findOrFail(1);
+        $repo = $this->getRepository(User::class);
+        $user = $repo->findOrFail(1);
 
         $repo->modify()->addPicks(['id', 'username']);
 

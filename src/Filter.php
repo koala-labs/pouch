@@ -202,8 +202,7 @@ class Filter implements QueryFilterContainer
                     $query->whereHas(
                         $relation,
                         function ($query) use ($method, $column, $filter) {
-
-                        // Check if the column is a primary key of the model
+                            // Check if the column is a primary key of the model
                             // within the query. If it is, we should use the
                             // qualified key instead. It's important when this is a
                             // many to many relationship query.
