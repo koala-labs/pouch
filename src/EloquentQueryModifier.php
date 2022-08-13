@@ -663,7 +663,7 @@ class EloquentQueryModifier implements QueryModifier
         }
     }
 
-    public function addPick(string $name): QueryModifier
+    public function addPick(string $name): self
     {
         $this->addPicks(!empty($name) ? [$name] : []);
 
