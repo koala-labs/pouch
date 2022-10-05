@@ -66,12 +66,22 @@ class RepositoryMiddleware
         $repository->setModelClass($model_class)->setInput($input);
 
         $repository->modify()
-            ->setPicks((array) $request->get('pick'))
             ->setFilters((array) $request->get('filters'))
             ->setSortOrder((array) $request->get('sort'))
             ->setGroupBy((array) $request->get('group'))
             ->setEagerLoads((array) $request->get('include'))
             ->setAggregate((array) $request->get('aggregate'));
+
+        //Clean up comma separated pick list and explode it into an array
+        if ($request->has('pick') && is_string($request->get('pick')) && strlen($request->get('pick'))) {
+            $parsedPicks = array_filter(
+                explode(',', str_replace(' ', '', $request->get('pick'))),
+                'strlen'
+            );
+            if ($parsedPicks) {
+                $repository->modify()->addPicks($parsedPicks);
+            }
+        }
 
         $repository->accessControl()->setDepthRestriction(config('pouch.eager_load_depth'));
 

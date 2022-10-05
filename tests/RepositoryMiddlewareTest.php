@@ -10,6 +10,7 @@ use Koala\Pouch\Providers\RepositoryServiceProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
+use Koala\Pouch\Tests\Models\User;
 use Mockery;
 
 class RepositoryMiddlewareTest extends TestCase
@@ -212,6 +213,37 @@ class RepositoryMiddlewareTest extends TestCase
         $this->assertSame(['foo' => 'include'], $repository->modify()->getEagerLoads());
         $this->assertSame(['foo' => 'aggregate'], $repository->modify()->getAggregate());
         $this->assertSame(['foo', 'bar', 'baz', 'yar', 'derp'], $repository->modify()->getPicks());
+    }
+
+    /**
+     * @dataProvider pickAndExpectedResultProvider
+     */
+    public function testItCanAcceptPicksFromRequest($input, $expectedPicks)
+    {
+        $middleware = new RepositoryMiddleware();
+        $request = Request::create('/users', 'GET', ['pick' => $input]);
+        $route = new Route('GET', $request->getUri(), ['uses' => fn () => null, 'resource' => User::class]);
+
+        $route->bind($request);
+        $request->setRouteResolver(fn () => $route);
+
+        $repository = $middleware->buildRepository($request);
+
+        $this->assertEquals($expectedPicks, $repository->modify()->getPicks());
+    }
+
+    public function pickAndExpectedResultProvider()
+    {
+        return [
+            ['a,b,c', ['a', 'b', 'c']],
+            ['a ,b, c', ['a', 'b', 'c']],
+            ['a ,b,', ['a', 'b']],
+            ['0,1,2', ['0', '1', '2']],
+            ['0', ['0']],
+            [null, []],
+            [['a', 'b'], []],
+            ['', []]
+        ];
     }
 }
 
