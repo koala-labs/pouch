@@ -176,7 +176,7 @@ Assuming we have users and their related tables resembling the following structu
 ]
 ```
 
-We can users by their hobbies with `users?filters[profile.hobbies.name]=^Cook`. 
+We can filter users by their hobbies with `users?filters[profile.hobbies.name]=^Cook`. 
 
 This filter can be read as `select users with whose profile.hobbies.name begins with "Cook"`
 
@@ -199,6 +199,11 @@ We can use `AND` and `OR` statements to build filters such as `users?filters[use
 ```
 
 and this filter can be read as `select (users with username Bobby) OR (users with username Johnny whose profile.favorite_cheese attribute is Gouda)`.
+
+## Other Parameters
+### Pick
+We can limit the amount of data that comes back with your query by adding `pick` to the URL.
+Usage: `https://api.yourdomain.com/1.0/users?pick=id,username,occupation`
 
 ## Model Setup
 
