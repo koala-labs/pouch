@@ -113,7 +113,7 @@ interface QueryModifier
     public function addPick(string $name): self;
 
     /**
-     * Add a single pick
+     * Add one or more picks
      * @param string[] $names
      * @return QueryModifier
      */

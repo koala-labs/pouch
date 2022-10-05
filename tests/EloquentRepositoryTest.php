@@ -1509,16 +1509,22 @@ class EloquentRepositoryTest extends DBTestCase
         $repo->modify()->addPicks(['id', 'username']);
 
         $userWithPicks = $repo->findOrFail(1);
+        //Eloquent models that were loaded with a subset of columns will only have those attributes set
+        $this->assertEquals(['id', 'username'], array_keys($userWithPicks->getAttributes()));
+
 
         $repo->modify()->addPick('occupation');
 
         $repo->modify()->setEagerLoads(['posts']);
         $userWithMorePicksAndEagerLoad = $repo->findOrFail(1);
+        //Only picked columns yield attributes
+        $this->assertEquals(['id', 'username', 'occupation'], array_keys($userWithMorePicksAndEagerLoad->getAttributes()));
 
         $this->assertEqualsCanonicalizing(Schema::getColumnListing($user->getTable()), array_keys($user->getAttributes()));
-        $this->assertEqualsCanonicalizing(['id', 'username'], array_keys($userWithPicks->getAttributes()));
+
         //Assert that posts have been eager loaded in addition to picked attributes
-        $this->assertEqualsCanonicalizing(['id', 'username', 'occupation', 'posts'], array_keys($userWithMorePicksAndEagerLoad->toArray()));
+        $this->assertArrayHasKey('posts', array_keys($userWithMorePicksAndEagerLoad->toArray()));
+        $this->assertNotEmpty($userWithMorePicksAndEagerLoad->posts);
     }
 
     public function testItOnlyPicksASubsetOfColumnsThatExistOnTheResourceModel()
