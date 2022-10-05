@@ -238,6 +238,7 @@ class RepositoryMiddlewareTest extends TestCase
             ['a,b,c', ['a', 'b', 'c']],
             ['a ,b, c', ['a', 'b', 'c']],
             ['a ,b,', ['a', 'b']],
+            ['a', ['a']],
             ['0,1,2', ['0', '1', '2']],
             ['0', ['0']],
             [null, []],
