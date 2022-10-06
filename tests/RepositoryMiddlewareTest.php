@@ -221,8 +221,8 @@ class RepositoryMiddlewareTest extends TestCase
     public function testItCanAcceptPicksFromRequest($input, $expectedPicks)
     {
         $middleware = new RepositoryMiddleware();
-        $request = Request::create('/users', 'GET', ['pick' => $input]);
-        $route = new Route('GET', $request->getUri(), ['uses' => fn () => null, 'resource' => User::class]);
+        $request    = Request::create('/users', 'GET', ['pick' => $input]);
+        $route      = new Route('GET', $request->getUri(), ['uses' => fn () => null, 'resource' => User::class]);
 
         $route->bind($request);
         $request->setRouteResolver(fn () => $route);

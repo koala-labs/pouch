@@ -73,7 +73,7 @@ class RepositoryMiddleware
             ->setEagerLoads((array) $request->get('include'))
             ->setAggregate((array) $request->get('aggregate'));
 
-        //$repository->accessControl()->setDepthRestriction(config('pouch.eager_load_depth'));
+        $repository->accessControl()->setDepthRestriction(config('pouch.eager_load_depth'));
 
         return $repository;
     }
@@ -83,7 +83,7 @@ class RepositoryMiddleware
         $pick = $request->get('pick');
         if (is_array($pick)) {
             return $pick;
-        } else if (isset($pick) && is_string($pick) && strlen($pick)) {
+        } elseif (isset($pick) && is_string($pick) && strlen($pick)) {
             //Clean up comma separated pick list and explode it into an array
             return array_filter(
                 explode(',', str_replace(' ', '', $pick)),
