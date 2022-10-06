@@ -203,7 +203,9 @@ and this filter can be read as `select (users with username Bobby) OR (users wit
 ## Other Parameters
 ### Pick
 We can limit the amount of data that comes back with your query by adding `pick` to the URL.
-Usage: `https://api.yourdomain.com/1.0/users?pick=id,username,occupation`
+Usage: 
+  * `https://api.yourdomain.com/1.0/users?pick=id,username,occupation`
+  * `https://api.yourdomain.com/1.0/users?pick[]=id&pick[]=username&pick[]=occupation`
 
 ## Model Setup
 
