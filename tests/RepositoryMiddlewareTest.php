@@ -235,6 +235,7 @@ class RepositoryMiddlewareTest extends TestCase
     public function pickAndExpectedResultProvider()
     {
         return [
+            //?pick=a,b,c
             ['a,b,c', ['a', 'b', 'c']],
             ['a ,b, c', ['a', 'b', 'c']],
             ['a ,b,', ['a', 'b']],
@@ -242,8 +243,12 @@ class RepositoryMiddlewareTest extends TestCase
             ['0,1,2', ['0', '1', '2']],
             ['0', ['0']],
             [null, []],
-            [['a', 'b'], []],
-            ['', []]
+            [['a', 'b'], ['a', 'b']],
+            ['', []],
+            //?pick[]=a&pick[]=b&pick[]=c
+            [['a', 'b', 'c'], ['a', 'b', 'c']],
+            [['0','1','2'], ['0', '1', '2']],
+            [[0, 1, 2], ['0', '1', '2']],
         ];
     }
 }

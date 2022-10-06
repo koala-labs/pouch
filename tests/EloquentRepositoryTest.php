@@ -1523,7 +1523,7 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertEqualsCanonicalizing(Schema::getColumnListing($user->getTable()), array_keys($user->getAttributes()));
 
         //Assert that posts have been eager loaded in addition to picked attributes
-        $this->assertArrayHasKey('posts', array_keys($userWithMorePicksAndEagerLoad->toArray()));
+        $this->assertArrayHasKey('posts', $userWithMorePicksAndEagerLoad->toArray());
         $this->assertNotEmpty($userWithMorePicksAndEagerLoad->posts);
     }
 
