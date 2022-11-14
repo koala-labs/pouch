@@ -118,11 +118,6 @@ class EloquentRepository implements Repository
         return $this->query_modifier;
     }
 
-    public function addTransformation(callable $callback)
-    {
-        $this->model_transformer_callbacks[] = $callback;
-    }
-
     /**
      * Set the QueryModifier
      *
