@@ -77,12 +77,6 @@ class EloquentRepository implements Repository
     protected $query_filter_container;
 
     /**
-     * Array of callbacks used to transform a model after query
-     * @var array
-     */
-    protected array $model_transformer_callbacks;
-
-    /**
      * Access the access compiler
      *
      * @return \Koala\Pouch\Contracts\AccessControl
