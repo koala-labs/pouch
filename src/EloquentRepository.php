@@ -2,6 +2,8 @@
 
 namespace Koala\Pouch;
 
+use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\App;
 use Koala\Pouch\Contracts\AccessControl;
 use Koala\Pouch\Contracts\QueryFilterContainer;
 use Koala\Pouch\Contracts\QueryModifier;
@@ -75,6 +77,12 @@ class EloquentRepository implements Repository
     protected $query_filter_container;
 
     /**
+     * Array of callbacks used to transform a model after query
+     * @var array
+     */
+    protected array $model_transformer_callbacks;
+
+    /**
      * Access the access compiler
      *
      * @return \Koala\Pouch\Contracts\AccessControl
@@ -114,6 +122,11 @@ class EloquentRepository implements Repository
         }
 
         return $this->query_modifier;
+    }
+
+    public function addTransformation(callable $callback)
+    {
+        $this->model_transformer_callbacks[] = $callback;
     }
 
     /**
@@ -264,7 +277,7 @@ class EloquentRepository implements Repository
      */
     public function find($id)
     {
-        return $this->query()->find($id);
+        return $this->applyPicksToModel($this->query()->find($id));
     }
 
     /**
@@ -275,7 +288,7 @@ class EloquentRepository implements Repository
      */
     public function findOrFail($id): Model
     {
-        return $this->query()->findOrFail($id);
+        return $this->applyPicksToModel($this->query()->findOrFail($id));
     }
 
     /**
@@ -285,7 +298,7 @@ class EloquentRepository implements Repository
      */
     public function all(): Collection
     {
-        return $this->query()->get();
+        return $this->applyPicksToModels($this->query()->get());
     }
 
     /**
@@ -296,7 +309,11 @@ class EloquentRepository implements Repository
      */
     public function paginate($per_page): Paginator
     {
-        return $this->query()->paginate($per_page);
+        $paginator = $this->query()->paginate($per_page);
+        //Modify attribute visibility for all models in the collection
+        $paginator->getCollection()->pipe(fn ($models) => $this->applyPicksToModels($models));
+
+        return $paginator;
     }
 
     /**
@@ -622,8 +639,6 @@ class EloquentRepository implements Repository
         return ($this->getInput() && array_keys($this->getInput()) === range(0, count($this->getInput()) - 1));
     }
 
-
-
     /**
      * A helper method for backwards compatibility.
      *
@@ -645,7 +660,7 @@ class EloquentRepository implements Repository
      */
     public function first(): ?Model
     {
-        return $this->query()->first();
+        return $this->applyPicksToModel($this->query()->first());
     }
 
     /**
@@ -656,6 +671,40 @@ class EloquentRepository implements Repository
      */
     public function firstOrFail(): Model
     {
-        return $this->query()->firstOrFail();
+        return $this->applyPicksToModel($this->query()->firstOrFail());
+    }
+
+    protected function applyPicksToModels(Collection $models): Collection
+    {
+        return $this->modify()->getPicks() && $models->isNotEmpty() ?
+            $models->each(fn ($model) => $this->applyPicksToModel($model)) :
+            $models;
+    }
+
+    protected function applyPicksToModel(?Model $model) : ?Model
+    {
+        if (is_null($model)) {
+            return null;
+        }
+
+        //toArray() will include attributes fed through $appends and $with, and other eager-loaded relationships
+        $allVisibleAttributes = array_unique(
+            array_merge(
+                array_keys($model->toArray()),
+                $model->getVisible()
+            )
+        );
+
+        //Do not un-hide attributes that are already hidden
+        //Keep picked attributes and eager loaded relationships
+        $attributesToKeepVisible = array_diff(
+            array_intersect($allVisibleAttributes,
+                array_merge($this->modify()->getPicks(), $this->modify()->getEagerLoads())),
+            $model->getHidden()
+        );
+        $model->makeHidden($allVisibleAttributes);
+        $model->makeVisible($attributesToKeepVisible);
+
+        return $model;
     }
 }

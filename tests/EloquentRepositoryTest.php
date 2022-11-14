@@ -2,6 +2,7 @@
 
 namespace Koala\Pouch\Tests;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 use Koala\Pouch\Contracts\AccessControl;
@@ -1525,6 +1526,127 @@ class EloquentRepositoryTest extends DBTestCase
         //Assert that posts have been eager loaded in addition to picked attributes
         $this->assertArrayHasKey('posts', $userWithMorePicksAndEagerLoad->toArray());
         $this->assertNotEmpty($userWithMorePicksAndEagerLoad->posts);
+    }
+
+    public function testItCanFindASimpleModelWithAppendedAttributesAndPickASubsetOfAttributes()
+    {
+        $this->seedUsers();
+
+        $repo = $this->getRepository(
+            get_class(
+                new class extends User {
+                    protected $visible = [
+                        'id',
+                        'username',
+                        'name',
+                        'hands',
+                        'occupation',
+                        'times_captured',
+                        'posts',
+                        'profile',
+                        'foobar',
+                        'barbaz',
+                        'yarderp'
+                    ];
+                    protected $appends = ['foobar', 'barbaz'];
+                    protected $with    = ['yarderp'];
+                    protected $hidden  = ['stays_hidden'];
+
+                    protected $table = 'users';
+
+                    public function getFoobarAttribute()
+                    {
+                        return 123;
+                    }
+
+                    public function getBarbazAttribute() {
+                        return 456;
+                    }
+
+                    public function getStaysHiddenAttribute() {
+                        return false;
+                    }
+
+                    public function yarderp() {
+                        return $this->hasOne(Profile::class, 'user_id');
+                    }
+                }
+            )
+        );
+        $repo->modify()->addPicks(['id', 'username', 'foobar', 'barbaz']);
+
+        $userWithPicks = $repo->findOrFail(1);
+        $this->assertEquals(['id', 'username', 'foobar', 'barbaz'], array_keys($userWithPicks->toArray()));
+
+        $repo->modify()->setPicks(['id', 'username']);
+        $userWithPicks = $repo->findOrFail(1);
+        $this->assertEquals(['id', 'username'], array_keys($userWithPicks->toArray()));
+
+        $repo->modify()->setPicks(['id', 'username', 'stay_hidden', 'yarderp']);
+        $userWithPicks = $repo->findOrFail(1);
+        $this->assertEquals(['id', 'username', 'yarderp'], array_keys($userWithPicks->toArray()));
+    }
+
+    public function testItCanFindAListOfModelsWithAppendedAttributesAndPickASubsetOfAttributes()
+    {
+        $this->seedUsers();
+
+        $repo = $this->getRepository(
+            get_class(
+                new class extends User {
+                    protected $visible = [
+                        'id',
+                        'username',
+                        'name',
+                        'hands',
+                        'occupation',
+                        'times_captured',
+                        'posts',
+                        'profile',
+                        'foobar',
+                        'barbaz',
+                        'yarderp'
+                    ];
+                    protected $appends = ['foobar', 'barbaz'];
+                    protected $with    = ['yarderp'];
+                    protected $hidden  = ['stays_hidden'];
+
+                    protected $table = 'users';
+
+                    public function getFoobarAttribute()
+                    {
+                        return 123;
+                    }
+
+                    public function getBarbazAttribute() {
+                        return 456;
+                    }
+
+                    public function getStaysHiddenAttribute() {
+                        return false;
+                    }
+
+                    public function yarderp() {
+                        return $this->hasOne(Profile::class, 'user_id');
+                    }
+                }
+            )
+        );
+        $repo->modify()->addPicks(['id', 'username', 'foobar', 'barbaz']);
+
+        $usersWithPicks = $repo->all();
+        $this->assertTrue($usersWithPicks->every(fn ($userWithPicks) => ['id', 'username', 'foobar', 'barbaz'] === array_keys($userWithPicks->toArray())));
+
+        $repo->modify()->setPicks(['id', 'username']);
+        $usersWithPicks = $repo->all();
+        $this->assertTrue($usersWithPicks->every(fn ($userWithPicks) => ['id', 'username'] === array_keys($userWithPicks->toArray())));
+
+        $repo->modify()->setPicks(['id', 'username', 'stay_hidden', 'yarderp']);
+        $usersWithPicks = $repo->all();
+        $this->assertTrue($usersWithPicks->every(fn ($userWithPicks) => ['id', 'username', 'yarderp'] === array_keys($userWithPicks->toArray())));
+
+        $paginatedUsersWithPicks = $repo->paginate(10);
+        $this->assertTrue($paginatedUsersWithPicks->getCollection()->every(fn ($userWithPicks) => ['id', 'username', 'yarderp'] === array_keys($userWithPicks->toArray())));
     }
 
     public function testItOnlyPicksASubsetOfColumnsThatExistOnTheResourceModel()
