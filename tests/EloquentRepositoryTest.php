@@ -2,7 +2,6 @@
 
 namespace Koala\Pouch\Tests;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 use Koala\Pouch\Contracts\AccessControl;
@@ -62,8 +61,8 @@ class EloquentRepositoryTest extends DBTestCase
 
     public function testItCanFindASimpleModel()
     {
-        $repo = $this->getRepository(User::class);
-        $user = $repo->save();
+        $repo       = $this->getRepository(User::class);
+        $user       = $repo->save();
         $found_user = $repo->find($user->id);
         $this->assertNotNull($found_user);
         $this->assertEquals($user->id, $found_user->id);
@@ -72,9 +71,9 @@ class EloquentRepositoryTest extends DBTestCase
     public function testItCanReturnASingleModelFromAQuery()
     {
         $this->seedUsers();
-        $repo = $this->getRepository(User::class);
-        $users = $repo->all();
-        $firstUser = $repo->first();
+        $repo            = $this->getRepository(User::class);
+        $users           = $repo->all();
+        $firstUser       = $repo->first();
         $firstOrFailUser = $repo->firstOrFail();
         $this->assertNotNull($firstUser);
         $this->assertNotNull($firstOrFailUser);
@@ -85,7 +84,7 @@ class EloquentRepositoryTest extends DBTestCase
 
     public function testItFirstReturnsNullWhenTheQueryHasNoResults()
     {
-        $model = new class () extends User {
+        $model = new class() extends User {
             public static function query()
             {
                 return \Mockery::mock(parent::query())
@@ -100,7 +99,7 @@ class EloquentRepositoryTest extends DBTestCase
 
     public function testItFailsWhenFirstOrFailQueryHasNoResults()
     {
-        $model = new class () extends User {
+        $model = new class() extends User {
             public static function query()
             {
                 return \Mockery::mock(parent::query())
@@ -124,8 +123,8 @@ class EloquentRepositoryTest extends DBTestCase
 
     public function testItPaginates()
     {
-        $repository = $this->getRepository(User::class);
-        $first_user = $repository->setInput(['username' => 'bob'])->save();
+        $repository  = $this->getRepository(User::class);
+        $first_user  = $repository->setInput(['username' => 'bob'])->save();
         $second_user = $repository->setInput(['username' => 'sue'])->save();
 
         $paginator = $repository->paginate(1);
@@ -137,7 +136,7 @@ class EloquentRepositoryTest extends DBTestCase
     {
         $this->getRepository(User::class, [
             'username' => 'joe',
-            'posts' => [
+            'posts'    => [
                 [
                     'title' => 'Some Great Post',
                 ],
@@ -173,7 +172,7 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertEquals($user->username, 'bobby');
 
         $user = $this->getRepository(User::class, [
-            'id' => 1,
+            'id'       => 1,
             'username' => 'sue'
         ])->save();
         $this->assertEquals($user->id, 1);
@@ -194,7 +193,7 @@ class EloquentRepositoryTest extends DBTestCase
     {
         $post = $this->getRepository(Post::class, [
             'title' => 'Some Great Post',
-            'user' => [
+            'user'  => [
                 'username' => 'jimmy',
             ],
         ])->save();
@@ -207,7 +206,7 @@ class EloquentRepositoryTest extends DBTestCase
     {
         $user = $this->getRepository(User::class, [
             'username' => 'joe',
-            'posts' => [
+            'posts'    => [
                 [
                     'title' => 'Some Great Post',
                 ],
@@ -228,7 +227,7 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertEquals($post->title, 'Yet Another Great Post');
 
         $this->getRepository(User::class, [
-            'id' => $user->id,
+            'id'    => $user->id,
             'posts' => [
                 [
                     'id' => 1,
@@ -250,7 +249,7 @@ class EloquentRepositoryTest extends DBTestCase
     {
         $user = $this->getRepository(User::class, [
             'username' => 'joe',
-            'profile' => [
+            'profile'  => [
                 'favorite_cheese' => 'brie',
             ],
         ])->save();
@@ -260,7 +259,7 @@ class EloquentRepositoryTest extends DBTestCase
         $old_profile_id = $user->profile->id;
 
         $user = $this->getRepository(User::class, [
-            'id' => $user->id,
+            'id'      => $user->id,
             'profile' => [
                 'favorite_cheese' => 'pepper jack',
             ],
@@ -277,9 +276,9 @@ class EloquentRepositoryTest extends DBTestCase
     {
         $post = $this->getRepository(Post::class, [
             'title' => 'All the Tags',
-            'user' => [
+            'user'  => [
                 'username' => 'simon',
-                'profile' => [
+                'profile'  => [
                     'favorite_cheese' => 'brie',
                 ],
             ],
@@ -302,10 +301,10 @@ class EloquentRepositoryTest extends DBTestCase
     {
         $post = $this->getRepository(Post::class, [
             'title' => 'All the Tags',
-            'user' => [
+            'user'  => [
                 'username' => 'josh',
             ],
-            'tags' => [
+            'tags'  => [
                 [
                     'label' => 'Has Extra',
                     'pivot' => [
@@ -319,10 +318,10 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertEquals($tag->pivot->extra, 'Meowth');
 
         $post = $this->getRepository(Post::class, [
-            'id' => $post->id,
+            'id'   => $post->id,
             'tags' => [
                 [
-                    'id' => $tag->id,
+                    'id'    => $tag->id,
                     'pivot' => [
                         'extra' => 'Pikachu',
                     ],
@@ -360,10 +359,10 @@ class EloquentRepositoryTest extends DBTestCase
         $repository = $this->getRepository(User::class);
         $first_user = $repository->setInput([
             'username' => 'Bobby',
-            'posts' => [
+            'posts'    => [
                 [
                     'title' => 'First Post',
-                    'tags' => [
+                    'tags'  => [
                         ['label' => 'Tag1']
                     ]
                 ]
@@ -371,10 +370,10 @@ class EloquentRepositoryTest extends DBTestCase
         ])->save();
         $second_user = $repository->setInput([
             'username' => 'Robby',
-            'posts' => [
+            'posts'    => [
                 [
                     'title' => 'Zis is the final post alphabetically',
-                    'tags' => [
+                    'tags'  => [
                         ['label' => 'Tag2']
                     ]
                 ]
@@ -382,10 +381,10 @@ class EloquentRepositoryTest extends DBTestCase
         ])->save();
         $third_user = $repository->setInput([
             'username' => 'Gobby',
-            'posts' => [
+            'posts'    => [
                 [
                     'title' => 'Third Post',
-                    'tags' => [
+                    'tags'  => [
                         ['label' => 'Tag3']
                     ]
                 ]
@@ -447,16 +446,16 @@ class EloquentRepositoryTest extends DBTestCase
     public function testItOnlyUpdatesFillableAttributesOnCreate()
     {
         $input = [
-            'username' => 'javacup@galaxyfarfaraway.com',
-            'name' => 'Jabba The Hutt',
-            'hands' => 10,
+            'username'       => 'javacup@galaxyfarfaraway.com',
+            'name'           => 'Jabba The Hutt',
+            'hands'          => 10,
             'times_captured' => 0,
-            'not_fillable' => 'should be null',
-            'occupation' => 'Being Gross',
-            'profile' => [
+            'not_fillable'   => 'should be null',
+            'occupation'     => 'Being Gross',
+            'profile'        => [
                 'favorite_cheese' => 'Cheddar',
-                'favorite_fruit' => 'Apples',
-                'is_human' => false
+                'favorite_fruit'  => 'Apples',
+                'is_human'        => false
             ],
         ];
 
@@ -467,16 +466,16 @@ class EloquentRepositoryTest extends DBTestCase
     public function testItOnlyUpdatesFillableAttributesOnUpdate()
     {
         $input = [
-            'username' => 'javacup@galaxyfarfaraway.com',
-            'name' => 'Jabba The Hutt',
-            'hands' => 10,
+            'username'       => 'javacup@galaxyfarfaraway.com',
+            'name'           => 'Jabba The Hutt',
+            'hands'          => 10,
             'times_captured' => 0,
-            'not_fillable' => 'should be null',
-            'occupation' => 'Being Gross',
-            'profile' => [
+            'not_fillable'   => 'should be null',
+            'occupation'     => 'Being Gross',
+            'profile'        => [
                 'favorite_cheese' => 'Cheddar',
-                'favorite_fruit' => 'Apples',
-                'is_human' => false
+                'favorite_fruit'  => 'Apples',
+                'is_human'        => false
             ],
         ];
 
@@ -491,17 +490,17 @@ class EloquentRepositoryTest extends DBTestCase
     public function testItOnlyUpdatesFillableAttributesForRelationsOnCreate()
     {
         $input = [
-            'username' => 'javacup@galaxyfarfaraway.com',
-            'name' => 'Jabba The Hutt',
-            'hands' => 10,
+            'username'       => 'javacup@galaxyfarfaraway.com',
+            'name'           => 'Jabba The Hutt',
+            'hands'          => 10,
             'times_captured' => 0,
-            'not_fillable' => 'should be null',
-            'occupation' => 'Being Gross',
-            'profile' => [
+            'not_fillable'   => 'should be null',
+            'occupation'     => 'Being Gross',
+            'profile'        => [
                 'favorite_cheese' => 'Cheddar',
-                'favorite_fruit' => 'Apples',
-                'is_human' => false,
-                'not_fillable' => 'should be null'
+                'favorite_fruit'  => 'Apples',
+                'is_human'        => false,
+                'not_fillable'    => 'should be null'
             ],
         ];
 
@@ -513,17 +512,17 @@ class EloquentRepositoryTest extends DBTestCase
     public function testItOnlyUpdatesFillableAttributesForRelationsOnUpdate()
     {
         $input = [
-            'username' => 'javacup@galaxyfarfaraway.com',
-            'name' => 'Jabba The Hutt',
-            'hands' => 10,
+            'username'       => 'javacup@galaxyfarfaraway.com',
+            'name'           => 'Jabba The Hutt',
+            'hands'          => 10,
             'times_captured' => 0,
-            'not_fillable' => 'should be null',
-            'occupation' => 'Being Gross',
-            'profile' => [
+            'not_fillable'   => 'should be null',
+            'occupation'     => 'Being Gross',
+            'profile'        => [
                 'favorite_cheese' => 'Cheddar',
-                'favorite_fruit' => 'Apples',
-                'is_human' => false,
-                'not_fillable' => 'should be null'
+                'favorite_fruit'  => 'Apples',
+                'is_human'        => false,
+                'not_fillable'    => 'should be null'
             ],
         ];
 
@@ -540,12 +539,12 @@ class EloquentRepositoryTest extends DBTestCase
     public function testItDoesNotRunArbitraryMethodsOnActualInstance()
     {
         $input = [
-            'username' => 'javacup@galaxyfarfaraway.com',
-            'name' => 'Jabba The Hutt',
-            'hands' => 10,
+            'username'       => 'javacup@galaxyfarfaraway.com',
+            'name'           => 'Jabba The Hutt',
+            'hands'          => 10,
             'times_captured' => 0,
-            'not_fillable' => 'should be null',
-            'occupation' => 'Being Gross',
+            'not_fillable'   => 'should be null',
+            'occupation'     => 'Being Gross',
         ];
 
         $user = $this->getRepository(User::class, $input)->save();
@@ -568,12 +567,12 @@ class EloquentRepositoryTest extends DBTestCase
     public function testItCanSetDepthRestriction()
     {
         $input = [
-            'username' => 'javacup@galaxyfarfaraway.com',
-            'name' => 'Jabba The Hutt',
-            'hands' => 10,
+            'username'       => 'javacup@galaxyfarfaraway.com',
+            'name'           => 'Jabba The Hutt',
+            'hands'          => 10,
             'times_captured' => 0,
-            'not_fillable' => 'should be null',
-            'occupation' => 'Being Gross',
+            'not_fillable'   => 'should be null',
+            'occupation'     => 'Being Gross',
         ];
 
         $repository = $this->getRepository(User::class, $input);
@@ -791,7 +790,7 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertCount(Tag::count(), $tags->pluck('label')->unique());
 
         $tags->each(
-            fn($tag) => $this->assertCollectionIsSorted($tag->posts->pluck('title'), $direction)
+            fn ($tag) => $this->assertCollectionIsSorted($tag->posts->pluck('title'), $direction)
         );
     }
 
@@ -814,7 +813,7 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertCount(Tag::count(), $tags->pluck('label')->unique());
 
         $tags->each(
-            fn($tag) => $this->assertCollectionIsSorted($tag->posts->pluck('title'), $direction)
+            fn ($tag) => $this->assertCollectionIsSorted($tag->posts->pluck('title'), $direction)
         );
     }
 
@@ -825,11 +824,11 @@ class EloquentRepositoryTest extends DBTestCase
         $otherUser = User::firstOrCreate(
             ['username' => 'bobbytables@xkcd.com'],
             [
-                'username' => 'bobbytables@xkcd.com',
-                'name' => 'Bobby',
-                'hands' => 2,
+                'username'       => 'bobbytables@xkcd.com',
+                'name'           => 'Bobby',
+                'hands'          => 2,
                 'times_captured' => 0,
-                'occupation' => 'Student'
+                'occupation'     => 'Student'
             ]
         );
 
@@ -845,7 +844,7 @@ class EloquentRepositoryTest extends DBTestCase
 
         $additional_filters = [
             'profile.is_human' => '=true',
-            'times_captured' => '>2'
+            'times_captured'   => '>2'
         ];
 
         $repository->modify()->addFilters($additional_filters);
@@ -854,9 +853,9 @@ class EloquentRepositoryTest extends DBTestCase
 
         $filters = $repository->modify()->getFilters();
         $this->assertEquals([
-            'username' => '~galaxyfarfaraway.com',
+            'username'         => '~galaxyfarfaraway.com',
             'profile.is_human' => '=true',
-            'times_captured' => '>2'
+            'times_captured'   => '>2'
         ], $filters);
     }
 
@@ -867,11 +866,11 @@ class EloquentRepositoryTest extends DBTestCase
         $otherUser = User::firstOrCreate(
             ['username' => 'bobbytables@xkcd.com'],
             [
-                'username' => 'bobbytables@xkcd.com',
-                'name' => 'Bobby',
-                'hands' => 2,
+                'username'       => 'bobbytables@xkcd.com',
+                'name'           => 'Bobby',
+                'hands'          => 2,
                 'times_captured' => 0,
-                'occupation' => 'Student'
+                'occupation'     => 'Student'
             ]
         );
 
@@ -890,7 +889,7 @@ class EloquentRepositoryTest extends DBTestCase
 
         $filters = $repository->modify()->getFilters();
         $this->assertEquals([
-            'username' => '~galaxyfarfaraway.com',
+            'username'         => '~galaxyfarfaraway.com',
             'profile.is_human' => '=true',
         ], $filters);
     }
@@ -979,7 +978,7 @@ class EloquentRepositoryTest extends DBTestCase
 
         $repository->accessControl()->removeManyFillable(['baz', 'bag']);
 
-        $this->assertSame(['foo',], $repository->accessControl()->getFillable());
+        $this->assertSame(['foo'], $repository->accessControl()->getFillable());
     }
 
     public function testItCanDetermineIfIsFillable()
@@ -1534,7 +1533,7 @@ class EloquentRepositoryTest extends DBTestCase
 
         $repo = $this->getRepository(
             get_class(
-                new class () extends User {
+                new class() extends User {
                     protected $visible = [
                         'id',
                         'username',
@@ -1596,7 +1595,7 @@ class EloquentRepositoryTest extends DBTestCase
 
         $repo = $this->getRepository(
             get_class(
-                new class () extends User {
+                new class() extends User {
                     protected $visible = [
                         'id',
                         'username',
@@ -1641,18 +1640,18 @@ class EloquentRepositoryTest extends DBTestCase
         $repo->modify()->addPicks(['id', 'username', 'foobar', 'barbaz']);
 
         $usersWithPicks = $repo->all();
-        $this->assertTrue($usersWithPicks->every(fn($userWithPicks) => ['id', 'username', 'foobar', 'barbaz'] === array_keys($userWithPicks->toArray())));
+        $this->assertTrue($usersWithPicks->every(fn ($userWithPicks) => ['id', 'username', 'foobar', 'barbaz'] === array_keys($userWithPicks->toArray())));
 
         $repo->modify()->setPicks(['id', 'username']);
         $usersWithPicks = $repo->all();
-        $this->assertTrue($usersWithPicks->every(fn($userWithPicks) => ['id', 'username'] === array_keys($userWithPicks->toArray())));
+        $this->assertTrue($usersWithPicks->every(fn ($userWithPicks) => ['id', 'username'] === array_keys($userWithPicks->toArray())));
 
         $repo->modify()->setPicks(['id', 'username', 'stay_hidden', 'yarderp']);
         $usersWithPicks = $repo->all();
-        $this->assertTrue($usersWithPicks->every(fn($userWithPicks) => ['id', 'username', 'yarderp'] === array_keys($userWithPicks->toArray())));
+        $this->assertTrue($usersWithPicks->every(fn ($userWithPicks) => ['id', 'username', 'yarderp'] === array_keys($userWithPicks->toArray())));
 
         $paginatedUsersWithPicks = $repo->paginate(10);
-        $this->assertTrue($paginatedUsersWithPicks->getCollection()->every(fn($userWithPicks) => ['id', 'username', 'yarderp'] === array_keys($userWithPicks->toArray())));
+        $this->assertTrue($paginatedUsersWithPicks->getCollection()->every(fn ($userWithPicks) => ['id', 'username', 'yarderp'] === array_keys($userWithPicks->toArray())));
     }
 
     public function testItShowsAllVisibleFieldsWhenNoPicksAreApplied()
@@ -1661,7 +1660,7 @@ class EloquentRepositoryTest extends DBTestCase
 
         $repo = $this->getRepository(
             get_class(
-                new class () extends User {
+                new class() extends User {
                     protected $visible = [
                         'id',
                         'username',
@@ -1721,7 +1720,7 @@ class EloquentRepositoryTest extends DBTestCase
 
         $repo->modify()->setEagerLoads(['profile']);
         $usersWithPicks = Collection::wrap([$repo->firstOrFail(), $repo->first(), $repo->find(1), $repo->findOrFail(1)])->concat($repo->all());
-        $usersWithPicks->each(fn($userWithPicks) => $this->assertEqualsCanonicalizing(array_diff($userWithPicks->getVisible(), array_keys($userWithPicks->toArray())), ['posts']));
+        $usersWithPicks->each(fn ($userWithPicks) => $this->assertEqualsCanonicalizing(array_diff($userWithPicks->getVisible(), array_keys($userWithPicks->toArray())), ['posts']));
     }
 
 
