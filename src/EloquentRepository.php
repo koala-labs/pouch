@@ -279,15 +279,15 @@ class EloquentRepository implements Repository
     {
         return $this->transformModelForVisibility($this->query()->findOrFail($id));
     }
-
     /**
+
      * Get all elements against the base query.
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all(): Collection
     {
-        return $this->transformModelsForVisibility($this->query()->get());
+        return $this->query()->get()->transform(fn ($model) => $this->transformModelForVisibility($model));
     }
 
     /**
@@ -300,7 +300,7 @@ class EloquentRepository implements Repository
     {
         $paginator = $this->query()->paginate($per_page);
         //Modify attribute visibility for all models in the collection
-        $paginator->getCollection()->pipe(fn ($models) => $this->transformModelsForVisibility($models));
+        $paginator->getCollection()->transform(fn ($model) => $this->transformModelForVisibility($model));
 
         return $paginator;
     }
@@ -661,12 +661,6 @@ class EloquentRepository implements Repository
     public function firstOrFail(): Model
     {
         return $this->transformModelForVisibility($this->query()->firstOrFail());
-    }
-
-    protected function transformModelsForVisibility(Collection $models): Collection
-    {
-        //Modify collection items in place
-        return $models->transform(fn ($model) => $this->transformModelForVisibility($model));
     }
 
     protected function transformModelForVisibility(?Model $model): ?Model
