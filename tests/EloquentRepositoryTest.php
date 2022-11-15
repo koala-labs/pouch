@@ -1649,6 +1649,72 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertTrue($paginatedUsersWithPicks->getCollection()->every(fn ($userWithPicks) => ['id', 'username', 'yarderp'] === array_keys($userWithPicks->toArray())));
     }
 
+    public function testItShowsAllVisibleFieldsWhenNoPicksAreApplied()
+    {
+        $this->seedUsers();
+
+        $repo = $this->getRepository(
+            get_class(
+                new class extends User {
+                    protected $visible = [
+                        'id',
+                        'username',
+                        'name',
+                        'hands',
+                        'occupation',
+                        'times_captured',
+                        'posts',
+                        'profile',
+                        'foobar',
+                        'barbaz',
+                        'yarderp'
+                    ];
+                    protected $appends = ['foobar', 'barbaz'];
+                    protected $with    = ['yarderp'];
+                    protected $hidden  = ['stays_hidden'];
+
+                    protected $table = 'users';
+
+                    public function getFoobarAttribute()
+                    {
+                        return 123;
+                    }
+
+                    public function getBarbazAttribute() {
+                        return 456;
+                    }
+
+                    public function getStaysHiddenAttribute() {
+                        return false;
+                    }
+
+                    public function yarderp() {
+                        return $this->hasOne(Profile::class, 'user_id');
+                    }
+
+                    public function profile() {
+                        return $this->hasOne(Profile::class, 'user_id');
+                    }
+                }
+            )
+        );
+
+
+        //All visible fields are present except lazy-loaded relationships
+        $usersWithPicks = Collection::wrap([$repo->firstOrFail(), $repo->first(), $repo->find(1), $repo->findOrFail(1)])->concat($repo->all());
+        $usersWithPicks->each(function ($userWithPicks) {
+            $modelToArray = $userWithPicks->toArray();
+            $modelKeys = array_keys($modelToArray);
+            $diff = array_diff($userWithPicks->getVisible(), $modelKeys);
+            $this->assertEqualsCanonicalizing($diff, ['posts', 'profile']);
+        });
+
+        $repo->modify()->setEagerLoads(['profile']);
+        $usersWithPicks = Collection::wrap([$repo->firstOrFail(), $repo->first(), $repo->find(1), $repo->findOrFail(1)])->concat($repo->all());
+        $usersWithPicks->each(fn ($userWithPicks) => $this->assertEqualsCanonicalizing(array_diff($userWithPicks->getVisible(), array_keys($userWithPicks->toArray())), ['posts']));
+    }
+
+
     public function testItOnlyPicksASubsetOfColumnsThatExistOnTheResourceModel()
     {
         $this->seedUsers();

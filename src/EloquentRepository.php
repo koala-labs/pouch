@@ -266,7 +266,7 @@ class EloquentRepository implements Repository
      */
     public function find($id)
     {
-        return $this->applyPicksToModel($this->query()->find($id));
+        return $this->transformModelForVisibility($this->query()->find($id));
     }
 
     /**
@@ -277,7 +277,7 @@ class EloquentRepository implements Repository
      */
     public function findOrFail($id): Model
     {
-        return $this->applyPicksToModel($this->query()->findOrFail($id));
+        return $this->transformModelForVisibility($this->query()->findOrFail($id));
     }
 
     /**
@@ -287,7 +287,7 @@ class EloquentRepository implements Repository
      */
     public function all(): Collection
     {
-        return $this->applyPicksToModels($this->query()->get());
+        return $this->transformModelsForVisibility($this->query()->get());
     }
 
     /**
@@ -300,7 +300,7 @@ class EloquentRepository implements Repository
     {
         $paginator = $this->query()->paginate($per_page);
         //Modify attribute visibility for all models in the collection
-        $paginator->getCollection()->pipe(fn ($models) => $this->applyPicksToModels($models));
+        $paginator->getCollection()->pipe(fn ($models) => $this->transformModelsForVisibility($models));
 
         return $paginator;
     }
@@ -649,7 +649,7 @@ class EloquentRepository implements Repository
      */
     public function first(): ?Model
     {
-        return $this->applyPicksToModel($this->query()->first());
+        return $this->transformModelForVisibility($this->query()->first());
     }
 
     /**
@@ -660,39 +660,32 @@ class EloquentRepository implements Repository
      */
     public function firstOrFail(): Model
     {
-        return $this->applyPicksToModel($this->query()->firstOrFail());
+        return $this->transformModelForVisibility($this->query()->firstOrFail());
     }
 
-    protected function applyPicksToModels(Collection $models): Collection
+    protected function transformModelsForVisibility(Collection $models): Collection
     {
-        return $this->modify()->getPicks() && $models->isNotEmpty() ?
-            $models->each(fn ($model) => $this->applyPicksToModel($model)) :
-            $models;
+        //Modify collection items in place
+        return $models->transform(fn ($model) => $this->transformModelForVisibility($model));
     }
 
-    protected function applyPicksToModel(?Model $model) : ?Model
+    protected function transformModelForVisibility(?Model $model): ?Model
     {
         if (is_null($model)) {
             return null;
         }
 
-        //toArray() will include attributes fed through $appends and $with, and other eager-loaded relationships
-        $allVisibleAttributes = array_unique(
-            array_merge(
-                array_keys($model->toArray()),
-                $model->getVisible()
-            )
-        );
+        if (empty($this->modify()->getPicks())) {
+            return $model;
+        }
 
-        //Do not un-hide attributes that are already hidden
-        //Keep picked attributes and eager loaded relationships
-        $attributesToKeepVisible = array_diff(
-            array_intersect($allVisibleAttributes,
-                array_merge($this->modify()->getPicks(), $this->modify()->getEagerLoads())),
-            $model->getHidden()
-        );
-        $model->makeHidden($allVisibleAttributes);
-        $model->makeVisible($attributesToKeepVisible);
+        $originalHidden = $model->getHidden();
+        //Move the picked and included fields into the visible set
+        $model->makeVisible($this->modify()->getPicks());
+        //Keep the original set of hidden fields hidden, even if it includes picks and includes
+        $model->makeHidden($originalHidden);
+        //Capture additional appended and with fields that were not listed in the original list of hidden fields
+        $model->makeHidden(array_diff(array_keys($model->toArray()), array_merge($this->modify()->getEagerLoads(), $this->modify()->getPicks())));
 
         return $model;
     }

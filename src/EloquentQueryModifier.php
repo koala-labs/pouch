@@ -675,7 +675,7 @@ class EloquentQueryModifier implements QueryModifier
         return $this->setPicks(array_merge($this->picks, $names));
     }
 
-    public function getPicks(): ?array
+    public function getPicks(): array
     {
         return $this->picks;
     }

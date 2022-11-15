@@ -195,7 +195,7 @@ interface QueryModifier
      *
      * @return array
      */
-    public function getPicks(): ?array;
+    public function getPicks(): array;
 
     /**
      * Set picked fields
