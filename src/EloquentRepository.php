@@ -679,13 +679,12 @@ class EloquentRepository implements Repository
             return $model;
         }
 
-        $originalHidden = $model->getHidden();
-        //Move the picked and included fields into the visible set
-        $model->makeVisible($this->modify()->getPicks());
-        //Keep the original set of hidden fields hidden, even if it includes picks and includes
-        $model->makeHidden($originalHidden);
-        //Capture additional appended and with fields that were not listed in the original list of hidden fields
-        $model->makeHidden(array_diff(array_keys($model->toArray()), array_merge($this->modify()->getEagerLoads(), $this->modify()->getPicks())));
+        $visibleModelAttributeNames       = array_unique(array_merge($model->getVisible(), array_keys($model->toArray())));
+        $pickedVisibleModelAttributeNames = array_intersect(array_merge($this->modify()->getEagerLoads(), $this->modify()->getPicks()), $visibleModelAttributeNames);
+
+        //Make all fields other than picked and includes hidden
+        $model->setHidden($visibleModelAttributeNames);
+        $model->makeVisible($pickedVisibleModelAttributeNames);
 
         return $model;
     }
