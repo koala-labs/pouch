@@ -304,7 +304,7 @@ class EloquentRepositoryTest extends DBTestCase
             'user'  => [
                 'username' => 'josh',
             ],
-            'tags'  => [
+            'tags' => [
                 [
                     'label' => 'Has Extra',
                     'pivot' => [
@@ -483,7 +483,7 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertNull($user->not_fillable);
 
         $input['id'] = $user->id;
-        $user = $this->getRepository(User::class, $input)->update();
+        $user        = $this->getRepository(User::class, $input)->update();
         $this->assertNull($user->not_fillable);
     }
 
@@ -531,7 +531,7 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertNull($user->profile->not_fillable);
 
         $input['id'] = $user->id;
-        $user = $this->getRepository(User::class, $input)->update();
+        $user        = $this->getRepository(User::class, $input)->update();
         $this->assertNull($user->not_fillable);
         $this->assertNull($user->profile->not_fillable);
     }
@@ -551,7 +551,7 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertNotNull($user);
 
         $input['delete'] = 'doesn\'t matter but this should not be run';
-        $input['id'] = $user->id;
+        $input['id']     = $user->id;
 
         // Since users are soft deletable, if this fails and we run a $user->delete(), magic box will delete the record
         // but then try to recreate it with the same ID and get a MySQL unique constraint error because the
@@ -913,7 +913,7 @@ class EloquentRepositoryTest extends DBTestCase
 
         $repository->accessControl()->addFillable('foo');
 
-        $expect = User::FILLABLE;
+        $expect   = User::FILLABLE;
         $expect[] = 'foo';
 
         $this->assertSame($expect, $repository->accessControl()->getFillable());
@@ -927,7 +927,7 @@ class EloquentRepositoryTest extends DBTestCase
 
         $repository->accessControl()->addManyFillable(['foo', 'bar', 'baz']);
 
-        $expect = User::FILLABLE;
+        $expect   = User::FILLABLE;
         $expect[] = 'foo';
         $expect[] = 'bar';
         $expect[] = 'baz';
@@ -1239,22 +1239,22 @@ class EloquentRepositoryTest extends DBTestCase
         $post = $this->getRepository(
             Post::class,
             [
-                'title' => 'All the Tags',
+                'title'        => 'All the Tags',
                 'not_fillable' => 'should not be set',
-                'user' => [
-                    'username' => 'simon',
+                'user'         => [
+                    'username'     => 'simon',
                     'not_fillable' => 'should not be set',
-                    'profile' => [
+                    'profile'      => [
                         'favorite_cheese' => 'brie',
                     ],
                 ],
                 'tags' => [
                     [
-                        'label' => 'Important Stuff',
+                        'label'        => 'Important Stuff',
                         'not_fillable' => 'should not be set',
                     ],
                     [
-                        'label' => 'Less Important Stuff',
+                        'label'        => 'Less Important Stuff',
                         'not_fillable' => 'should not be set',
                     ],
                 ],
@@ -1277,7 +1277,7 @@ class EloquentRepositoryTest extends DBTestCase
             User::class,
             [
                 'username' => 'joe',
-                'posts' => [
+                'posts'    => [
                     [
                         'title' => 'Some Great Post',
                     ],
@@ -1316,7 +1316,7 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertEquals(User::count(), $repository->all()->count());
 
         $repository->modify()->setFilters([
-            'not_filterable' => '=foo', // Should not be applied
+            'not_filterable'       => '=foo', // Should not be applied
             'posts.not_filterable' => '=foo', // Should not be applied
         ]);
         $found_users = $repository->all();
@@ -1334,7 +1334,7 @@ class EloquentRepositoryTest extends DBTestCase
         $repository->accessControl()->setFilterable([]);
         $repository->modify()->setFilters([
             'profile.is_human' => '=true',
-            'times_captured' => '>2'
+            'times_captured'   => '>2'
         ]);
         $found_users = $repository->all();
 
@@ -1344,7 +1344,7 @@ class EloquentRepositoryTest extends DBTestCase
         $repository->accessControl()->setFilterable(AccessControl::ALLOW_ALL);
         $repository->modify()->setFilters([
             'profile.is_human' => '=true',
-            'times_captured' => '>2'
+            'times_captured'   => '>2'
         ]);
         $found_users = $repository->all();
 
@@ -1493,7 +1493,7 @@ class EloquentRepositoryTest extends DBTestCase
     public function testItCanCheckIfManyOperation()
     {
         $notManyOperationData = ['id' => 1, 'username' => 'bobby'];
-        $manyOperationData = [['id' => 1, 'username' => 'bobby'], ['id' => 2, 'username' => 'sam']];
+        $manyOperationData    = [['id' => 1, 'username' => 'bobby'], ['id' => 2, 'username' => 'sam']];
 
         $this->assertFalse($this->getRepository(User::class, [])->isManyOperation());
         $this->assertFalse($this->getRepository(User::class, $notManyOperationData)->isManyOperation());
