@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  testing-8:
+  testing-php8-laravel9:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,10 +25,37 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php8-composer-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-composer-testing-php8-laravel9-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Composer
         run: composer install
+      - name: Run Tests
+        run: composer run test-coverage
+  testing-php8-laravel8:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          coverage: xdebug
+          extensions: sqlite3, pdo_sqlite
+          tools: composer, phpunit
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-testing-php8-laravel8-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Set testbench dependency
+        run: composer require orchestra/testbench "^6"
+#      - name: Composer
+#        run: composer install
       - name: Run Tests
         run: composer run test-coverage
   testing-74:
