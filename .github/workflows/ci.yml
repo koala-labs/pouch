@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        laravel-version: ['^8', '^9']
+        laravel-version: ['^8.0', '^9.0']
         php-version: ['7.4', '8.0', '8.1']
         exclude:
           - laravel-version: '^8.0'
@@ -29,10 +29,6 @@ jobs:
           coverage: xdebug
           extensions: sqlite3, pdo_sqlite
           tools: composer, phpunit
-      - name: Require Laravel
-        run: composer require "${{ matrix.laravel-version }}"
-#      - name: Set testbench dependency
-#        run: composer require orchestra/testbench "^6"
 
       - name: Get composer cache directory
         id: composer-cache
@@ -42,7 +38,10 @@ jobs:
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-testing-php${{ matrix.php-version }}-laravel${{ matrix.laravel-version }}-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
+      - name: Require Laravel
+        run: composer require laravel/framework "${{ matrix.laravel-version }}"
+      #      - name: Set testbench dependency
+      #        run: composer require orchestra/testbench "^6"
       - name: Composer
         run: composer install
       - name: Run Tests
