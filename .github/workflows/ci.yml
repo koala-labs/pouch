@@ -8,9 +8,11 @@ on:
 jobs:
   testing-php-laravel-combinations:
     runs-on: ubuntu-latest
-    matrix:
-      laravel-version: ['8', '9']
-      php-version: ['7.4', '8.0', '8.1', '8.2']
+    strategy:
+      fail-fast: false
+      matrix:
+        laravel-version: ['8', '9']
+        php-version: ['7.4', '8.0', '8.1', '8.2']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
