@@ -11,20 +11,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        laravel-version: ['8', '9']
-        php-version: ['7.4', '8.0', '8.1', '8.2']
+        - laravel-version: ['8']
+          php-version: ['7.4', '8.0', '8.1']
+        - laravel-version: ['9']
+          php-version: ['8.0', '8.1', '8.2']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build
         uses: shivammathur/setup-php@v2
         with:
-          php-version: {{ matrix.php-version}}
+          php-version: {{ matrix.php-version }}
           coverage: xdebug
           extensions: sqlite3, pdo_sqlite
           tools: composer, phpunit
+      - name: Require Laravel
+        run: composer require ${{ matrix.laravel-version }}
 #      - name: Set testbench dependency
 #        run: composer require orchestra/testbench "^6"
+
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
