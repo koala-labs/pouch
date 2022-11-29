@@ -25,7 +25,7 @@ jobs:
       - name: Build
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "${{ matrix.php-version }}"
+          php-version: ${{ matrix.php-version }}
           coverage: xdebug
           extensions: sqlite3, pdo_sqlite
           tools: composer, phpunit
@@ -39,7 +39,7 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-testing-php${{ matrix.php-version }}-laravel${{ matrix.laravel-version }}-${{ hashFiles('**/composer.json') }}
       - name: Require Laravel
-        run: composer require laravel/framework "${{ matrix.laravel-version }}"
+        run: composer require laravel/framework ${{ matrix.laravel-version }}
       - name: Composer
         run: composer install
       - name: Run Tests
