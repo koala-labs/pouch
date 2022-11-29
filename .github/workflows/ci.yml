@@ -23,7 +23,7 @@ jobs:
       - name: Build
         uses: shivammathur/setup-php@v2
         with:
-          php-version: {{ matrix.php-version }}
+          php-version: ${{ matrix.php-version }}
           coverage: xdebug
           extensions: sqlite3, pdo_sqlite
           tools: composer, phpunit
