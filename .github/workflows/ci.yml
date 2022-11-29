@@ -40,8 +40,6 @@ jobs:
           key: ${{ runner.os }}-composer-testing-php${{ matrix.php-version }}-laravel${{ matrix.laravel-version }}-${{ hashFiles('**/composer.json') }}
       - name: Require Laravel
         run: composer require laravel/framework "${{ matrix.laravel-version }}"
-      #      - name: Set testbench dependency
-      #        run: composer require orchestra/testbench "^6"
       - name: Composer
         run: composer install
       - name: Run Tests
