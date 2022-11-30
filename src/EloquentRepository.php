@@ -520,6 +520,8 @@ class EloquentRepository implements Repository
                 break;
             case HasManyThrough::class:
                 //Assume that the input(s) contains a valid reference to the intermediate object
+                //@TODO: Handle the relationship between this model and a "through" model created in the same fill operation
+                //@TODO: (?) Handle chained HasManyThrough relationships, and save the models in the correct order
                 foreach ($input as $sub_input) {
                     $relation_repository->setInput($sub_input)->save();
                 }
