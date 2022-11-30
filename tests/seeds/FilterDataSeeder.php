@@ -47,8 +47,8 @@ class FilterDataSeeder extends Seeder
 
             if (isset($user['posts'])) {
                 foreach ($user['posts'] as $post) {
-                    $post_instance = new Post();
-                    $post_instance->title = $post['title'];
+                    $post_instance          = new Post();
+                    $post_instance->title   = $post['title'];
                     $post_instance->user_id = $user_instance->id;
                     $post_instance->save();
 

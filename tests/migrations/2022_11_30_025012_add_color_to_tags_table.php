@@ -14,7 +14,7 @@ class AddColorToTagsTable extends Migration
     public function up()
     {
         Schema::table('tags', function (Blueprint $table) {
-           $table->text('color')->nullable();
+            $table->text('color')->nullable();
         });
     }
 

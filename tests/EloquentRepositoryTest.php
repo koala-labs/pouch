@@ -282,12 +282,12 @@ class EloquentRepositoryTest extends DBTestCase
 
         $user = $this->getRepository(User::class, [
             'username' => 'joe',
-            'posts'      => [
+            'posts'    => [
                 [
                     'id' => $postId
                 ]
             ],
-            'reactions'  => [
+            'reactions' => [
                 ['name' => 'Jar Jar Binks', 'icon' => 'lol', 'post_id' => $postId],
                 ['name' => 'Darth Maul', 'icon' => 'skull-and-crossbones', 'post_id' => $postId],
             ]
@@ -301,8 +301,8 @@ class EloquentRepositoryTest extends DBTestCase
 
         //Another user with the same id, same post, and an additional reaction
         $user = $this->getRepository(User::class, [
-            'id'    => $user->id,
-            'reactions'  => [
+            'id'        => $user->id,
+            'reactions' => [
                 ['name' => 'Han Solo', 'icon' => 'gun', 'post_id' => $postId],
                 ['name' => 'Biggs', 'icon' => 'boom', 'post_id' => 2],
             ],
