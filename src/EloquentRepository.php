@@ -395,6 +395,9 @@ class EloquentRepository implements Repository
                         ];
                         break;
                     case HasManyThrough::class:
+                        //Process HasManyThrough after all other relationships since it can depend on a related
+                        // intermediate object. Ex: Filling in a User that has Posts, and those Posts have a Reaction.
+                        // The Post relationship has to process before the Reaction.
                         $late_relations[] = [
                             'relation' => $relation,
                             'value'    => $value
