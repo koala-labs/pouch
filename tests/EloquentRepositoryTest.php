@@ -302,13 +302,13 @@ class EloquentRepositoryTest extends DBTestCase
         //Another user with the same id, same post, and an additional reaction
         $user = $this->getRepository(User::class, [
             'id'    => $user->id,
-            'posts' => [
-                ['id' => $postId],
-                ['id' => 2],
-            ],
             'reactions'  => [
                 ['name' => 'Han Solo', 'icon' => 'gun', 'post_id' => $postId],
                 ['name' => 'Biggs', 'icon' => 'boom', 'post_id' => 2],
+            ],
+            'posts' => [
+                ['id' => $postId],
+                ['id' => 2],
             ]
         ])->save();
 
@@ -868,8 +868,7 @@ class EloquentRepositoryTest extends DBTestCase
          */
         $repository = $this->getRepository(User::class);
         $repository->modify()
-            ->setSortOrder(['reactions.name' => $direction])
-            ->setEagerLoads(['reactions']);
+            ->setSortOrder(['reactions.name' => $direction]);
         $users = $repository->all();
 
         $this->assertCount(User::count(), $users->pluck('name')->unique());
