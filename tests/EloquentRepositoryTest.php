@@ -495,6 +495,19 @@ class EloquentRepositoryTest extends DBTestCase
 
         $this->assertEquals($found_users->count(), 1);
         $this->assertEquals($found_users->first()->username, 'chewbaclava@galaxyfarfaraway.com');
+
+        // Test that it can filter a chained relationship
+        $repository->accessControl()->setDepthRestriction(4);
+        $repository->modify()->setFilters(['posts.tags.label' => '=#99']);
+        $found_users = $repository->all();
+        $this->assertEquals($found_users->count(), 1);
+        $this->assertEquals($found_users->first()->username, 'solocup@galaxyfarfaraway.com');
+
+        // Test that the repository can filter through a HasManyThrough relationship
+        $repository->modify()->setFilters(['reactions.name' => '=Luke Skywalker']);
+        $found_users = $repository->all();
+        $this->assertEquals($found_users->count(), 1);
+        $this->assertEquals($found_users->first()->username, 'solocup@galaxyfarfaraway.com');
     }
 
     public function testItOnlyUpdatesFillableAttributesOnCreate()
@@ -871,11 +884,20 @@ class EloquentRepositoryTest extends DBTestCase
             ->setSortOrder(['reactions.name' => $direction]);
         $users = $repository->all();
 
-        $this->assertCount(User::count(), $users->pluck('name')->unique());
+        $sortByDir = strtolower($direction) === 'asc' ? 'sortBy' : 'sortByDesc';
 
-        $users->each(
-            fn ($user) => $this->assertCollectionIsSorted($user->reactions->pluck('name'), $direction)
-        );
+        $expectedUserIdsOrder = User::all()->flatMap(
+            function ($user) {
+                if ($user->reactions->isEmpty()) {
+                    return Collection::wrap([['user_id' => $user->id, 'name' => null]]);
+                } else {
+                    return $user->reactions->map(fn ($reaction) => ['user_id' => $user->id, 'name' => $reaction->name]);
+                }
+            }
+        )->$sortByDir('name')->pluck('user_id');
+
+        $this->assertSameSize($expectedUserIdsOrder, $users);
+        $this->assertEquals($expectedUserIdsOrder, $users->pluck('id'));
     }
 
     public function testItCanAddMultipleAdditionalFilters()
@@ -1804,7 +1826,7 @@ class EloquentRepositoryTest extends DBTestCase
         $valueToAvoid = $direction == 'desc' ? -1 : 1;
         $collection->sliding(2)->eachSpread(function ($previous, $current) use ($valueToAvoid, $direction) {
             $word    = $valueToAvoid == -1 ? 'after' : 'before';
-            $message = "Failed asserting that the collection is sorted in $direction order. $previous does not come $word to $current.";
+            $message = "Failed asserting that the collection is sorted in $direction order. $previous does not come $word $current.";
             $this->assertNotEquals($valueToAvoid, $previous <=> $current, $message);
         });
     }

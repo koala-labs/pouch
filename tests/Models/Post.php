@@ -34,7 +34,7 @@ class Post extends Model implements PouchResource
         'hands',
         'occupation',
         'times_captured',
-        'posts.label',
+        'posts.label'
     ];
 
     /**

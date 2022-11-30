@@ -402,6 +402,7 @@ class EloquentRepository implements Repository
                             'relation' => $relation,
                             'value'    => $value
                         ];
+                        break;
                 }
             } elseif ((in_array($key, $model_fields) || $instance->hasSetMutator($key)) && $access_compiler->isFillable($key)) {
                 $instance->{$key} = $value;

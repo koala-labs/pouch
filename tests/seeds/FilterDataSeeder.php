@@ -47,8 +47,8 @@ class FilterDataSeeder extends Seeder
 
             if (isset($user['posts'])) {
                 foreach ($user['posts'] as $post) {
-                    $post_instance          = new Post();
-                    $post_instance->title   = $post['title'];
+                    $post_instance = new Post();
+                    $post_instance->title = $post['title'];
                     $post_instance->user_id = $user_instance->id;
                     $post_instance->save();
 
@@ -58,7 +58,6 @@ class FilterDataSeeder extends Seeder
                             ['icon' => $reaction['icon'], 'comment' => $reaction['comment'] ?? null]
                         );
                     }
-                }
 
                     $tag_ids = [];
                     foreach ($post['tags'] as $tag) {
@@ -73,6 +72,7 @@ class FilterDataSeeder extends Seeder
                     }
 
                     $post_instance->tags()->sync($tag_ids);
+                }
             }
         }
     }
@@ -147,7 +147,7 @@ class FilterDataSeeder extends Seeder
                             ['label' => '#triggerfinger',],
                             ['label' => '#mysonistheworst',],
                         ],
-                        'coauthors' => [
+                        'reactions' => [
                             ['name' => 'Chewbacca', 'icon' => 'thumbs-up'],
                             ['name' => 'Luke Skywalker', 'icon' => 'sick', 'comment' => 'Do you know how to get tauntaun odor out of clothes?']
                         ]

@@ -865,6 +865,25 @@ class FilterTest extends DBTestCase
         }
     }
 
+    /**
+     * Check to see if filtering by id works with a many to many relationship.
+     */
+    public function testItFiltersNestedHasManyThroughRelationships()
+    {
+        $filters = ['reactions.icon' => '=sick'];
+
+        $model   = User::class;
+        $query   = $this->getQuery($model);
+        $columns = $this->getModelColumns($model);
+
+        Filter::applyQueryFilters($query, $filters, $columns, (new $model())->getTable());
+
+        $results = $query->get();
+
+        $this->assertEquals(1, count($results));
+        $this->assertEquals('solocup@galaxyfarfaraway.com', $results->first()->username);
+    }
+
     public function testItFiltersNestedConjuctions()
     {
         $filters = [

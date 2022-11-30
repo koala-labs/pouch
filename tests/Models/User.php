@@ -21,7 +21,7 @@ class User extends Model implements PouchResource
         'times_captured',
         'posts',
         'profile',
-        'reactions' //Usually something that wouldn't be fillable in real life, but this is for testing purposes
+        'reactions'
     ];
 
     /**
@@ -46,6 +46,9 @@ class User extends Model implements PouchResource
         'posts.tags',
         'posts.tags.label',
         'profile.is_human',
+        'reactions.name',
+        'reactions.icon',
+        'reactions.comment'
     ];
 
     protected $casts = [
