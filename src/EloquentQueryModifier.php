@@ -3,8 +3,11 @@
 namespace Koala\Pouch;
 
 use Closure;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Query\Expression;
 use Koala\Pouch\Contracts\AccessControl;
 use Koala\Pouch\Contracts\QueryModifier;
+use Koala\Pouch\Tests\Models\User;
 use Koala\Pouch\Utility\ChecksModelFields;
 use Koala\Pouch\Utility\ChecksRelations;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use ReflectionClass;
 
 /**
  * Class EloquentQueryModifier
@@ -651,6 +655,13 @@ class EloquentQueryModifier implements QueryModifier
                  */
                 // Join related's table on the base table's foreign key
                 $query->join($table, $instance->getQualifiedKeyName(), '=', $related->getQualifiedForeignKeyName());
+                break;
+            case HasManyThrough::class:
+                Relation::noConstraints(function () use ($related, $relation, $instance, $query) {
+                    //Use the relationship to build a new query without the model constraint and name the subtable the same as the requested relationship name
+                    $subQuery = $instance->$relation();
+                    $query->leftJoinSub($subQuery, $relation, $related->getQualifiedLocalKeyName(), $relation.'.'.$related->getFirstKeyName(), $relation.'.'.$related->getQualifiedForeignKeyName());
+                });
                 break;
         }
 

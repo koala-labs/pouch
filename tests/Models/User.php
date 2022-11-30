@@ -21,6 +21,7 @@ class User extends Model implements PouchResource
         'times_captured',
         'posts',
         'profile',
+        'reactions' //Usually something that wouldn't be fillable in real life, but this is for testing purposes
     ];
 
     /**
@@ -73,6 +74,11 @@ class User extends Model implements PouchResource
     public function profile()
     {
         return $this->hasOne(Profile::class);
+    }
+
+    public function reactions()
+    {
+        return $this->hasManyThrough(Reaction::class, Post::class);
     }
 
     /**

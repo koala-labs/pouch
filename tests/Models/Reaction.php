@@ -5,70 +5,74 @@ namespace Koala\Pouch\Tests\Models;
 use Koala\Pouch\Contracts\PouchResource;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model implements PouchResource
+class Reaction extends Model implements PouchResource
 {
     /**
      * @const array
      */
     public const FILLABLE = [
-        'title',
-        'user_id',
-        'user',
-        'tags',
+        'name',
+        'icon',
+        'comment',
+        'post_id'
     ];
 
     /**
      * @const array
      */
     public const INCLUDABLE = [
-        'user',
-        'tags',
+        'post',
     ];
 
     /**
      * @const array
      */
     public const FILTERABLE = [
-        'username',
         'name',
-        'hands',
-        'occupation',
-        'times_captured',
-        'posts.label',
+        'icon',
+        'comment'
     ];
 
     /**
      * @var string
      */
-    protected $table = 'posts';
+
+    protected $fillable = self::FILLABLE;
+
+    protected $hidden = [
+        'laravel_through_key'
+    ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function not_includable()
+    public function post()
     {
-        return $this->belongsTo(NotIncludable::class);
+        return $this->HasOne(Post::class);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * For unit testing purposes
+     *
+     * @return array
      */
-    public function user()
+    public function getFillable()
     {
-        return $this->belongsTo(User::class);
+        return $this->fillable;
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * For unit testing purposes
+     *
+     * @param array $fillable
+     *
+     * @return $this
      */
-    public function tags()
+    public function setFillable(array $fillable)
     {
-        return $this->belongsToMany(Tag::class)->withPivot('extra');
-    }
+        $this->fillable = $fillable;
 
-    public function reactions()
-    {
-        return $this->hasMany(Reaction::class);
+        return $this;
     }
 
     /**

@@ -2,8 +2,7 @@
 
 namespace Koala\Pouch;
 
-use Illuminate\Pipeline\Pipeline;
-use Illuminate\Support\Facades\App;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Koala\Pouch\Contracts\AccessControl;
 use Koala\Pouch\Contracts\QueryFilterContainer;
 use Koala\Pouch\Contracts\QueryModifier;
@@ -368,6 +367,7 @@ class EloquentRepository implements Repository
         $model_fields     = $this->getFields($instance);
         $before_relations = [];
         $after_relations  = [];
+        $late_relations   = [];
         $instance_model   = get_class($instance);
         $safe_instance    = new $instance_model();
 
@@ -394,6 +394,11 @@ class EloquentRepository implements Repository
                             'value'    => $value,
                         ];
                         break;
+                    case HasManyThrough::class:
+                        $late_relations[] = [
+                            'relation' => $relation,
+                            'value'    => $value
+                        ];
                 }
             } elseif ((in_array($key, $model_fields) || $instance->hasSetMutator($key)) && $access_compiler->isFillable($key)) {
                 $instance->{$key} = $value;
@@ -405,6 +410,7 @@ class EloquentRepository implements Repository
         $this->applyRelations($before_relations, $instance);
         $instance->save();
         $this->applyRelations($after_relations, $instance);
+        $this->applyRelations($late_relations, $instance);
 
         return true;
     }
@@ -503,6 +509,12 @@ class EloquentRepository implements Repository
 
                 // Sync to save pivot table and optional extra data.
                 $relation->sync($ids);
+                break;
+            case HasManyThrough::class:
+                //Assume that the input(s) contains a valid reference to the intermediate object
+                foreach ($input as $sub_input) {
+                    $relation_repository->setInput($sub_input)->save();
+                }
                 break;
         }
     }

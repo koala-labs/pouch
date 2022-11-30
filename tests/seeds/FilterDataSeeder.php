@@ -2,6 +2,7 @@
 
 namespace Koala\Pouch\Tests\Seeds;
 
+use Koala\Pouch\Tests\Models\Reaction;
 use Koala\Pouch\Tests\Models\Post;
 use Koala\Pouch\Tests\Models\Profile;
 use Koala\Pouch\Tests\Models\Tag;
@@ -51,6 +52,14 @@ class FilterDataSeeder extends Seeder
                     $post_instance->user_id = $user_instance->id;
                     $post_instance->save();
 
+                    foreach ($post['reactions'] ?? [] as $reaction) {
+                        Reaction::firstOrCreate(
+                            ['name' => $reaction['name'], 'post_id' => $post_instance->id],
+                            ['icon' => $reaction['icon'], 'comment' => $reaction['comment'] ?? null]
+                        );
+                    }
+                }
+
                     $tag_ids = [];
                     foreach ($post['tags'] as $tag) {
                         $tag_instance = Tag::firstOrCreate(
@@ -64,17 +73,8 @@ class FilterDataSeeder extends Seeder
                     }
 
                     $post_instance->tags()->sync($tag_ids);
-                }
             }
         }
-
-        $users = User::with(
-            [
-                'profile',
-                'posts.tags'
-            ]
-        )->get()->toArray();
-        $test = 'test';
     }
 
     public function users()
@@ -95,8 +95,11 @@ class FilterDataSeeder extends Seeder
                     [
                         'title' => 'I Kissed a Princess and I Liked it',
                         'tags'  => [
-                            ['label' => '#peace',],
+                            ['label' => '#peace', 'color' => 'green'],
                             ['label' => '#thelastjedi',]
+                        ],
+                        'reactions' => [
+                            ['name' => 'Obi-Wan Kenobi', 'icon' => 'wave', 'comment' => 'Hello there.']
                         ]
                     ]
                 ]
@@ -118,6 +121,9 @@ class FilterDataSeeder extends Seeder
                         'tags'  => [
                             ['label' => '#princess',],
                             ['label' => '#mysonistheworst',],
+                        ],
+                        'reactions' => [
+                            ['name' => 'Han Solo', 'icon' => 'heart', 'comment' => 'I know.']
                         ]
                     ]
                 ]
@@ -140,12 +146,16 @@ class FilterDataSeeder extends Seeder
                             ['label' => '#iknow',],
                             ['label' => '#triggerfinger',],
                             ['label' => '#mysonistheworst',],
+                        ],
+                        'coauthors' => [
+                            ['name' => 'Chewbacca', 'icon' => 'thumbs-up'],
+                            ['name' => 'Luke Skywalker', 'icon' => 'sick', 'comment' => 'Do you know how to get tauntaun odor out of clothes?']
                         ]
                     ],
                     [
                         'title' => '99 Problems But A Hutt Ain\'t One',
                         'tags'  => [
-                            ['label' => '#og'],
+                            ['label' => '#og', 'color' => 'green'],
                             ['label' => '#99']
                         ]
                     ]
