@@ -4,10 +4,8 @@ namespace Koala\Pouch;
 
 use Closure;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Query\Expression;
 use Koala\Pouch\Contracts\AccessControl;
 use Koala\Pouch\Contracts\QueryModifier;
-use Koala\Pouch\Tests\Models\User;
 use Koala\Pouch\Utility\ChecksModelFields;
 use Koala\Pouch\Utility\ChecksRelations;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +17,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use ReflectionClass;
 
 /**
  * Class EloquentQueryModifier

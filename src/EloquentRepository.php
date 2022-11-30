@@ -398,6 +398,10 @@ class EloquentRepository implements Repository
                         //Process HasManyThrough after all other relationships since it can depend on a related
                         // intermediate object. Ex: Filling in a User that has Posts, and those Posts have a Reaction.
                         // The Post relationship has to process before the Reaction.
+                        //NOTE: The model referred to by $value HAS TO ALREADY EXIST IN THE DATABASE. The input
+                        // data uses nesting to infer parent model and its relationship. HasManyThrough circumvents this
+                        // direct lineage.
+                        //@TODO: Add the ability to refer to a nested chunk of data in input, and force the creation of the parent model first.
                         $late_relations[] = [
                             'relation' => $relation,
                             'value'    => $value

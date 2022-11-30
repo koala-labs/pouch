@@ -2,11 +2,9 @@
 
 namespace Koala\Pouch\Tests;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 use Koala\Pouch\Contracts\AccessControl;
-use Koala\Pouch\Tests\Models\Reaction;
 use Koala\Pouch\Tests\Models\Tag;
 use Koala\Pouch\Tests\Seeds\FilterDataSeeder;
 use Illuminate\Database\Eloquent\Collection;
