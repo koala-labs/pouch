@@ -898,6 +898,42 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertEquals($expectedUserIdsOrder, $users->pluck('id'));
     }
 
+    /**
+     * @dataProvider sortDirectionProvider
+     */
+    public function testItCanSortHasManyThroughRelationWithAFilter(string $direction)
+    {
+        $this->seedUsers();
+
+        /**
+         * Sort depth 1, expect sorting by post title, desc alphabetical
+         */
+        $searchString = '#mysonistheworst';
+        $repository  = $this->getRepository(User::class);
+        $repository->modify()
+            ->setFilters((['posts.tags.label' => '='.$searchString]))
+            ->setSortOrder(['reactions.name' => $direction]);
+        $users = $repository->paginate(10);
+
+        $sortByDir = strtolower($direction) === 'asc' ? 'sortBy' : 'sortByDesc';
+
+        //Roundabout way of doing the same query expected to be run in the Repository
+        $expectedUserIdsOrder = User::all()
+            ->filter(fn ($user) => $user->posts->map->tags->flatten()->pluck('label')->contains($searchString))
+            ->flatMap(
+                function ($user) use ($searchString) {
+                    if ($user->reactions->isEmpty()) {
+                        return Collection::wrap([['user_id' => $user->id, 'name' => null]]);
+                    } else {
+                        return $user->reactions->map(fn ($reaction) => ['user_id' => $user->id, 'name' => $reaction->name]);
+                    }
+                }
+            )->$sortByDir('name')->pluck('user_id');
+
+        $this->assertSameSize($expectedUserIdsOrder, $users);
+        $this->assertEquals($expectedUserIdsOrder, $users->pluck('id'));
+    }
+
     public function testItCanAddMultipleAdditionalFilters()
     {
         $this->seedUsers();
