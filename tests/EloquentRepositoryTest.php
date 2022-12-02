@@ -909,7 +909,7 @@ class EloquentRepositoryTest extends DBTestCase
          * Sort depth 1, expect sorting by post title, desc alphabetical
          */
         $searchString = '#mysonistheworst';
-        $repository  = $this->getRepository(User::class);
+        $repository   = $this->getRepository(User::class);
         $repository->modify()
             ->setFilters((['posts.tags.label' => '='.$searchString]))
             ->setSortOrder(['reactions.name' => $direction]);
