@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches:
+      - main
       - 3.2.x-with-mutation-testing
   pull_request:
     branches:
