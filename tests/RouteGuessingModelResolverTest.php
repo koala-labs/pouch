@@ -51,7 +51,7 @@ class RouteGuessingModelResolverTest extends TestCase
     public function testItThrowsAnExceptionIfTheResolvedModelDoesNotExtendPouchResource()
     {
         $route = Mockery::mock(Route::class)
-            ->shouldReceive('getName')->once()->andReturn('not_a_pouch_resource.v1')
+            ->shouldReceive('getName')->once()->andReturn('v1.not_a_pouch_resource')
             ->getMock();
         App::shouldReceive('getNamespace')->once()->andReturn(__NAMESPACE__.'\\Models\\');
 
