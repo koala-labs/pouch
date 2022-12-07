@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 3.2.x-with-mutation-testing
+      - mutation-testing-pr
   pull_request:
     branches:
       - main
