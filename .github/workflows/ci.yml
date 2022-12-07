@@ -73,7 +73,7 @@ jobs:
       - name: Install Mutation Testing Package
         run: composer config --no-plugins allow-plugins.infection/extension-installer true && composer require --dev infection/infection
       - name: Mutation Testing
-        run: vendor/bin/infection -j$(nproc) --show-mutations --coverage=.
+        run: vendor/bin/infection -j$(nproc) --show-mutations --coverage=. --min-msi=70 --min-covered-msi=90
 
   linting:
     runs-on: ubuntu-latest
