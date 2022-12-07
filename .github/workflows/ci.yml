@@ -78,7 +78,8 @@ jobs:
         run: vendor/bin/infection -j$(nproc) --coverage=. --min-msi=70 --min-covered-msi=70 >> $GITHUB_STEP_SUMMARY
       - name: PR Mutation Testing
         if: github.event_name == 'pull_request'
-        run: vendor/bin/infection -j$(nproc) --coverage=. --min-msi=70 --min-covered-msi=70 --git-diff-filter=AM >> $GITHUB_STEP_SUMMARY
+        #Run mutation tests on the diff between the PR target branch and the current branch
+        run: vendor/bin/infection -j$(nproc) --coverage=. --min-msi=70 --min-covered-msi=70 --git-diff-base=origin/$GITHUB_BASE_REF --git-diff-filter=AM >> $GITHUB_STEP_SUMMARY
 
   linting:
     name: Linting
