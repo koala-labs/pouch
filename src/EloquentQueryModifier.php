@@ -3,6 +3,7 @@
 namespace Koala\Pouch;
 
 use Closure;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Koala\Pouch\Contracts\AccessControl;
 use Koala\Pouch\Contracts\QueryModifier;
 use Koala\Pouch\Utility\ChecksModelFields;
@@ -651,6 +652,18 @@ class EloquentQueryModifier implements QueryModifier
                  */
                 // Join related's table on the base table's foreign key
                 $query->join($table, $instance->getQualifiedKeyName(), '=', $related->getQualifiedForeignKeyName());
+                break;
+            case HasManyThrough::class:
+                Relation::noConstraints(function () use ($related, $relation, $instance, $query, $field) {
+                    //Use the relationship to build a new query without the model constraint and name the subtable the same as the requested relationship name
+                    //Alias the "first" key to prevent collisions with other columns
+                    $subQuery = $instance->$relation()->select([
+                        $related->getQualifiedFirstKeyName().' AS '.($uniqeFirstKey = str_replace('.', '_', uniqId().$related->getQualifiedFirstKeyName())), //Id to left join on
+                        "$relation.$field" //Relation and field that comes from the aggregation function
+                    ]);
+
+                    $query->leftJoinSub($subQuery, $relation, $related->getQualifiedLocalKeyName(), $uniqeFirstKey, $related->getQualifiedForeignKeyName());
+                });
                 break;
         }
 

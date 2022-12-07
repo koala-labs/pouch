@@ -4,84 +4,51 @@ namespace Koala\Pouch\Tests\Models;
 
 use Koala\Pouch\Contracts\PouchResource;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Model implements PouchResource
+class Reaction extends Model implements PouchResource
 {
-    use SoftDeletes;
-
     /**
      * @const array
      */
     public const FILLABLE = [
-        'username',
         'name',
-        'hands',
-        'occupation',
-        'times_captured',
-        'posts',
-        'profile',
-        'reactions'
+        'icon',
+        'comment',
+        'post_id'
     ];
 
     /**
      * @const array
      */
     public const INCLUDABLE = [
-        'posts',
-        'posts.user',
-        'profile',
+        'post',
     ];
 
     /**
      * @const array
      */
     public const FILTERABLE = [
-        'username',
         'name',
-        'hands',
-        'occupation',
-        'times_captured',
-        'posts.title',
-        'posts.tags',
-        'posts.tags.label',
-        'profile.is_human',
-        'reactions.name',
-        'reactions.icon',
-        'reactions.comment'
-    ];
-
-    protected $casts = [
-        'hands'          => 'integer',
-        'times_captured' => 'integer'
+        'icon',
+        'comment'
     ];
 
     /**
      * @var string
      */
-    protected $table = 'users';
 
     protected $fillable = self::FILLABLE;
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function posts()
-    {
-        return $this->hasMany(Post::class);
-    }
+    protected $hidden = [
+        'laravel_through_key'
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function profile()
+    public function post()
     {
-        return $this->hasOne(Profile::class);
-    }
-
-    public function reactions()
-    {
-        return $this->hasManyThrough(Reaction::class, Post::class);
+        return $this->HasOne(Post::class);
     }
 
     /**

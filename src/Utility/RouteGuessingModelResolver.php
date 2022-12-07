@@ -4,10 +4,10 @@ namespace Koala\Pouch\Utility;
 
 use Koala\Pouch\Contracts\PouchResource;
 use Koala\Pouch\Contracts\ModelResolver;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\App;
+use Koala\Pouch\Exception\ModelNotResolvedException;
 
 /**
  * Class RouteGuessingModelResolver
@@ -30,7 +30,7 @@ class RouteGuessingModelResolver implements ModelResolver
         $route_name = $route->getName();
 
         if (! is_null($route_name) && strpos($route_name, '.') !== false) {
-            list(, $alias) = Arr::reverse(explode('.', $route->getName()));
+            list(, $alias) = array_reverse(explode('.', $route_name) ?: []);
 
             $model_class = $this->namespaceModel(Str::studly(Str::singular($alias)));
 
@@ -41,7 +41,7 @@ class RouteGuessingModelResolver implements ModelResolver
             throw new \LogicException(sprintf('%s must be an instance of %s', $model_class, PouchResource::class));
         }
 
-        throw new \LogicException('Unable to resolve model from improperly named route');
+        throw new ModelNotResolvedException('Unable to resolve model from improperly named route');
     }
 
     /**
