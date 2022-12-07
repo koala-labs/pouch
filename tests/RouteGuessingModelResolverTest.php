@@ -32,11 +32,9 @@ class RouteGuessingModelResolverTest extends TestCase
     public function routeNameAndModelClassProvider(): array
     {
         return [
-          ['users.v1', User::class],
-          ['users.posts.v1', Post::class],
-          ['users.posts.tags', Post::class],
-          ['users.posts.tags.v1', Tag::class],
-          ['user.post.tag.v1', Tag::class],
+          ['v1.users', User::class],
+          ['v1.user', User::class],
+          ['v1.users.posts', User::class] //@TODO: Should the route guess Post::class? There is not any documentation on route naming convention
         ];
     }
 
