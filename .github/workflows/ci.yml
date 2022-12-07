@@ -75,13 +75,16 @@ jobs:
         run: composer config --no-plugins allow-plugins.infection/extension-installer true && composer require --dev infection/infection
       - name: Full Mutation Testing
         if: github.event_name == 'push'
-        run: vendor/bin/infection -j$(nproc) --coverage=. --min-msi=70 --min-covered-msi=70 --only-covered --logger-github
+        run: |
+          vendor/bin/infection -j$(nproc) --coverage=. --min-msi=70 --min-covered-msi=70 --only-covered --formatter=progress --logger-github
+          cat infection.html >> $GITHUB_STEP_SUMMARY
       - name: PR Mutation Testing
         if: github.event_name == 'pull_request'
         #Run mutation tests on the diff between the PR target branch and the current branch
         run: |
           git fetch --depth=1 origin $GITHUB_BASE_REF
-          vendor/bin/infection -j$(nproc) --coverage=. --min-msi=70 --min-covered-msi=70 --git-diff-base=origin/$GITHUB_BASE_REF --git-diff-filter=AM --only-covered --logger-github
+          vendor/bin/infection -j$(nproc) --coverage=. --min-msi=70 --min-covered-msi=70 --git-diff-base=origin/$GITHUB_BASE_REF --git-diff-filter=AM --only-covered --formatter=progress --logger-github
+          cat infection.html >> $GITHUB_STEP_SUMMARY
 
   linting:
     name: Linting

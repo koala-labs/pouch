@@ -5,6 +5,14 @@
       "src"
     ]
   },
+  "logs": {
+    "text": "infection.log",
+    "html": "infection.html",
+    "summary": "summary.log",
+    "json": "infection-log.json",
+    "perMutator": "per-mutator.md",
+    "github": true,
+  },
   "mutators": {
     "@default": true
   }
