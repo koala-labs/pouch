@@ -50,14 +50,13 @@ jobs:
       - name: Composer
         run: composer install --no-interaction
       - name: Run Tests
-        run: vendor/bin/phpunit --coverage-text --coverage-clover ./coverage.xml
+        run: vendor/bin/phpunit --coverage-text --coverage-xml=coverage.xml --log-junit=junit.xml
       - name: Mutation Testing
         if: ${{ matrix.mutation-testing }} == 'true'
         run: composer config --no-plugins allow-plugins.infection/extension-installer true && composer require --dev infection/infection
       - name: Mutation Testing
         if: ${{ matrix.mutation-testing }} == 'true'
-        run: vendor/bin/infection --coverage=coverage.xml
-
+        run: vendor/bin/infection --coverage=.
   linting:
     runs-on: ubuntu-latest
     steps:
