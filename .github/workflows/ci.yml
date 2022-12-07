@@ -10,7 +10,6 @@ on:
 
 jobs:
   testing-php-laravel-combinations:
-    name: Tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -22,6 +21,7 @@ jobs:
             php-version: '8.2'
           - laravel-version: '^9.0'
             php-version: '7.4'
+    name: Test with PHP ${{ matrix.php-version }}, Laravel ${{ matrix.laravel-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
