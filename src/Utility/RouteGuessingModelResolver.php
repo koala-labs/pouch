@@ -30,7 +30,7 @@ class RouteGuessingModelResolver implements ModelResolver
         $route_name = $route->getName();
 
         if (! is_null($route_name) && strpos($route_name, '.') !== false) {
-            list(, $alias) = array_reverse(explode('.', $route_name) ?: []);
+            $alias = (explode('.', $route_name) ?: [])[1] ?? "";
 
             $model_class = $this->namespaceModel(Str::studly(Str::singular($alias)));
 
