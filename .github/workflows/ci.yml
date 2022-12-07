@@ -73,10 +73,10 @@ jobs:
       - name: Install Mutation Testing Package
         run: composer config --no-plugins allow-plugins.infection/extension-installer true && composer require --dev infection/infection
       - name: Full Mutation Testing
-        on: push
+        if: github.event_name == 'push'
         run: vendor/bin/infection -j$(nproc) --coverage=. --min-msi=70 --min-covered-msi=70 >> $GITHUB_STEP_SUMMARY
       - name: PR Mutation Testing
-        on: pull-request
+        if: github.event_name == 'pull_request'
         run: vendor/bin/infection -j$(nproc) --coverage=. --min-msi=70 --min-covered-msi=70 --git-diff-filter=AM >> $GITHUB_STEP_SUMMARY
 
   linting:
