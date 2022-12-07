@@ -8,7 +8,6 @@ use Koala\Pouch\Exception\ModelNotResolvedException;
 use Koala\Pouch\Tests\Models\Post;
 use Koala\Pouch\Tests\Models\Tag;
 use Koala\Pouch\Tests\Models\User;
-use Illuminate\Routing\Controller;
 use Illuminate\Routing\Route;
 use Koala\Pouch\Utility\RouteGuessingModelResolver;
 use Mockery;
