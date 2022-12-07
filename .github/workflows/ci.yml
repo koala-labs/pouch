@@ -17,16 +17,11 @@ jobs:
       matrix:
         laravel-version: ['^8.0', '^9.0']
         php-version: ['7.4', '8.0', '8.1', '8.2']
-        mutation-testing: ['false']
         exclude:
           - laravel-version: '^8.0'
             php-version: '8.2'
           - laravel-version: '^9.0'
             php-version: '7.4'
-        include:
-          - laravel-version: '^9.0'
-            php-version: '8.1'
-            mutation-testing: 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -47,15 +42,37 @@ jobs:
           key: ${{ runner.os }}-composer-testing-php${{ matrix.php-version }}-laravel${{ matrix.laravel-version }}-${{ hashFiles('**/composer.json') }}
       - name: Require Laravel
         run: composer require laravel/framework ${{ matrix.laravel-version }} --no-interaction
-      - name: Composer
-        run: composer install --no-interaction
+      - name: Run Tests
+        run: vendor/bin/phpunit --coverage-text
+
+  mutation-testing:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          coverage: pcov
+          extensions: sqlite3, pdo_sqlite
+          tools: composer, phpunit
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-testing-php8.2-laravel^9.0-${{ hashFiles('**/composer.json') }}
+      - name: Require Laravel
+        run: composer require laravel/framework ^9.0 --no-interaction
       - name: Run Tests
         run: vendor/bin/phpunit --coverage-text --coverage-xml=coverage.xml --log-junit=junit.xml
-      - name: Mutation Testing
-        if: ${{ matrix.mutation-testing }} == 'true'
+      - name: Install Mutation Testing Package
         run: composer config --no-plugins allow-plugins.infection/extension-installer true && composer require --dev infection/infection
       - name: Mutation Testing
-        if: matrix.mutation-testing == 'true'
         run: vendor/bin/infection --coverage=.
 
   linting:
