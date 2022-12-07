@@ -1529,32 +1529,68 @@ class EloquentRepositoryTest extends DBTestCase
 
     public function testItCanAggregateQueryCount()
     {
-        $this->markTestIncomplete();
+        $this->seedUsers();
+
+        $repository = $this->getRepository(User::class);
+
+        $repository->modify()->setAggregate(['count' => 'id']);
+
+        $this->assertEquals(User::count(), $repository->first()->aggregate);
     }
 
     public function testItCanAggregateQueryMin()
     {
-        $this->markTestIncomplete();
+        $this->seedUsers();
+
+        $repository = $this->getRepository(User::class);
+
+        $repository->modify()->setAggregate(['min' => 'hands']);
+
+        $this->assertEquals(User::query()->min('hands'), $repository->first()->aggregate);
     }
 
     public function testItCanAggregateQueryMax()
     {
-        $this->markTestIncomplete();
+        $this->seedUsers();
+
+        $repository = $this->getRepository(User::class);
+
+        $repository->modify()->setAggregate(['max' => 'hands']);
+
+        $this->assertEquals(User::query()->max('hands'), $repository->first()->aggregate);
     }
 
     public function testItCanAggregateQuerySum()
     {
-        $this->markTestIncomplete();
+        $this->seedUsers();
+
+        $repository = $this->getRepository(User::class);
+
+        $repository->modify()->setAggregate(['sum' => 'hands']);
+
+        $this->assertEquals(User::query()->sum('hands'), $repository->first()->aggregate);
     }
 
     public function testItCanAggregateQueryAverage()
     {
-        $this->markTestIncomplete();
+        $this->seedUsers();
+
+        $repository = $this->getRepository(User::class);
+
+        $repository->modify()->setAggregate(['avg' => 'hands']);
+
+        $this->assertEquals(User::query()->average('hands'), $repository->first()->aggregate);
     }
 
     public function testItCanGroupQuery()
     {
-        $this->markTestIncomplete();
+        $this->seedUsers();
+
+        $repository = $this->getRepository(User::class);
+
+        $repository->modify()->setGroupBy(['hands']);
+
+        $this->assertEquals(User::query()->groupBy('hands')->get(), $repository->all());
     }
 
     /**
