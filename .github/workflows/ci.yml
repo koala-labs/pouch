@@ -88,8 +88,8 @@ jobs:
 
       - name: Output Logs
         run: |
-          cat summary.log >> $GITHUB_STEP_SUMMARY
-          cat per-mutator.md >> $GITHUB_STEP_SUMMARY
+          cat summary.log || echo "No summary" >> $GITHUB_STEP_SUMMARY
+          cat per-mutator.md || echo "No mutations" >> $GITHUB_STEP_SUMMARY
 
   linting:
     name: Linting
