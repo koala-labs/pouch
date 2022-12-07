@@ -77,7 +77,55 @@ $user = $repository->save();
 When `$repository->save()` is invoked, a User will be created with the username "Steve", and a Post will
 be created with the `user_id` belonging to that User. The nonsensical "nonsense" property is simply
 ignored, because it does not actually exist on the table storing Users.
+---
 
+***A limitation on Eloquent HasManyThrough relationships:***
+
+Inputs that define a model related through a `HasManyThrough` relationship must refer to an already existing model.
+In this example, a `User` has many `Reaction`s through a `Post`. The `Reaction` model must exist and be related to a
+`Post` in order to correctly relate to the `User`.
+
+```php
+$repository = (new EloquentRepository)
+    ->setModelClass('User')
+    ->setInput([
+        'username' => 'steve',        
+        'posts'    => [
+            'title' => 'Stuff',
+        ],
+        'reactions' => [
+            [
+                'id': 1 //The Reaction model must already exist, and relate to a Post
+            ]
+        ]
+    ]);
+
+$user = $repository->save();
+```
+A workaround for new `Reaction` and `Post` models attached to a `User` involves nesting the `Reaction` model data under the related `Post`
+```php
+$repository = (new EloquentRepository)
+    ->setModelClass('User')
+    ->setInput([
+        'username' => 'steve',        
+        //The Post is related to the User, and the Reaction is related to the Post. User Reactions are related through the Post.
+        'posts'    => [
+            'title' => 'Stuff',
+            'reactions' => [ 
+                [
+                    'name' => 'John Doe',
+                    'icon' => 'thumbs-up'
+                ]
+            ]
+        ],
+        
+    ]);
+
+$user = $repository->save();
+```
+Support for new models defined through a `HasThroughMany` relationship will come soon.
+
+---
 By itself, EloquentRepository is a blunt weapon with no access controls that should be avoided in any
 public APIs. It will clobber every relationship it touches without prejudice. For example, the following
 is a BAD way to add a new Post for the user we just created.
