@@ -658,11 +658,11 @@ class EloquentQueryModifier implements QueryModifier
                     //Use the relationship to build a new query without the model constraint and name the subtable the same as the requested relationship name
                     //Alias the "first" key to prevent collisions with other columns
                     $subQuery = $instance->$relation()->select([
-                        $related->getQualifiedFirstKeyName().' AS '.($uniqeFirstKey = str_replace('.', '_', uniqId().$related->getQualifiedFirstKeyName())), //Id to left join on
+                        $related->getQualifiedFirstKeyName().' AS '.($uniqueFirstKey = str_replace('.', '_', uniqid().$related->getQualifiedFirstKeyName())), //Id to left join on
                         "$relation.$field" //Relation and field that comes from the aggregation function
                     ]);
 
-                    $query->leftJoinSub($subQuery, $relation, $related->getQualifiedLocalKeyName(), $uniqeFirstKey, $related->getQualifiedForeignKeyName());
+                    $query->leftJoinSub($subQuery, $relation, $related->getQualifiedLocalKeyName(), $uniqueFirstKey, $related->getQualifiedForeignKeyName());
                 });
                 break;
         }
