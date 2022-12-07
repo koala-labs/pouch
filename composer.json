@@ -35,10 +35,7 @@
 			"vendor/bin/phpunit"
 		],
 		"test-coverage": [
-			"vendor/bin/phpunit --coverage-text --coverage-clover ./coverage.xml"
-		],
-		"test-mutation": [
-			"vendor/bin/infection --coverage=./coverage.xml"
+			"vendor/bin/phpunit --coverage-text"
 		],
 		"test-repo": [
 			"vendor/bin/phpunit --filter EloquentRepositoryTest"
@@ -50,9 +47,4 @@
 		]
 	},
 	"minimum-stability": "stable",
-	"config": {
-		"allow-plugins": {
-			"infection/extension-installer": true
-		}
-	}
 }
