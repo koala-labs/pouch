@@ -37,6 +37,7 @@ class RouteGuessingModelResolverTest extends TestCase
           ['users.posts.v1', Post::class],
           ['users.posts.tags', Post::class],
           ['users.posts.tags.v1', Tag::class],
+          ['user.post.tag.v1', Tag::class],
         ];
     }
 
