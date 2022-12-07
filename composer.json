@@ -49,5 +49,8 @@
 			"phan --progress-bar -o phan_analysis.txt"
 		]
 	},
-	"minimum-stability": "stable"
+	"minimum-stability": "stable",
+	"allow-plugins": {
+		"infection/extension-installer": true
+	}
 }
