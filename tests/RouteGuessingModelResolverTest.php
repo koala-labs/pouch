@@ -62,18 +62,3 @@ class RouteGuessingModelResolverTest extends TestCase
         (new RouteGuessingModelResolver())->resolveModelClass($route);
     }
 }
-
-
-/**
- * Class UserController
- *
- * @package Koala\Pouch\Tests
- */
-class UserController extends Controller
-{
-    public static $resource = User::class;
-}
-
-class RouteGuessingModelResolverTestStubControllerNoResource
-{
-}
