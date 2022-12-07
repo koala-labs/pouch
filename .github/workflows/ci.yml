@@ -51,6 +51,8 @@ jobs:
         run: composer install --no-interaction
       - name: Run Tests
         run: vendor/bin/phpunit --coverage-text --coverage-clover ./coverage.xml
+      - name: LS
+        run: ls -al
 
       - name: Mutation Testing
         if: ${{ matrix.mutation-testing }} == 'true'
