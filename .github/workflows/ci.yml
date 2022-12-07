@@ -76,6 +76,7 @@ jobs:
         run: vendor/bin/infection -j$(nproc) --show-mutations --coverage=. --min-msi=70 --min-covered-msi=90
 
   linting:
+    name: Linting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -88,6 +89,7 @@ jobs:
       - name: Run Lint Check
         run: php-cs-fixer fix --dry-run -vv --diff --config=.php_cs.dist.php
   phan:
+    name: Static Analysis
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
