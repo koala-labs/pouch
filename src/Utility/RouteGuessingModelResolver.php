@@ -7,7 +7,7 @@ use Koala\Pouch\Contracts\ModelResolver;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Route;
-use Illuminate\Console\AppNamespaceDetectorTrait;
+use Illuminate\Support\Facades\App;
 
 /**
  * Class RouteGuessingModelResolver
@@ -18,8 +18,6 @@ use Illuminate\Console\AppNamespaceDetectorTrait;
  */
 class RouteGuessingModelResolver implements ModelResolver
 {
-    use AppNamespaceDetectorTrait;
-
     /**
      * Resolve and return the model class for requests.
      *
@@ -54,6 +52,6 @@ class RouteGuessingModelResolver implements ModelResolver
      */
     final public function namespaceModel($model_class)
     {
-        return sprintf('%s%s', $this->getAppNamespace(), $model_class);
+        return sprintf('%s%s', App::getNamespace(), $model_class);
     }
 }
