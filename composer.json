@@ -50,7 +50,9 @@
 		]
 	},
 	"minimum-stability": "stable",
-	"allow-plugins": {
-		"infection/extension-installer": true
-	}
+	"config": {
+		"allow-plugins": {
+			"infection/extension-installer": true
+		}
+	},
 }
