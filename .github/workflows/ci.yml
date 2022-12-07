@@ -21,8 +21,8 @@ jobs:
           - laravel-version: '^9.0'
             php-version: '7.4'
         include:
-          - laravel-version: '^9.0',
-            php-version: '8.1',
+          - laravel-version: '^9.0'
+            php-version: '8.1'
             mutation-testing: 'true'
     steps:
       - name: Checkout
