@@ -58,7 +58,7 @@ jobs:
         with:
           php-version: "8.2"
           coverage: pcov
-          extensions: sqlite3, pdo_sqlite
+          extensions: sqlite3, pdo_sqlite, ast
           tools: composer, phpunit
       - name: Get composer cache directory
         id: composer-cache
@@ -87,8 +87,8 @@ jobs:
 
       - name: Output Logs
         run: |
-          cat summary.log >> $GITHUB_STEP_SUMMARY
-          cat per-mutator.md >> $GITHUB_STEP_SUMMARY
+          cat summary.log || echo "No summary" >> $GITHUB_STEP_SUMMARY
+          cat per-mutator.md || echo "No mutations" >> $GITHUB_STEP_SUMMARY
 
   linting:
     name: Linting
@@ -114,5 +114,6 @@ jobs:
         with:
           php-version: '8.0'
           tools: phan
+          extensions: ast
       - name: Run Static Analysis
         run: phan --progress-bar -o phan_analysis.txt
