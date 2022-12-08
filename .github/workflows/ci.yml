@@ -84,8 +84,17 @@ jobs:
 
       - name: Output Logs
         run: |
-          echo $([ -f summary.log ] && cat summary.log || echo "No summary is available") >> $GITHUB_STEP_SUMMARY
-          echo $([ -f per-mutator.md ] && cat per-mutator.md || echo "No mutator effectiveness table is available") >> $GITHUB_STEP_SUMMARY
+          if [ -f summary.log ]; then
+            cat summary.log >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No summary is available" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ -f per-mutator.md ]; then
+            cat per-mutator.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No mutator effectiveness table is available" >> $GITHUB_STEP_SUMMARY
+          fi                
 
       - name: HTML Report As Artifact
         uses: actions/upload-artifact@v3
