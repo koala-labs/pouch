@@ -82,21 +82,23 @@ jobs:
           git fetch --depth=1 origin $GITHUB_BASE_REF
           infection -j$(nproc) --coverage=. --min-msi=70 --min-covered-msi=70 --git-diff-base=origin/$GITHUB_BASE_REF --git-diff-filter=AM --only-covered --ignore-msi-with-no-mutations --logger-github
 
-      - name: Output Logs
+      - name: Output Summary
         run: |
           if [ -f summary.log ]; then
             cat summary.log >> $GITHUB_STEP_SUMMARY
           else
             echo "No summary is available" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
+      - name: Output Mutator Effectiveness
+        run: |
           if [ -f per-mutator.md ]; then
             cat per-mutator.md >> $GITHUB_STEP_SUMMARY
           else
             echo "No mutator effectiveness table is available" >> $GITHUB_STEP_SUMMARY
           fi                
 
-      - name: HTML Report As Artifact
+      - name: Upload HTML Report As Artifact
         uses: actions/upload-artifact@v3
         with:
           name: mutation-explorer
