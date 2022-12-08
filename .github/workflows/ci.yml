@@ -84,10 +84,8 @@ jobs:
 
       - name: Output Logs
         run: |
-          [ -f summary.log ] && cat per-mutator.md >> $GITHUB_STEP_SUMMARY
-          [ -f per-mutator.md ] && cat summary.log >> $GITHUB_STEP_SUMMARY
-          #cat summary.log || echo "No summary" >> $GITHUB_STEP_SUMMARY
-          #cat per-mutator.md || echo "No mutations" >> $GITHUB_STEP_SUMMARY
+          [ -f summary.log ] && cat summary.log || echo "No summary is available" >> $GITHUB_STEP_SUMMARY
+          [ -f per-mutator.md ] && cat per-mutator.md || echo "No mutator effectiveness table is available" >> $GITHUB_STEP_SUMMARY          
 
   linting:
     name: Linting
