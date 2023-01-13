@@ -4,10 +4,10 @@ namespace Koala\Pouch\Utility;
 
 use Koala\Pouch\Contracts\PouchResource;
 use Koala\Pouch\Contracts\ModelResolver;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Route;
-use Illuminate\Console\AppNamespaceDetectorTrait;
+use Illuminate\Support\Facades\App;
+use Koala\Pouch\Exception\ModelNotResolvedException;
 
 /**
  * Class RouteGuessingModelResolver
@@ -18,8 +18,6 @@ use Illuminate\Console\AppNamespaceDetectorTrait;
  */
 class RouteGuessingModelResolver implements ModelResolver
 {
-    use AppNamespaceDetectorTrait;
-
     /**
      * Resolve and return the model class for requests.
      *
@@ -32,7 +30,7 @@ class RouteGuessingModelResolver implements ModelResolver
         $route_name = $route->getName();
 
         if (! is_null($route_name) && strpos($route_name, '.') !== false) {
-            list(, $alias) = Arr::reverse(explode('.', $route->getName()));
+            $alias = (explode('.', $route_name) ?: [])[1] ?? "";
 
             $model_class = $this->namespaceModel(Str::studly(Str::singular($alias)));
 
@@ -43,7 +41,7 @@ class RouteGuessingModelResolver implements ModelResolver
             throw new \LogicException(sprintf('%s must be an instance of %s', $model_class, PouchResource::class));
         }
 
-        throw new \LogicException('Unable to resolve model from improperly named route');
+        throw new ModelNotResolvedException('Unable to resolve model from improperly named route');
     }
 
     /**
@@ -54,6 +52,6 @@ class RouteGuessingModelResolver implements ModelResolver
      */
     final public function namespaceModel($model_class)
     {
-        return sprintf('%s%s', $this->getAppNamespace(), $model_class);
+        return sprintf('%s%s', App::getNamespace(), $model_class);
     }
 }

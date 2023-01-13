@@ -13,6 +13,7 @@ class Tag extends Model implements PouchResource
     public const FILLABLE = [
         'label',
         'posts',
+        'color'
     ];
 
     /**
@@ -29,6 +30,7 @@ class Tag extends Model implements PouchResource
         'hands',
         'occupation',
         'times_captured',
+        'color',
         'posts.label',
     ];
 
@@ -43,6 +45,7 @@ class Tag extends Model implements PouchResource
     protected $fillable = [
         'label',
         'posts',
+        'color'
     ];
 
     /**

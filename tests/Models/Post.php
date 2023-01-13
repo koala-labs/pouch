@@ -34,7 +34,7 @@ class Post extends Model implements PouchResource
         'hands',
         'occupation',
         'times_captured',
-        'posts.label',
+        'posts.label'
     ];
 
     /**
@@ -64,6 +64,11 @@ class Post extends Model implements PouchResource
     public function tags()
     {
         return $this->belongsToMany(Tag::class)->withPivot('extra');
+    }
+
+    public function reactions()
+    {
+        return $this->hasMany(Reaction::class);
     }
 
     /**

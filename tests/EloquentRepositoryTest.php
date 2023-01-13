@@ -272,6 +272,58 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertNull(Profile::find($old_profile_id));
     }
 
+    public function testItFillsHasManyThroughRelations()
+    {
+        $this->seedUsers();
+
+        $postId = 1;
+
+        $user = $this->getRepository(User::class, [
+            'username' => 'joe',
+            'posts'    => [
+                [
+                    'id' => $postId
+                ]
+            ],
+            'reactions' => [
+                ['name' => 'Jar Jar Binks', 'icon' => 'lol', 'post_id' => $postId],
+                ['name' => 'Darth Maul', 'icon' => 'skull-and-crossbones', 'post_id' => $postId],
+            ]
+        ])->save();
+
+        $this->assertTrue($user->reactions->contains('name', 'Jar Jar Binks'));
+        $this->assertTrue($user->reactions->contains('name', 'Darth Maul'));
+        $this->assertTrue($user->reactions->contains('name', 'Obi-Wan Kenobi')); //Keeps the seeded reactions
+        $this->assertEquals(Post::find($postId)->reactions->toArray(), $originalReactions = $user->reactions->toArray());
+        $originalReactions = $user->reactions;
+
+        //Another user with the same id, same post, and an additional reaction
+        $user = $this->getRepository(User::class, [
+            'id'        => $user->id,
+            'reactions' => [
+                ['name' => 'Han Solo', 'icon' => 'gun', 'post_id' => $postId],
+                ['name' => 'Biggs', 'icon' => 'boom', 'post_id' => 2],
+            ],
+            'posts' => [
+                ['id' => $postId],
+                ['id' => 2],
+            ]
+        ])->save();
+
+        $this->assertNotEmpty($user->reactions);
+        //Contains the new reactions across both posts
+        $this->assertTrue($user->reactions->contains('name', 'Han Solo'));
+        $this->assertTrue($user->reactions->contains('name', 'Biggs'));
+
+        //Contains the original reactions for the first post
+        $this->assertEmpty($originalReactions->diff($user->reactions));
+
+        //Contains all reactions for the first post
+        $this->assertEmpty(Post::find($postId)->reactions->diff($user->reactions));
+        //Contains all reactions for the second post
+        $this->assertEmpty(Post::find(2)->reactions->diff($user->reactions));
+    }
+
     public function testItCascadesThroughSupportedRelations()
     {
         $post = $this->getRepository(Post::class, [
@@ -441,6 +493,19 @@ class EloquentRepositoryTest extends DBTestCase
 
         $this->assertEquals($found_users->count(), 1);
         $this->assertEquals($found_users->first()->username, 'chewbaclava@galaxyfarfaraway.com');
+
+        // Test that it can filter a chained relationship
+        $repository->accessControl()->setDepthRestriction(4);
+        $repository->modify()->setFilters(['posts.tags.label' => '=#99']);
+        $found_users = $repository->all();
+        $this->assertEquals($found_users->count(), 1);
+        $this->assertEquals($found_users->first()->username, 'solocup@galaxyfarfaraway.com');
+
+        // Test that the repository can filter through a HasManyThrough relationship
+        $repository->modify()->setFilters(['reactions.name' => '=Luke Skywalker']);
+        $found_users = $repository->all();
+        $this->assertEquals($found_users->count(), 1);
+        $this->assertEquals($found_users->first()->username, 'solocup@galaxyfarfaraway.com');
     }
 
     public function testItOnlyUpdatesFillableAttributesOnCreate()
@@ -678,7 +743,7 @@ class EloquentRepositoryTest extends DBTestCase
         $repository->accessControl()
             ->setDepthRestriction(1);
         $repository->modify()->setFilters([
-            'posts.tags.label' => '=#mysonistheworst'
+            'posts.tags.color' => '=green'
         ]);
         $users = $repository->all();
 
@@ -686,22 +751,30 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertEquals(User::all()->count(), $users->count());
 
         /**
-         * Test with 1 depth, filter is okay
+         * Test with 2 depth, filter is too long
          */
         $repository = $this->getRepository(User::class);
         $repository->accessControl()
             ->setDepthRestriction(2);
         $repository->modify()->setFilters([
-            'posts.tags.label' => '=#mysonistheworst'
+            'posts.tags.color' => '=green'
         ]);
         $users = $repository->all();
-
         // Filter should not apply because depth restriction is 2
-        $this->assertEquals(2, $users->count());
+        $this->assertEquals(5, $users->count());
 
-        foreach ($users as $user) {
-            $this->assertTrue(in_array($user->username, ['solocup@galaxyfarfaraway.com', 'lorgana@galaxyfarfaraway.com']));
-        }
+        /**
+         * Test with 2 depth, filter is too long
+         */
+        $repository = $this->getRepository(User::class);
+        $repository->accessControl()
+            ->setDepthRestriction(2);
+        $repository->modify()->setFilters([
+            'posts.tags.color' => '=green'
+        ]);
+        $users = $repository->all();
+        // Filter should not apply because depth restriction is 2
+        $this->assertEquals(5, $users->count());
     }
 
     /**
@@ -797,24 +870,68 @@ class EloquentRepositoryTest extends DBTestCase
     /**
      * @dataProvider sortDirectionProvider
      */
-    public function testItCanSortBelongsToManyRelationDesc(string $direction)
+    public function testItCanSortHasManyThroughRelation(string $direction)
     {
         $this->seedUsers();
 
         /**
          * Sort depth 1, expect sorting by post title, desc alphabetical
          */
-        $repository = $this->getRepository(Tag::class);
+        $repository = $this->getRepository(User::class);
         $repository->modify()
-            ->setSortOrder(['posts.title' => $direction])
-            ->setEagerLoads(['posts']);
-        $tags = $repository->all();
+            ->setSortOrder(['reactions.name' => $direction]);
+        $users = $repository->all();
 
-        $this->assertCount(Tag::count(), $tags->pluck('label')->unique());
+        $sortByDir = strtolower($direction) === 'asc' ? 'sortBy' : 'sortByDesc';
 
-        $tags->each(
-            fn ($tag) => $this->assertCollectionIsSorted($tag->posts->pluck('title'), $direction)
-        );
+        $expectedUserIdsOrder = User::all()->flatMap(
+            function ($user) {
+                if ($user->reactions->isEmpty()) {
+                    return Collection::wrap([['user_id' => $user->id, 'name' => null]]);
+                } else {
+                    return $user->reactions->map(fn ($reaction) => ['user_id' => $user->id, 'name' => $reaction->name]);
+                }
+            }
+        )->$sortByDir('name')->pluck('user_id');
+
+        $this->assertSameSize($expectedUserIdsOrder, $users);
+        $this->assertEquals($expectedUserIdsOrder, $users->pluck('id'));
+    }
+
+    /**
+     * @dataProvider sortDirectionProvider
+     */
+    public function testItCanSortHasManyThroughRelationWithAFilter(string $direction)
+    {
+        $this->seedUsers();
+
+        /**
+         * Sort depth 1, expect sorting by post title, desc alphabetical
+         */
+        $searchString = '#mysonistheworst';
+        $repository   = $this->getRepository(User::class);
+        $repository->modify()
+            ->setFilters((['posts.tags.label' => '='.$searchString]))
+            ->setSortOrder(['reactions.name' => $direction]);
+        $users = $repository->paginate(10);
+
+        $sortByDir = strtolower($direction) === 'asc' ? 'sortBy' : 'sortByDesc';
+
+        //Roundabout way of doing the same query expected to be run in the Repository
+        $expectedUserIdsOrder = User::all()
+            ->filter(fn ($user) => $user->posts->map->tags->flatten()->pluck('label')->contains($searchString))
+            ->flatMap(
+                function ($user) use ($searchString) {
+                    if ($user->reactions->isEmpty()) {
+                        return Collection::wrap([['user_id' => $user->id, 'name' => null]]);
+                    } else {
+                        return $user->reactions->map(fn ($reaction) => ['user_id' => $user->id, 'name' => $reaction->name]);
+                    }
+                }
+            )->$sortByDir('name')->pluck('user_id');
+
+        $this->assertSameSize($expectedUserIdsOrder, $users);
+        $this->assertEquals($expectedUserIdsOrder, $users->pluck('id'));
     }
 
     public function testItCanAddMultipleAdditionalFilters()
@@ -1743,7 +1860,7 @@ class EloquentRepositoryTest extends DBTestCase
         $valueToAvoid = $direction == 'desc' ? -1 : 1;
         $collection->sliding(2)->eachSpread(function ($previous, $current) use ($valueToAvoid, $direction) {
             $word    = $valueToAvoid == -1 ? 'after' : 'before';
-            $message = "Failed asserting that the collection is sorted in $direction order. $previous does not come $word to $current.";
+            $message = "Failed asserting that the collection is sorted in $direction order. $previous does not come $word $current.";
             $this->assertNotEquals($valueToAvoid, $previous <=> $current, $message);
         });
     }
