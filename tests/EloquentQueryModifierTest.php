@@ -81,10 +81,10 @@ class EloquentQueryModifierTest extends DBTestCase
         $query = $model->query();
 
         (new EloquentQueryModifier())->setQuery($query)
-            ->setAggregate(['sum' => 'hands'])
+            ->setAggregate([$function => 'hands'])
             ->apply(new EloquentAccessControl(), get_class($model));
 
-        $this->assertEqualsCanonicalizing(['function' => 'sum', 'columns' => ['hands']], $query->getQuery()->aggregate);
+        $this->assertEqualsCanonicalizing(['function' => $function, 'columns' => ['hands']], $query->getQuery()->aggregate);
     }
 
     public function testItOnlyAppliesTheFirstAggregation()
