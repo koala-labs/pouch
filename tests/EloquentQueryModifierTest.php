@@ -39,13 +39,8 @@ class EloquentQueryModifierTest extends DBTestCase
 
     public function testItDoesNotApplySelectWhenThereAreNoPicksDefined()
     {
-        Artisan::call('db:seed', [
-            '--class' => FilterDataSeeder::class
-        ]);
-
-        /** @var Model $model */
-        $model = User::findOrFail(1);
-        $query = $model->newQuery();
+        $model = new User();
+        $query = $model->query();
 
         (new EloquentQueryModifier())->setQuery($query)->apply(new EloquentAccessControl(), get_class($model));
 
@@ -54,13 +49,8 @@ class EloquentQueryModifierTest extends DBTestCase
 
     public function testItDoesNotSelectPicksThatAreNotInTheModelTable()
     {
-        Artisan::call('db:seed', [
-            '--class' => FilterDataSeeder::class
-        ]);
-
-        /** @var Model $model */
-        $model = User::findOrFail(1);
-        $query = $model->newQuery();
+        $model = new User();
+        $query = $model->query();
 
         (new EloquentQueryModifier())->setQuery($query)
             ->setPicks([$model->getKeyName(), 'not-in-this-model'])
@@ -72,18 +62,63 @@ class EloquentQueryModifierTest extends DBTestCase
 
     public function testItDoesNotApplySelectWhenNoneOfThePicksMatchColumns()
     {
-        Artisan::call('db:seed', [
-            '--class' => FilterDataSeeder::class
-        ]);
-
-        /** @var Model $model */
-        $model = User::findOrFail(1);
-        $query = $model->newQuery();
+        $model = new User();
+        $query = $model->query();
 
         (new EloquentQueryModifier())->setQuery($query)
             ->setPicks(['not-in-this-model', 'another-not-in-this-model'])
             ->apply(new EloquentAccessControl(), get_class($model));
 
         $this->assertNull($query->getQuery()->columns);
+    }
+
+    /**
+     * @dataProvider aggregateFunctionDataProvider
+     */
+    public function testItCanApplyAnAggregation(string $function)
+    {
+        $model = new User();
+        $query = $model->query();
+
+        (new EloquentQueryModifier())->setQuery($query)
+            ->setAggregate(['sum' => 'hands'])
+            ->apply(new EloquentAccessControl(), get_class($model));
+
+        $this->assertEqualsCanonicalizing(['function' => 'sum', 'columns' => ['hands']], $query->getQuery()->aggregate);
+    }
+
+    public function testItOnlyAppliesTheFirstAggregation()
+    {
+        $model = new User();
+        $query = $model->query();
+
+        (new EloquentQueryModifier())->setQuery($query)
+            ->setAggregate(['sum' => 'hands', 'avg' => 'hands', 'max' => 'hands'])
+            ->apply(new EloquentAccessControl(), get_class($model));
+
+        $this->assertEqualsCanonicalizing(['function' => 'sum', 'columns' => ['hands']], $query->getQuery()->aggregate);
+    }
+
+    public function testItDoesNotApplyInvalidAggregationFunctions()
+    {
+        $model = new User();
+        $query = $model->query();
+
+        (new EloquentQueryModifier())->setQuery($query)
+            ->setAggregate(['not-valid' => 'hands'])
+            ->apply(new EloquentAccessControl(), get_class($model));
+
+        $this->assertNull($query->getQuery()->aggregate);
+    }
+
+    protected function aggregateFunctionDataProvider()
+    {
+        return [
+            'Count' => ['count'],
+            'Min' => ['min'],
+            'Max' => ['max'],
+            'Sum' => ['sum'],
+            'Avg' => ['avg']
+        ];
     }
 }
