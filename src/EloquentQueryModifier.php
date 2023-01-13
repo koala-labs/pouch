@@ -360,8 +360,6 @@ class EloquentQueryModifier implements QueryModifier
                 $this->query()->addSelect($valid_group);
             }
         }
-
-        var_dump($this->query()->toSql());
     }
 
     /**
