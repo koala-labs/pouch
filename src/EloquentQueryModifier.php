@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -356,12 +355,13 @@ class EloquentQueryModifier implements QueryModifier
 
         if (in_array($function, $allowed_aggregations, true) && in_array($column, $allowed_columns, true)) {
             $this->query()->getQuery()->aggregate = ['columns' => [$column], 'function' => $function];
-            $this->query()->getQuery()->aggregate = ['columns' => [$column], 'function' => $function];
 
             if (! empty($valid_group)) {
                 $this->query()->addSelect($valid_group);
             }
         }
+
+        var_dump($this->query()->toSql());
     }
 
     /**
