@@ -1577,7 +1577,7 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertSame($expectedValue, $result->aggregate);
     }
 
-    protected function aggregateFunctionDataProvider()
+    public function aggregateFunctionDataProvider()
     {
         return [
             'Count' => ['count'],
