@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -257,7 +256,7 @@ class EloquentQueryModifier implements QueryModifier
     /**
      * Set aggregate functions.
      *
-     * @param array $aggregate
+     * @param array<array{0: string, 1: string}> $aggregate
      *
      * @return \Koala\Pouch\Contracts\QueryModifier
      */
@@ -355,7 +354,7 @@ class EloquentQueryModifier implements QueryModifier
         $function        = strtolower(key($aggregate));
 
         if (in_array($function, $allowed_aggregations, true) && in_array($column, $allowed_columns, true)) {
-            $this->query()->addSelect(DB::raw($function . '(' . $column . ') as aggregate'));
+            $this->query()->getQuery()->aggregate = ['columns' => [$column], 'function' => $function];
 
             if (! empty($valid_group)) {
                 $this->query()->addSelect($valid_group);
