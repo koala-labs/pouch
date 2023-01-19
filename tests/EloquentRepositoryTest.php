@@ -1864,7 +1864,7 @@ class EloquentRepositoryTest extends DBTestCase
         $usersWithPicks = Collection::wrap([$repo->firstOrFail(), $repo->first(), $repo->find(1), $repo->findOrFail(1)])->concat($repo->all());
         $usersWithPicks->each(function ($userWithPicks) {
             $modelToArray = $userWithPicks->toArray();
-            $modelKeys  = array_keys($modelToArray);
+            $modelKeys = array_keys($modelToArray);
             $diff = array_diff($userWithPicks->getVisible(), $modelKeys);
             $this->assertEqualsCanonicalizing($diff, ['posts', 'profile']);
         });

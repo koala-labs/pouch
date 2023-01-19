@@ -115,10 +115,10 @@ class EloquentQueryModifierTest extends DBTestCase
     {
         return [
             'Count' => ['count'],
-            'Min' => ['min'],
-            'Max' => ['max'],
-            'Sum' => ['sum'],
-            'Avg' => ['avg']
+            'Min'   => ['min'],
+            'Max'   => ['max'],
+            'Sum'   => ['sum'],
+            'Avg'   => ['avg']
         ];
     }
 }
