@@ -111,7 +111,7 @@ class EloquentQueryModifierTest extends DBTestCase
         $this->assertNull($query->getQuery()->aggregate);
     }
 
-    protected function aggregateFunctionDataProvider()
+    public function aggregateFunctionDataProvider()
     {
         return [
             'Count' => ['count'],
