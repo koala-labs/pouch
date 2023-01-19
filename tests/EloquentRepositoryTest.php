@@ -1539,7 +1539,7 @@ class EloquentRepositoryTest extends DBTestCase
 
         //Aggregate over all Users
         $expectedValue = User::aggregate($function, ['id']);
-        $repository = $this->getRepository(User::class);
+        $repository    = $this->getRepository(User::class);
         $repository->modify()->setAggregate([$function => 'id']);
         $result = $repository->all();
         $this->assertCount(1, $result);
@@ -1547,10 +1547,9 @@ class EloquentRepositoryTest extends DBTestCase
 
         //Aggregate on one user by input id
         $expectedValue = User::where('id', User::first()->id)->aggregate($function, ['id']);
-        $repository = $this->getRepository(User::class)->setInput(['id' => User::first()->id]);
+        $repository    = $this->getRepository(User::class)->setInput(['id' => User::first()->id]);
         $repository->modify()->setAggregate([$function => 'id']);
-        $result = $repository->read();
-        $this->assertSame($expectedValue, $result->aggregate);
+        $this->assertSame($expectedValue, $repository->read()->aggregate);
 
         //Aggregate on multiple users by filter
         $expectedValue = User::where('hands', '<', 2)->aggregate($function, ['id']);
@@ -1561,16 +1560,15 @@ class EloquentRepositoryTest extends DBTestCase
 
         //Aggregate on one user by filter
         $expectedValue = User::where('id', User::first()->id)->aggregate($function, ['id']);
-        $repository = $this->getRepository(User::class)->setInput(['id' => User::first()->id]);
+        $repository    = $this->getRepository(User::class)->setInput(['id' => User::first()->id]);
         $repository->modify()->setAggregate([$function => 'id']);
         $repository->modify()->addFilter('name', '='.User::first()->name);
-        $result = $repository->read();
-        $this->assertSame($expectedValue, $result->aggregate);
+        $this->assertSame($expectedValue, $repository->read()->aggregate);
 
         //Aggregate on zero users
-        $fakeName = $this->faker->name;
+        $fakeName      = $this->faker->name;
         $expectedValue = User::query()->where('name', $fakeName)->aggregate($function, ['name']);
-        $repository = $this->getRepository(User::class);
+        $repository    = $this->getRepository(User::class);
         $repository->modify()->setAggregate([$function => 'id']);
         $repository->modify()->addFilter('name', '='.$fakeName);
         $result = $repository->first();
@@ -1701,8 +1699,8 @@ class EloquentRepositoryTest extends DBTestCase
                         'yarderp'
                     ];
                     protected $appends = ['foobar', 'barbaz'];
-                    protected $with    = ['yarderp'];
-                    protected $hidden  = ['stays_hidden'];
+                    protected $with = ['yarderp'];
+                    protected $hidden = ['stays_hidden'];
 
                     protected $table = 'users';
 
@@ -1763,8 +1761,8 @@ class EloquentRepositoryTest extends DBTestCase
                         'yarderp'
                     ];
                     protected $appends = ['foobar', 'barbaz'];
-                    protected $with    = ['yarderp'];
-                    protected $hidden  = ['stays_hidden'];
+                    protected $with = ['yarderp'];
+                    protected $hidden = ['stays_hidden'];
 
                     protected $table = 'users';
 
@@ -1828,8 +1826,8 @@ class EloquentRepositoryTest extends DBTestCase
                         'yarderp'
                     ];
                     protected $appends = ['foobar', 'barbaz'];
-                    protected $with    = ['yarderp'];
-                    protected $hidden  = ['stays_hidden'];
+                    protected $with = ['yarderp'];
+                    protected $hidden = ['stays_hidden'];
 
                     protected $table = 'users';
 
@@ -1866,8 +1864,8 @@ class EloquentRepositoryTest extends DBTestCase
         $usersWithPicks = Collection::wrap([$repo->firstOrFail(), $repo->first(), $repo->find(1), $repo->findOrFail(1)])->concat($repo->all());
         $usersWithPicks->each(function ($userWithPicks) {
             $modelToArray = $userWithPicks->toArray();
-            $modelKeys    = array_keys($modelToArray);
-            $diff         = array_diff($userWithPicks->getVisible(), $modelKeys);
+            $modelKeys  = array_keys($modelToArray);
+            $diff = array_diff($userWithPicks->getVisible(), $modelKeys);
             $this->assertEqualsCanonicalizing($diff, ['posts', 'profile']);
         });
 
@@ -1895,7 +1893,7 @@ class EloquentRepositoryTest extends DBTestCase
     {
         $valueToAvoid = $direction == 'desc' ? -1 : 1;
         $collection->sliding(2)->eachSpread(function ($previous, $current) use ($valueToAvoid, $direction) {
-            $word    = $valueToAvoid == -1 ? 'after' : 'before';
+            $word = $valueToAvoid == -1 ? 'after' : 'before';
             $message = "Failed asserting that the collection is sorted in $direction order. $previous does not come $word $current.";
             $this->assertNotEquals($valueToAvoid, $previous <=> $current, $message);
         });
