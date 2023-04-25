@@ -12,12 +12,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        laravel-version: ['^8.0', '^9.0']
-        php-version: ['7.4', '8.0', '8.1']
+        laravel-version: ['^8.0', '^9.0', '^10.0']
+        php-version: ['7.4', '8.0', '8.1', '8.2']
         exclude:
           - laravel-version: '^8.0'
             php-version: '8.2'
           - laravel-version: '^9.0'
+            php-version: '7.4'
+          - laravel-version: '^10.0'
             php-version: '7.4'
     steps:
       - name: Checkout
