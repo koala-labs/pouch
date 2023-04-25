@@ -2,6 +2,7 @@
 
 namespace Koala\Pouch\Tests;
 
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 use Koala\Pouch\Contracts\AccessControl;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class EloquentRepositoryTest extends DBTestCase
 {
+    use WithFaker;
+
     /**
      * Retrieve a sample repository for testing.
      *
@@ -461,7 +464,8 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertEquals($repository->count(), 1);
         $repository->modify()->set([
             function (Builder $query) {
-                $query->whereRaw(DB::raw('0 = 1'));
+                //Force the query to return no results
+                $query->where('id', 'a-value-that-will-not-be-found');
             }
         ]);
         $this->assertEquals($repository->count(), 0);
@@ -473,7 +477,8 @@ class EloquentRepositoryTest extends DBTestCase
         $repository->save();
         $this->assertEquals($repository->count(), 1);
         $repository->modify()->add(function (Builder $query) {
-            $query->whereRaw(DB::raw('0 = 1'));
+            //Force the query to return no results
+            $query->where('id', 'a-value-that-will-not-be-found');
         });
 
         $this->assertSame(1, count($repository->modify()->getModifiers()));
@@ -1527,29 +1532,60 @@ class EloquentRepositoryTest extends DBTestCase
         ], $repository->accessControl()->getFilterable(true));
     }
 
-    public function testItCanAggregateQueryCount()
+    /**
+     * @dataProvider aggregateFunctionDataProvider
+     */
+    public function testItCanAggregateQueryWithFunction(string $function)
     {
-        $this->markTestIncomplete();
+        $this->seedUsers();
+
+        //Aggregate over all Users
+        $expectedValue = User::aggregate($function, ['id']);
+        $repository    = $this->getRepository(User::class);
+        $repository->modify()->setAggregate([$function => 'id']);
+        $result = $repository->all();
+        $this->assertCount(1, $result);
+        $this->assertTrue($result->every(fn ($model) => $model->aggregate === $expectedValue));
+
+        //Aggregate on one user by input id
+        $expectedValue = User::where('id', User::first()->id)->aggregate($function, ['id']);
+        $repository    = $this->getRepository(User::class)->setInput(['id' => User::first()->id]);
+        $repository->modify()->setAggregate([$function => 'id']);
+        $this->assertSame($expectedValue, $repository->read()->aggregate);
+
+        //Aggregate on multiple users by filter
+        $expectedValue = User::where('hands', '<', 2)->aggregate($function, ['id']);
+        $repository->modify()->setAggregate([$function => 'id']);
+        $repository->modify()->addFilter('hands', '<2');
+        $result = $repository->all();
+        $this->assertTrue($result->every(fn ($model) => $model->aggregate === $expectedValue));
+
+        //Aggregate on one user by filter
+        $expectedValue = User::where('id', User::first()->id)->aggregate($function, ['id']);
+        $repository    = $this->getRepository(User::class)->setInput(['id' => User::first()->id]);
+        $repository->modify()->setAggregate([$function => 'id']);
+        $repository->modify()->addFilter('name', '='.User::first()->name);
+        $this->assertSame($expectedValue, $repository->read()->aggregate);
+
+        //Aggregate on zero users
+        $fakeName      = $this->faker->name;
+        $expectedValue = User::query()->where('name', $fakeName)->aggregate($function, ['name']);
+        $repository    = $this->getRepository(User::class);
+        $repository->modify()->setAggregate([$function => 'id']);
+        $repository->modify()->addFilter('name', '='.$fakeName);
+        $result = $repository->first();
+        $this->assertSame($expectedValue, $result->aggregate);
     }
 
-    public function testItCanAggregateQueryMin()
+    public function aggregateFunctionDataProvider()
     {
-        $this->markTestIncomplete();
-    }
-
-    public function testItCanAggregateQueryMax()
-    {
-        $this->markTestIncomplete();
-    }
-
-    public function testItCanAggregateQuerySum()
-    {
-        $this->markTestIncomplete();
-    }
-
-    public function testItCanAggregateQueryAverage()
-    {
-        $this->markTestIncomplete();
+        return [
+            'Count' => ['count'],
+            'Min'   => ['min'],
+            'Max'   => ['max'],
+            'Sum'   => ['sum'],
+            'Avg'   => ['avg']
+        ];
     }
 
     public function testItCanGroupQuery()
@@ -1665,8 +1701,8 @@ class EloquentRepositoryTest extends DBTestCase
                         'yarderp'
                     ];
                     protected $appends = ['foobar', 'barbaz'];
-                    protected $with    = ['yarderp'];
-                    protected $hidden  = ['stays_hidden'];
+                    protected $with = ['yarderp'];
+                    protected $hidden = ['stays_hidden'];
 
                     protected $table = 'users';
 
@@ -1727,8 +1763,8 @@ class EloquentRepositoryTest extends DBTestCase
                         'yarderp'
                     ];
                     protected $appends = ['foobar', 'barbaz'];
-                    protected $with    = ['yarderp'];
-                    protected $hidden  = ['stays_hidden'];
+                    protected $with = ['yarderp'];
+                    protected $hidden = ['stays_hidden'];
 
                     protected $table = 'users';
 
@@ -1792,8 +1828,8 @@ class EloquentRepositoryTest extends DBTestCase
                         'yarderp'
                     ];
                     protected $appends = ['foobar', 'barbaz'];
-                    protected $with    = ['yarderp'];
-                    protected $hidden  = ['stays_hidden'];
+                    protected $with = ['yarderp'];
+                    protected $hidden = ['stays_hidden'];
 
                     protected $table = 'users';
 
@@ -1830,8 +1866,8 @@ class EloquentRepositoryTest extends DBTestCase
         $usersWithPicks = Collection::wrap([$repo->firstOrFail(), $repo->first(), $repo->find(1), $repo->findOrFail(1)])->concat($repo->all());
         $usersWithPicks->each(function ($userWithPicks) {
             $modelToArray = $userWithPicks->toArray();
-            $modelKeys    = array_keys($modelToArray);
-            $diff         = array_diff($userWithPicks->getVisible(), $modelKeys);
+            $modelKeys = array_keys($modelToArray);
+            $diff = array_diff($userWithPicks->getVisible(), $modelKeys);
             $this->assertEqualsCanonicalizing($diff, ['posts', 'profile']);
         });
 
@@ -1859,7 +1895,7 @@ class EloquentRepositoryTest extends DBTestCase
     {
         $valueToAvoid = $direction == 'desc' ? -1 : 1;
         $collection->sliding(2)->eachSpread(function ($previous, $current) use ($valueToAvoid, $direction) {
-            $word    = $valueToAvoid == -1 ? 'after' : 'before';
+            $word = $valueToAvoid == -1 ? 'after' : 'before';
             $message = "Failed asserting that the collection is sorted in $direction order. $previous does not come $word $current.";
             $this->assertNotEquals($valueToAvoid, $previous <=> $current, $message);
         });
