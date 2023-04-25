@@ -464,7 +464,8 @@ class EloquentRepositoryTest extends DBTestCase
         $this->assertEquals($repository->count(), 1);
         $repository->modify()->set([
             function (Builder $query) {
-                $query->whereRaw(DB::raw('0 = 1'));
+                //Force the query to return no results
+                $query->where('id', 'a-value-that-will-not-be-found');
             }
         ]);
         $this->assertEquals($repository->count(), 0);
@@ -476,7 +477,8 @@ class EloquentRepositoryTest extends DBTestCase
         $repository->save();
         $this->assertEquals($repository->count(), 1);
         $repository->modify()->add(function (Builder $query) {
-            $query->whereRaw(DB::raw('0 = 1'));
+            //Force the query to return no results
+            $query->where('id', 'a-value-that-will-not-be-found');
         });
 
         $this->assertSame(1, count($repository->modify()->getModifiers()));
